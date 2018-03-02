@@ -18,6 +18,7 @@ module.exports = class extends Command {
 				},
 			});
 		}
+		msg.member.configs.words.forEach(word => this.client.removeCachedWord(msg.guild, word, msg.member));
 		await msg.member.configs.reset("words", msg.guild);
 		return msg.send(null, {
 			embed: {

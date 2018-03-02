@@ -39,4 +39,22 @@ module.exports = class HighlightClient extends Client {
 		}, { provider: "json" }, false);
 		return super.login(token);
 	}
+
+	async addCachedWord (guild, word, member) {
+		let cachedItem = guild.words.get(word);
+		if (!cachedItem) {
+			guild.words.set(word, new Set());
+			cachedItem = guild.words.get(word);
+		}
+		cachedItem.add(member.id);
+	}
+
+	async removeCachedWord (guild, word, member) {
+		let cachedItem = guild.words.get(word);
+		if (!cachedItem) return;
+		if (cachedItem.has(member.id)) {
+			cachedItem.delete(member.id);
+		}
+		if (!cachedItem.size) guild.words.delete(word);
+	}
 };

@@ -10,7 +10,7 @@ module.exports = class extends Command {
 	}
 
 	async run (msg, [word]) {
-		word = word.toLowerCase();
+		word = word.toLowerCase().trim();
 		if (!msg.member.configs.words.includes(word)) {
 			return msg.send({
 				embed: {
@@ -19,8 +19,8 @@ module.exports = class extends Command {
 				},
 			});
 		}
-		// TODO: Implement the guild-level cache
 		msg.member.configs.update("words", word);
+		await this.client.removeCachedWord(msg.guild, word, msg.member);
 		return msg.send({
 			embed: {
 				color: 0x43B581,

@@ -14,16 +14,22 @@ module.exports = class extends Monitor {
 
 	async run (msg) {
 		if (!msg.guild) return;
-		const members = [...msg.guild.members.filter(m => m.configs.words.length).filter(m => m.id !== msg.author.id).values()];
-		const content = msg.content ? msg.content.toLowerCase().split(/\s+/) : [];
-		members.forEach(async member => {
-			if ((member.configs.blacklistedUsers && member.configs.blacklistedUsers.includes(msg.author.id)) || (member.configs.blacklistedChannels && member.configs.blacklistedChannels.includes(msg.channel.id))) return;
-			const foundWord = member.configs.words.find(word => content.includes(word));
-			if (foundWord) this._highlight(msg, member, foundWord);
-		});
+		const responded = new Set();
+		if (msg.content) {
+			for (const word of msg.content.toLowerCase().split(/\s+/)) {
+				const members = msg.guild.words.get(word);
+				if (!members) continue;
+				for (const memberID of members) {
+					if (responded.has(memberID)) continue;
+					this._highlight(msg, msg.guild.member(memberID), word);
+					responded.add(memberID);
+				}
+			}
+		}
 	}
 
 	async _highlight (msg, member, chosenWord) {
+		if (member.configs.blacklistedUsers.includes(msg.author.id) || member.configs.blacklistedChannels.includes(msg.channel.id) || member.id === msg.author.id) return;
 		const messages = [];
 		if (msg.channel.permissionsFor(msg.guild.me).has("READ_MESSAGE_HISTORY")) {
 			const tempMessages = await msg.channel.messages.fetch({ limit: 3, before: msg.id });
@@ -40,7 +46,7 @@ module.exports = class extends Monitor {
 			`${msg.author.tag.replace(/(\_|\*|\`|\~)/g, "\\$1")}:`,
 			`${msg.content}`,
 		].join(" "));
-		member.user.send(`You were mentioned in ${msg.channel} (#${msg.channel.name}) of ${msg.guild} using the highlight word **${chosenWord}**`, {
+		member.send(`You were mentioned in ${msg.channel} (#${msg.channel.name}) of ${msg.guild} using the highlight word **${chosenWord}**`, {
 			embed: {
 				color: 0x3669FA,
 				description: `${messages.join("\n")}`,
