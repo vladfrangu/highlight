@@ -18,12 +18,7 @@ module.exports = class extends Event {
 		for (const guild of this.client.guilds.values()) {
 			guild.members.filter(m => m.configs && m.configs.words.length).forEach(member => {
 				member.configs.words.forEach(word => {
-					let cachedWord = guild.words.get(word);
-					if (!cachedWord) {
-						guild.words.set(word, new Set());
-						cachedWord = guild.words.get(word);
-					}
-					cachedWord.add(member.id);
+           this.client.addCachedWord({ member, guild }, word);
 				});
 			});
 		}
