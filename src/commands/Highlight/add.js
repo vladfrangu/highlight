@@ -20,7 +20,7 @@ module.exports = class extends Command {
 			});
 		}
 		msg.member.configs.update("words", word);
-		await this.client.addCachedWord(msg.guild, word, msg.member);
+		await this.client.addCachedWord(msg, word);
 		return msg.send(null, {
 			embed: {
 				color: 0x43B581,
