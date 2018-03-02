@@ -13,7 +13,7 @@ Structures.extend("Guild", Guild => class HighlightGuild extends Guild {
 
 		/**
 		 * A map containing members mapped to certain trigger words
-		 * @type {Map<string, Set<Snowflake>>}
+		 * @type {Map<string, Set<GuildMember>>}
 		 */
 		this.words = new Map();
 	}
