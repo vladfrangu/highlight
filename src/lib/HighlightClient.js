@@ -46,7 +46,7 @@ module.exports = class HighlightClient extends Client {
     let guildCache = msg.guild.words.get(word);
     if (guildCache) cachedItem = new Set(guildCache);
 
-    cachedItem.add(member);
+    cachedItem.add(msg.member);
     msg.guild.words.set(word, cachedItem);
 	}
 
