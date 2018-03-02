@@ -1,0 +1,28 @@
+{
+  "name": "highlight-klasa",
+  "version": "1.0.0",
+  "description": "A klasa bot that highlights words and tells you when they were said",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo It works"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KingDGrizzle/highlight-klasa.git"
+  },
+  "keywords": [
+    "klasa",
+    "highlight"
+  ],
+  "author": "Frangu Vlad <kingdgrizzle@gmail.com>",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/KingDGrizzle/highlight-klasa/issues"
+  },
+  "homepage": "https://github.com/KingDGrizzle/highlight-klasa#readme",
+  "dependencies": {
+    "discord.js": "github:discordjs/discord.js",
+    "klasa": "github:dirigeants/klasa",
+    "moment-timezone": "^0.5.14"
+  }
+}
