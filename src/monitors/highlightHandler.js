@@ -19,10 +19,10 @@ module.exports = class extends Monitor {
 			for (const word of msg.content.toLowerCase().split(/\s+/)) {
 				const members = msg.guild.words.get(word);
 				if (!members) continue;
-				for (const memberID of members) {
-					if (responded.has(memberID)) continue;
-					this._highlight(msg, msg.guild.member(memberID), word);
-					responded.add(memberID);
+				for (const member of members) {
+					if (responded.has(member)) continue;
+					this._highlight(msg, member, word);
+					responded.add(member);
 				}
 			}
 		}
