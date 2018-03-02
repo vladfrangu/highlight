@@ -40,21 +40,21 @@ module.exports = class HighlightClient extends Client {
 		return super.login(token);
 	}
 
-	async addCachedWord (guild, word, member) {
-		let cachedItem = guild.words.get(word);
+	async addCachedWord (msg, word) {
+		let cachedItem = msg.guild.words.get(word);
 		if (!cachedItem) {
-			guild.words.set(word, new Set());
-			cachedItem = guild.words.get(word);
+			msg.guild.words.set(word, new Set());
+			cachedItem = msg.guild.words.get(word);
 		}
-		cachedItem.add(member.id);
+		cachedItem.add(msg.member.id);
 	}
 
-	async removeCachedWord (guild, word, member) {
-		let cachedItem = guild.words.get(word);
+	async removeCachedWord (msg, word) {
+		let cachedItem = msg.guild.words.get(word);
 		if (!cachedItem) return;
-		if (cachedItem.has(member.id)) {
-			cachedItem.delete(member.id);
+		if (cachedItem.has(msg.member.id)) {
+			cachedItem.delete(msg.member.id);
 		}
-		if (!cachedItem.size) guild.words.delete(word);
+		if (!cachedItem.size) msg.guild.words.delete(word);
 	}
 };
