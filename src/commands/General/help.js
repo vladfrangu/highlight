@@ -57,6 +57,10 @@ module.exports = class extends Command {
 						value: `Shows all your highlighted words in a list`,
 					},
 					{
+						name: `stats`,
+						value: `Shows some stats about this bot`,
+					},
+					{
 						name: `unblock`,
 						value: `Unblock a channel or a member from the highlight block`,
 					},

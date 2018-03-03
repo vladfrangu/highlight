@@ -5,7 +5,7 @@ module.exports = class extends Command {
 	constructor (...args) {
 		super(...args, {
 			guarded: true,
-			description: msg => msg.language.get("COMMAND_STATS_DESCRIPTION"),
+			description: `Shows some stats about this bot`,
 		});
 	}
 
@@ -22,13 +22,65 @@ module.exports = class extends Command {
 			}
 		}
 
-		return msg.sendCode("asciidoc", msg.language.get("COMMAND_STATS",
-			(memory || process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2),
-			Timestamp.toNow(Date.now() - (process.uptime() * 1000)),
-			(users || this.client.users.size).toLocaleString(),
-			(guilds || this.client.guilds.size).toLocaleString(),
-			(channels || this.client.channels.size).toLocaleString(),
-			klasaVersion, discordVersion, process.version, msg
-		));
+		// return msg.sendCode("asciidoc", msg.language.get("COMMAND_STATS",
+		// 	,
+		// 	,
+		// 	,
+		// 	,
+		// 	klasaVersion, discordVersion, process.version, msg
+		// ));
+		return msg.send({
+			embed: {
+				color: 0x3669FA,
+				title: `Stats for __${this.client.user.username}__`,
+				fields: [
+					{
+						name: `Guilds`,
+						value: (guilds || this.client.guilds.size).toLocaleString(),
+						inline: true,
+					},
+					{
+						name: `Channels`,
+						value: (channels || this.client.channels.size).toLocaleString(),
+						inline: true,
+					},
+					{
+						name: `Users`,
+						value: (users || this.client.users.size).toLocaleString(),
+						inline: true,
+					},
+					{
+						name: `Uptime`,
+						value: Timestamp.toNow(Date.now() - (process.uptime() * 1000)),
+						inline: true,
+					},
+					{
+						name: `Memory Used`,
+						value: `${(memory || process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB`,
+						inline: true,
+					},
+					{
+						name: `CPU Usage`,
+						value: `${(await this.client.getCPUUsage()).toFixed(2)}%`,
+						inline: true,
+					},
+					{
+						name: `Discord.js Version`,
+						value: `${discordVersion}`,
+						inline: true,
+					},
+					{
+						name: `Klasa Version`,
+						value: `${klasaVersion}`,
+						inline: true,
+					},
+					{
+						name: `Node Versions`,
+						value: `Node ${process.version}`,
+						inline: true,
+					},
+				],
+			},
+		});
 	}
 };

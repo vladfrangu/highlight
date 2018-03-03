@@ -1,4 +1,5 @@
 const { Client } = require("klasa");
+const os = require("os");
 
 module.exports = class HighlightClient extends Client {
 	async login (token) {
@@ -59,4 +60,36 @@ module.exports = class HighlightClient extends Client {
 		if (cachedItem.has(msg.member)) cachedItem.delete(msg.member);
 		msg.guild.words.set(word, cachedItem);
 	}
+
+	getCPUUsage () {
+		return new Promise(resolve => {
+			const { idle: startIdle, total: startTotal } = getCPUInfo();
+			setTimeout(() => {
+				const { idle: endIdle, total: endTotal } = getCPUInfo();
+
+				let idle = endIdle - startIdle;
+				let total = endTotal - startTotal;
+				let perc = idle / total;
+				resolve(1 - perc);
+			}, 1000);
+		});
+	}
 };
+
+function getCPUInfo () {
+	let cpus = os.cpus();
+
+	let user = 0, nice = 0, sys = 0, idle = 0, irq = 0, total = 0;
+
+	for (let i = 0; i < cpus.length; i++) {
+		user += cpus[i].times.user;
+		nice += cpus[i].times.nice;
+		sys += cpus[i].times.sys;
+		irq += cpus[i].times.irq;
+		idle += cpus[i].times.idle;
+	}
+
+	total = user + nice + sys + idle + irq;
+
+	return { total, idle };
+}

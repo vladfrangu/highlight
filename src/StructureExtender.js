@@ -1,4 +1,4 @@
-const { Structures } = require("discord.js");
+const { Structures, Collection } = require("discord.js");
 
 Structures.extend("GuildMember", GuildMember => class HighlightMember extends GuildMember {
 	constructor (...args) {
@@ -13,8 +13,8 @@ Structures.extend("Guild", Guild => class HighlightGuild extends Guild {
 
 		/**
 		 * A map containing members mapped to certain trigger words
-		 * @type {Map<string, Set<GuildMember>>}
+		 * @type {Collection<string, Set<GuildMember>>}
 		 */
-		this.words = new Map();
+		this.words = new Collection();
 	}
 })

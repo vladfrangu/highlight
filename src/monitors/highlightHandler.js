@@ -14,8 +14,8 @@ module.exports = class extends Monitor {
 
 	async run (msg) {
 		if (!msg.guild) return;
-		const responded = new Set();
 		if (msg.content) {
+			const responded = new Set();
 			for (const word of msg.content.toLowerCase().split(/\s+/)) {
 				const members = msg.guild.words.get(word);
 				if (!members) continue;
@@ -23,6 +23,18 @@ module.exports = class extends Monitor {
 					if (responded.has(member)) continue;
 					this._highlight(msg, member, word);
 					responded.add(member);
+				}
+			}
+			const otherWords = [...msg.guild.words.filter((_, word) => word.includes(" ") && msg.content.toLowerCase().includes(word)).keys()];
+			if (otherWords.length) {
+				for (const word of otherWords) {
+					const members = msg.guild.words.get(word);
+					if (!members) continue;
+					for (const member of members) {
+						if (responded.has(member)) continue;
+						this._highlight(msg, member, word);
+						responded.add(member);
+					}
 				}
 			}
 		}
@@ -46,7 +58,7 @@ module.exports = class extends Monitor {
 			`${msg.author.tag.replace(/(\_|\*|\`|\~)/g, "\\$1")}:`,
 			`${msg.content}`,
 		].join(" "));
-		member.send(`You were mentioned in ${msg.channel} (#${msg.channel.name}) of ${msg.guild} using the highlight word **${chosenWord}**`, {
+		member.send(`You were mentioned in ${msg.channel} (#${msg.channel.name}) of ${msg.guild} using the highlight ${chosenWord.includes(" ") ? "phrase" : "word"} **${chosenWord}**`, {
 			embed: {
 				color: 0x3669FA,
 				description: `${messages.join("\n")}`,
