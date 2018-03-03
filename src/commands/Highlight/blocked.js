@@ -4,7 +4,7 @@ module.exports = class extends Command {
 	constructor (...args) {
 		super(...args, {
 			runIn: ["text"],
-			description: `Shows all your highlighted words in a list`,
+			description: `Shows your list of blocked members / channels`,
 			aliases: ["list"],
 		});
 	}
@@ -14,7 +14,7 @@ module.exports = class extends Command {
 			return msg.send({
 				embed: {
 					color: 0xCC0F16,
-					description: `You don't have anyone blacklisted!`,
+					description: `You don't have anyone blocked!`,
 				},
 			});
 		}
@@ -22,11 +22,11 @@ module.exports = class extends Command {
 		const blacklistedChannels = msg.member.configs.blacklistedChannels ? msg.member.configs.blacklistedChannels.map(id => `• #${msg.guild.channels.get(id).name} (<#${id}>)`).join("\n") : "";
 		const fields = [];
 		blacklistedUsers.length && fields.push({
-			name: `Blacklisted Users`,
+			name: `Blocked Users`,
 			value: blacklistedUsers,
 		});
 		blacklistedChannels.length && fields.push({
-			name: `Blacklisted Channels`,
+			name: `Blocked Channels`,
 			value: blacklistedChannels,
 		});
 		return msg.send(null, {

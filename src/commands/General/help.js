@@ -34,7 +34,7 @@ module.exports = class extends Command {
 					},
 					{
 						name: `blocked`,
-						value: `Shows your list of blocked channels / members`,
+						value: `Shows your list of blocked members / channels`,
 					},
 					{
 						name: `clear`,
