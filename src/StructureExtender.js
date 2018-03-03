@@ -17,4 +17,31 @@ Structures.extend("Guild", Guild => class HighlightGuild extends Guild {
 		 */
 		this.words = new Collection();
 	}
-})
+
+	/**
+	 * Adds a member to the guild word list
+	 * @param {string} word
+	 * @param {GuildMember} member
+	 * @returns {this}
+	 * @chainable
+	 */
+	addCachedWord (word, member) {
+		const cached = this.words.get(word);
+		if (cached) cached.add(member);
+		else this.words.set(word, new Set([member]));
+		return this;
+	}
+
+	/**
+	 * Removes a member from the guild word list
+	 * @param {string} word
+	 * @param {GuildMember} member
+	 * @returns {this}
+	 */
+	removeCachedWord (word, member) {
+		const cached = this.words.get(word);
+		if (cached) cached.delete(member);
+		if (!cached.size) this.words.delete(word);
+		return this;
+	}
+});

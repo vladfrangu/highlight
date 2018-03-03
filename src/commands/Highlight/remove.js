@@ -19,8 +19,8 @@ module.exports = class extends Command {
 				},
 			});
 		}
-		msg.member.configs.update("words", word);
-		await this.client.removeCachedWord(msg, word);
+		await msg.member.configs.update("words", word);
+		msg.guild.removeCachedWord(word, msg.member);
 		return msg.send({
 			embed: {
 				color: 0x43B581,

@@ -41,38 +41,15 @@ module.exports = class HighlightClient extends Client {
 		return super.login(token);
 	}
 
-	async addCachedWord (msg, word) {
-		let cachedItem = new Set();
+	async getCPUUsage () {
+		const { idle: startIdle, total: startTotal } = getCPUInfo();
+		await this.methods.util.sleep(1000);
+		const { idle: endIdle, total: endTotal } = getCPUInfo();
 
-		let guildCache = msg.guild.words.get(word);
-		if (guildCache) cachedItem = new Set(guildCache);
-
-		cachedItem.add(msg.member);
-		msg.guild.words.set(word, cachedItem);
-	}
-
-	async removeCachedWord (msg, word) {
-		let cachedItem = new Set();
-
-		let guildCache = msg.guild.words.get(word);
-		if (guildCache) cachedItem = new Set(guildCache);
-
-		if (cachedItem.has(msg.member)) cachedItem.delete(msg.member);
-		msg.guild.words.set(word, cachedItem);
-	}
-
-	getCPUUsage () {
-		return new Promise(resolve => {
-			const { idle: startIdle, total: startTotal } = getCPUInfo();
-			setTimeout(() => {
-				const { idle: endIdle, total: endTotal } = getCPUInfo();
-
-				let idle = endIdle - startIdle;
-				let total = endTotal - startTotal;
-				let perc = idle / total;
-				resolve(1 - perc);
-			}, 1000);
-		});
+		let idle = endIdle - startIdle;
+		let total = endTotal - startTotal;
+		let perc = idle / total;
+		return 1 - perc;
 	}
 };
 
