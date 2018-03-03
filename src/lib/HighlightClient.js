@@ -45,11 +45,7 @@ module.exports = class HighlightClient extends Client {
 		const { idle: startIdle, total: startTotal } = getCPUInfo();
 		await this.methods.util.sleep(1000);
 		const { idle: endIdle, total: endTotal } = getCPUInfo();
-
-		let idle = endIdle - startIdle;
-		let total = endTotal - startTotal;
-		let perc = idle / total;
-		return 1 - perc;
+		return 1 - ((endIdle - startIdle) / (endTotal - startTotal));
 	}
 };
 

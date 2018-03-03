@@ -25,18 +25,6 @@ module.exports = class extends Monitor {
 					responded.add(member);
 				}
 			}
-			const otherWords = [...msg.guild.words.filter((_, word) => word.includes(" ") && msg.content.toLowerCase().includes(word)).keys()];
-			if (otherWords.length) {
-				for (const word of otherWords) {
-					const members = msg.guild.words.get(word);
-					if (!members) continue;
-					for (const member of members) {
-						if (responded.has(member)) continue;
-						this._highlight(msg, member, word);
-						responded.add(member);
-					}
-				}
-			}
 		}
 	}
 

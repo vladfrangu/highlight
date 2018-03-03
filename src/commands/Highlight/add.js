@@ -10,7 +10,7 @@ module.exports = class extends Command {
 	}
 
 	async run (msg, [word]) {
-		word = word.toLowerCase().trim();
+		word = word.toLowerCase().trim().split(/\s+/)[0].replace(/(\_|\*|\`|\~)/g, "");
 		if (msg.member.configs.words.includes(word)) {
 			return msg.send(null, {
 				embed: {
