@@ -46,7 +46,7 @@ module.exports = class extends Monitor {
 			`${msg.author.tag.replace(/(\_|\*|\`|\~)/g, "\\$1")}:`,
 			msg.content,
 		].join(" "));
-		member.send(`You were mentioned in ${msg.channel} (#${msg.channel.name}) of ${msg.guild} using the highlight ${chosenWord.includes(" ") ? "phrase" : "word"} **${chosenWord}**`, {
+		member.send(`You were mentioned in ${msg.channel} of ${msg.guild} using the highlight ${chosenWord.includes(" ") ? "phrase" : "word"} **${chosenWord}**`, {
 			embed: {
 				color: 0x3669FA,
 				description: `${messages.join("\n")}`,
