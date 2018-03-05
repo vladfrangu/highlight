@@ -21,18 +21,10 @@ module.exports = class extends Command {
 				memory += result[3];
 			}
 		}
-
-		// return msg.sendCode("asciidoc", msg.language.get("COMMAND_STATS",
-		// 	,
-		// 	,
-		// 	,
-		// 	,
-		// 	klasaVersion, discordVersion, process.version, msg
-		// ));
 		return msg.send({
 			embed: {
 				color: 0x3669FA,
-				title: `Stats for __${this.client.user.username}__`,
+				title: `Stats for ${this.client.user.username}`,
 				fields: [
 					{
 						name: `Guilds`,

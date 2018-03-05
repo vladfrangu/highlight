@@ -37,14 +37,14 @@ module.exports = class extends Monitor {
 				messages.push([
 					`[${moment(message.createdAt).tz("Europe/London").format("HH[:]mm[:]ss")} UTC]`,
 					`${message.author.tag.replace(/(\_|\*|\`|\~)/g, "\\$1")}:`,
-					`${message.content}`,
+					message.content,
 				].join(" "));
 			}
 		}
 		messages.push([
 			`[${moment(msg.createdAt).tz("Europe/London").format("HH[:]mm[:]ss")} UTC]`,
 			`${msg.author.tag.replace(/(\_|\*|\`|\~)/g, "\\$1")}:`,
-			`${msg.content}`,
+			msg.content,
 		].join(" "));
 		member.send(`You were mentioned in ${msg.channel} (#${msg.channel.name}) of ${msg.guild} using the highlight ${chosenWord.includes(" ") ? "phrase" : "word"} **${chosenWord}**`, {
 			embed: {

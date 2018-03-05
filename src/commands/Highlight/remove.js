@@ -4,7 +4,7 @@ module.exports = class extends Command {
 	constructor (...args) {
 		super(...args, {
 			runIn: ["text"],
-			description: "Removes a word or a phrase from your highlight list",
+			description: "Removes a word from your highlight list",
 			usage: "<Word:str>",
 		});
 	}

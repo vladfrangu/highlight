@@ -17,7 +17,7 @@ module.exports = class extends Command {
 					url: this.client.user.displayAvatarURL(),
 				},
 				title: `Hi, I'm __${this.client.user.tag}__`,
-				description: `I'm running \`highlight-klasa\` v**${version}**! My source code is available [here](https://github.com/KingDGrizzle/highlight-klasa)!\nTo learn more about using me, run \`@${this.client.user.tag} help\`!`,
+				description: `I'm running \`highlight\` v**${version}**!\nMy source code is available [here](https://github.com/KingDGrizzle/highlight)!\nTo learn more about using me, run \`@${this.client.user.tag} help\`!`,
 			},
 		});
 	}

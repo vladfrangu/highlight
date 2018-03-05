@@ -1,4 +1,4 @@
-## hightlight-klasa
+## hightlight
 
 A simple to use highlight bot made using klasa and discord.js.
 

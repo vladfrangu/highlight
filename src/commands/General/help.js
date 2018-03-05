@@ -26,7 +26,7 @@ module.exports = class extends Command {
 				fields: [
 					{
 						name: `add`,
-						value: `Adds a word or a phrase to your highlight list`,
+						value: `Adds a word to your highlight list`,
 					},
 					{
 						name: `block`,
@@ -50,7 +50,7 @@ module.exports = class extends Command {
 					},
 					{
 						name: `remove`,
-						value: `Removes a word or a phrase from your highlight list`,
+						value: `Removes a word from your highlight list`,
 					},
 					{
 						name: `show`,
