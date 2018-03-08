@@ -26,4 +26,34 @@ const client = new Client({
 	},
 });
 
+client.gateways.register("members", {
+	words: {
+		type: "string",
+		default: [],
+		min: null,
+		max: null,
+		array: true,
+		configurable: true,
+		sql: "TEXT",
+	},
+	blacklistedUsers: {
+		type: "user",
+		default: [],
+		min: null,
+		max: null,
+		array: true,
+		configurable: true,
+		sql: "TEXT",
+	},
+	blacklistedChannels: {
+		type: "textchannel",
+		default: [],
+		min: null,
+		max: null,
+		array: true,
+		configurable: true,
+		sql: "TEXT",
+	},
+}, { provider: "json" });
+
 client.login(config.token);
