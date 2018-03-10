@@ -43,7 +43,7 @@ module.exports = class extends Command {
 					},
 					{
 						name: `Uptime`,
-						value: Timestamp.toNow(Date.now() - (process.uptime() * 1000)),
+						value: Duration.toNow(Date.now() - (process.uptime() * 1000)),
 						inline: true,
 					},
 					{
