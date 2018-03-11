@@ -16,7 +16,7 @@ module.exports = class extends Monitor {
 		if (!msg.guild) return;
 		if (msg.content) {
 			const responded = new Set();
-			for (const word of msg.content.toLowerCase().split(/\s+/)) {
+			for (const word of msg.content.toLowerCase().split(/\s*\b\s*/)) {
 				const members = msg.guild.words.get(word);
 				if (!members) continue;
 				for (const member of members) {
