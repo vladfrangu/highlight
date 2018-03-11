@@ -33,7 +33,7 @@ module.exports = class extends Monitor {
 		const messages = [];
 		if (msg.channel.permissionsFor(msg.guild.me).has("READ_MESSAGE_HISTORY")) {
 			const tempMessages = await msg.channel.messages.fetch({ limit: 3, before: msg.id });
-			for (const message of tempMessages.values()) {
+			for (const message of tempMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)).values()) {
 				messages.push([
 					`[${moment(message.createdAt).tz("Europe/London").format("HH[:]mm[:]ss")} UTC]`,
 					`${message.author.tag.replace(/(\_|\*|\`|\~)/g, "\\$1")}:`,
