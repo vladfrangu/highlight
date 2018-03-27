@@ -24,6 +24,9 @@ const client = new Client({
 			type: "WATCHING",
 		},
 	},
+	consoleEvents: {
+		verbose: true,
+	},
 });
 
 client.gateways.register("members", {
