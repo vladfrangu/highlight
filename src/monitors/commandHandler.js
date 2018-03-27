@@ -17,7 +17,7 @@ module.exports = class extends Monitor {
 				embed: {
 					color: 0x3669FA,
 					title: `Hi!`,
-					description: `I'm **${this.client.user.tag}**!\n\nRun **${msg.guild.me.toString()} help** to see what commands I have!`,
+					description: `I'm **${this.client.user.tag}**!\n\nRun **${msg.guild.configs.prefix}help** to see what commands I have!`,
 					thumbnail: {
 						url: this.client.user.displayAvatarURL(),
 					},
