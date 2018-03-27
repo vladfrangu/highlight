@@ -7,6 +7,7 @@ module.exports = class extends Command {
 			cooldown: 5,
 			description: "Clears your highlighted word list",
 		});
+		this.needsMember = true;
 	}
 
 	async run (msg) {

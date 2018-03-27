@@ -7,6 +7,7 @@ module.exports = class extends Command {
 			description: `Shows your list of blocked members / channels`,
 			aliases: ["list"],
 		});
+		this.needsMember = true;
 	}
 
 	async run (msg) {

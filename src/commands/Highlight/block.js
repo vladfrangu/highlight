@@ -9,6 +9,7 @@ module.exports = class extends Command {
 			usage: "<User:user|TextChannel:channel>",
 			aliases: ["blacklist"],
 		});
+		this.needsMember = true;
 	}
 
 	async run (msg, [userOrChannel]) {

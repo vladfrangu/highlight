@@ -7,6 +7,7 @@ module.exports = class extends Command {
 			description: `Shows all your highlighted words in a list`,
 			aliases: ["list"],
 		});
+		this.needsMember = true;
 	}
 
 	async run (msg) {

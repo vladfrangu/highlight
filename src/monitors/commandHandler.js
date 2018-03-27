@@ -35,7 +35,7 @@ module.exports = class extends Monitor {
 			return;
 		}
 
-		if (!msg.member) await msg.guild.members.fetch(msg.author);
+		if (!msg.member && validCommand.needsMember) await msg.guild.members.fetch(msg.author);
 		const timer = new Stopwatch();
 		if (this.client.options.typing) msg.channel.startTyping();
 		msg._registerCommand({ command: validCommand, prefix, prefixLength });

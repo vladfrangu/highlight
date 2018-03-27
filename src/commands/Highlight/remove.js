@@ -7,6 +7,7 @@ module.exports = class extends Command {
 			description: "Removes a word from your highlight list",
 			usage: "<Word:str>",
 		});
+		this.needsMember = true;
 	}
 
 	async run (msg, [word]) {
