@@ -35,6 +35,7 @@ module.exports = class extends Monitor {
 			return;
 		}
 
+		if (!msg.member) await msg.guild.members.fetch(msg.author);
 		const timer = new Stopwatch();
 		if (this.client.options.typing) msg.channel.startTyping();
 		msg._registerCommand({ command: validCommand, prefix, prefixLength });
@@ -61,9 +62,22 @@ module.exports = class extends Monitor {
 	}
 
 	getPrefix (msg) {
-		if (this.prefixMention.test(msg.content))
-			return { length: this.nick.test(msg.content) ? this.prefixMentionLength + 1 : this.prefixMentionLength, regex: this.prefixMention };
-		return { prefix: null };
+		if (this.prefixMention.test(msg.content)) return { length: this.nick.test(msg.content) ? this.prefixMentionLength + 1 : this.prefixMentionLength, regex: this.prefixMention };
+		if (msg.guildConfigs.disableNaturalPrefix !== true && this.client.options.regexPrefix) {
+			const results = this.client.options.regexPrefix.exec(msg.content);
+			if (results) return { length: results[0].length, regex: this.client.options.regexPrefix };
+		}
+		const prefix = msg.guildConfigs.prefix || this.client.options.prefix;
+		if (Array.isArray(prefix)) {
+			for (let i = prefix.length - 1; i >= 0; i--) {
+				const testingPrefix = this.prefixes.get(prefix[i]) || this.generateNewPrefix(prefix[i]);
+				if (testingPrefix.regex.test(msg.content)) return testingPrefix;
+			}
+		} else if (prefix) {
+			const testingPrefix = this.prefixes.get(prefix) || this.generateNewPrefix(prefix);
+			if (testingPrefix.regex.test(msg.content)) return testingPrefix;
+		}
+		return false;
 	}
 
 	generateNewPrefix (prefix) {
