@@ -1,4 +1,3 @@
-require("./StructureExtender");
 const Client = require("./lib/HighlightClient");
 const config = require("../config.json");
 
@@ -58,5 +57,7 @@ client.gateways.register("members", {
 		sql: "TEXT",
 	},
 }, { provider: "json" });
+
+require("./StructureExtender");
 
 client.login(config.token);
