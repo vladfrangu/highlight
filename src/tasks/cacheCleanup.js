@@ -30,13 +30,13 @@ module.exports = class extends Task {
 			guild.presences.clear();
 
 			// Clear members that haven't send a message in the last 30 minutes
-			const { me } = guild;
-			for (const [id, member] of guild.members) {
-				if (member === me) continue;
-				if (member.lastMessageID && member.lastMessageID < OLD_SNOWFLAKE) continue;
-				guildMembers++;
-				guild.members.delete(id);
-			}
+			// const { me } = guild;
+			// for (const [id, member] of guild.members) {
+				// if (member === me) continue;
+				// if (member.lastMessageID && member.lastMessageID < OLD_SNOWFLAKE) continue;
+				// guildMembers++;
+				// guild.members.delete(id);
+			// }
 
 			// Clear emojis
 			emojis += guild.emojis.size;
