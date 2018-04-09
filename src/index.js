@@ -1,5 +1,6 @@
 const Client = require("./lib/HighlightClient");
 const config = require("../config.json");
+require("./StructureExtender");
 
 const client = new Client({
 	cmdEditing: true,
@@ -57,7 +58,5 @@ client.gateways.register("members", {
 		sql: "TEXT",
 	},
 }, { provider: "json" });
-
-require("./StructureExtender");
 
 client.login(config.token);
