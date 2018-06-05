@@ -1,10 +1,10 @@
-const { Client } = require("klasa");
+const { Client, util: { sleep } } = require("klasa");
 const os = require("os");
 
 module.exports = class HighlightClient extends Client {
 	async getCPUUsage () {
 		const { idle: startIdle, total: startTotal } = getCPUInfo();
-		await this.methods.util.sleep(1000);
+		await sleep(1000);
 		const { idle: endIdle, total: endTotal } = getCPUInfo();
 		return 1 - ((endIdle - startIdle) / (endTotal - startTotal));
 	}
