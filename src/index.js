@@ -3,8 +3,8 @@ const config = require("../config.json");
 require("./StructureExtender");
 
 const client = new Client({
-	cmdEditing: true,
-	cmdLogging: true,
+	commandEditing: true,
+	commandLogging: true,
 	disableEveryone: true,
 	fetchAllMembers: true,
 	disabledEvents: [

@@ -5,7 +5,7 @@ const { resolve, join } = require("path");
 module.exports = class extends Command {
 	constructor (...args) {
 		super(...args, {
-			permLevel: 10,
+			permissionLevel: 10,
 			guarded: true,
 			description: msg => msg.language.get("COMMAND_TRANSFER_DESCRIPTION"),
 			usage: "<Piece:piece>",

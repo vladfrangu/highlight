@@ -6,7 +6,7 @@ module.exports = class extends Command {
 			runIn: ["text"],
 			description: "Changes this server's accepted prefix",
 			usage: "[Prefix:str{,12}]",
-			permLevel: 6,
+			permissionLevel: 6,
 		});
 	}
 

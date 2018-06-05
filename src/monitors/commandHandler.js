@@ -110,9 +110,7 @@ module.exports = class extends Monitor {
 	}
 
 	init () {
-		this.ignoreSelf = this.client.user.bot;
-		this.ignoreOthers = !this.client.user.bot;
-		this.ignoreEdits = !this.client.options.cmdEditing;
+		this.ignoreEdits = !this.client.options.commandEditing;
 		this.prefixMention = new RegExp(`^<@!?${this.client.user.id}>`);
 		this.prefixMentionLength = this.client.user.id.length + 3;
 	}

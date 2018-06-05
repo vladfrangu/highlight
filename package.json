@@ -23,6 +23,6 @@
   "dependencies": {
     "discord.js": "github:discordjs/discord.js",
     "klasa": "github:dirigeants/klasa",
-    "moment-timezone": "^0.5.14"
+    "moment-timezone": "^0.5.17"
   }
 }

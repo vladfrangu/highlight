@@ -37,14 +37,14 @@ module.exports = class extends Monitor {
 			for (const message of tempMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)).values()) {
 				messages.push([
 					`[${moment(message.createdAt).tz("Europe/London").format("HH[:]mm[:]ss")} UTC]`,
-					`${message.author.tag.replace(/(\_|\*|\`|\~)/g, "\\$1")}:`,
+					`${message.author.tag.replace(/(_|\*|`|~)/g, "\\$1")}:`,
 					message.content,
 				].join(" "));
 			}
 		}
 		messages.push([
 			`[${moment(msg.createdAt).tz("Europe/London").format("HH[:]mm[:]ss")} UTC]`,
-			`${msg.author.tag.replace(/(\_|\*|\`|\~)/g, "\\$1")}:`,
+			`${msg.author.tag.replace(/(_|\*|`|~)/g, "\\$1")}:`,
 			msg.content,
 		].join(" "));
 		member.send(`You were mentioned in ${msg.channel} of ${msg.guild} using the highlight ${chosenWord.includes(" ") ? "phrase" : "word"} **${chosenWord}**`, {

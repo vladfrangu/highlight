@@ -6,7 +6,7 @@ module.exports = class extends Command {
 			runIn: ["text"],
 			guarded: true,
 			description: msg => msg.language.get("COMMAND_INVITE_DESCRIPTION"),
-			botPerms: ["EMBED_LINKS"],
+			requiredPermissions: ["EMBED_LINKS"],
 		});
 	}
 

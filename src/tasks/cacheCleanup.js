@@ -29,15 +29,6 @@ module.exports = class extends Task {
 			presences += guild.presences.size;
 			guild.presences.clear();
 
-			// Clear members that haven't send a message in the last 30 minutes
-			// const { me } = guild;
-			// for (const [id, member] of guild.members) {
-				// if (member === me) continue;
-				// if (member.lastMessageID && member.lastMessageID < OLD_SNOWFLAKE) continue;
-				// guildMembers++;
-				// guild.members.delete(id);
-			// }
-
 			// Clear emojis
 			emojis += guild.emojis.size;
 			guild.emojis.clear();
@@ -69,7 +60,7 @@ module.exports = class extends Task {
 				this.setColor(emojis)} [Emoji]s | ${
 				this.setColor(lastMessage)} [Last Message]s.`);
 	}
-	
+
 	/**
 	 * Set a colour depending on the amount:
 	 * > 1000 : Light Red colour
