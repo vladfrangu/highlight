@@ -49,6 +49,8 @@ module.exports = class extends Monitor {
 		].join(" "));
 		member.send(`You were mentioned in ${msg.channel} of ${msg.guild} using the highlight ${chosenWord.includes(" ") ? "phrase" : "word"} **${chosenWord}**`, {
 			embed: {
+				title: "Click here to jump to the message",
+				url: `https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}?jump=${msg.id}`,
 				color: 0x3669FA,
 				description: `${messages.join("\n")}`,
 				timestamp: new Date,
