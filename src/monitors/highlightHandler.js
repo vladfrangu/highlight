@@ -47,7 +47,7 @@ module.exports = class extends Monitor {
 			`${msg.author.tag.replace(/(_|\*|`|~)/g, "\\$1")}:`,
 			msg.content,
 		].join(" "));
-		member.send(`You were mentioned in ${msg.channel} of ${msg.guild} using the highlight ${chosenWord.includes(" ") ? "phrase" : "word"} **${chosenWord}**`, {
+		member.send(`You were mentioned in ${msg.channel} of ${msg.guild} using the highlight ${chosenWord.includes(" ") ? "phrase" : "word"} **${chosenWord}**\n\nClick <https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}?jump=${msg.id}> to jump to the message`, {
 			embed: {
 				title: "Click here to jump to the message",
 				url: `https://discordapp.com/channels/${msg.guild.id}/${msg.channel.id}?jump=${msg.id}`,
