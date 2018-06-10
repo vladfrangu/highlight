@@ -30,7 +30,8 @@ module.exports = class extends Monitor {
 
 	async _highlight (msg, member, chosenWord) {
 		if (member.configs.blacklistedUsers.includes(msg.author.id) || member.configs.blacklistedChannels.includes(msg.channel.id) || member.id === msg.author.id) return;
-		if (!(msg.channel.permissionsFor(member).has("VIEW_CHANNEL") || msg.guild.members.has(member.id))) return;
+		if (!msg.channel.permissionsFor(member).has("VIEW_CHANNEL")) return;
+		if (!msg.guild.members.has(member.id)) return;
 		const messages = [];
 		if (msg.channel.permissionsFor(msg.guild.me).has("READ_MESSAGE_HISTORY")) {
 			const tempMessages = await msg.channel.messages.fetch({ limit: 3, before: msg.id });
