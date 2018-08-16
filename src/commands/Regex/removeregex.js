@@ -34,7 +34,7 @@ module.exports = class extends Command {
 		for (const regex of providedExpressions) {
 			if (regexes.includes(regex)) {
 				removed.push(regex);
-				message.guild.removeCachedWord(regex, message.member);
+				message.guild.removeCachedRegexp(regex, message.member);
 			} else {
 				inexistent.push(regex);
 			}
