@@ -46,5 +46,6 @@ const client = new Client({
 		members: { providers: config.provider },
 	},
 	schedule: { interval: 1000 },
+	disabledCorePieces: ["commands"],
 });
 client.login(config.token);
