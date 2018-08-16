@@ -34,7 +34,7 @@ const client = new Client({
 		},
 	},
 	consoleEvents: { verbose: true },
-	prefix: "no u.",
+	prefix: "h!",
 	restTimeOffset: 0,
 	regexPrefix: /^((?:hey|hi )?highlight(?:,|!|\w)?)/i,
 	providers: {
