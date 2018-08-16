@@ -47,5 +47,6 @@ const client = new Client({
 	},
 	schedule: { interval: 1000 },
 	disabledCorePieces: ["commands"],
+	console: { useColor: true },
 });
 client.login(config.token);
