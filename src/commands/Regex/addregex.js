@@ -18,7 +18,7 @@ module.exports = class extends Command {
 			quotedStringSupport: true,
 		});
 
-		this.customizeResponse("Regex", message => new MessageEmbed()
+		this.customizeResponse("Regex", new MessageEmbed()
 			.setColor(0xCC0F16)
 			.setDescription("You need to provide one or multiple regexes, separated by spaces")
 		);
