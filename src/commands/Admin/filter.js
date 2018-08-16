@@ -12,6 +12,7 @@ module.exports = class extends Command {
 			subcommands: true,
 			usageDelim: ",",
 			aliases: ["filters"],
+			enabled: false,
 		});
 
 		this.acceptedValues = [
