@@ -37,8 +37,8 @@ module.exports = class extends Command {
 						inline: true,
 					},
 					{
-						name: `Users`,
-						value: (users || this.client.users.size).toLocaleString(),
+						name: `Aprox. Users`,
+						value: (users || this.client.guilds.reduce((acc, guild) => acc + guild.memberCount, 0)).toLocaleString(),
 						inline: true,
 					},
 					{

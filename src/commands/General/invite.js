@@ -5,7 +5,7 @@ module.exports = class extends Command {
 		super(...args, {
 			runIn: ["text"],
 			guarded: true,
-			description: msg => msg.language.get("COMMAND_INVITE_DESCRIPTION"),
+			description: language => language.get("COMMAND_INVITE_DESCRIPTION"),
 			requiredPermissions: ["EMBED_LINKS"],
 		});
 	}

@@ -2,11 +2,12 @@ const { Monitor, Stopwatch, util: { regExpEsc } } = require("klasa");
 
 module.exports = class extends Monitor {
 	constructor (...args) {
-		super(...args);
+		super(...args, { ignoreOthers: false });
 		this.prefixes = new Map();
 		this.prefixMention = null;
 		this.prefixMentionLength = null;
 		this.nick = new RegExp("^<@!");
+		this.prefixFlags = this.client.options.prefixCaseInsensitive ? "i" : "";
 	}
 
 	async run (message) {
@@ -17,7 +18,7 @@ module.exports = class extends Monitor {
 				embed: {
 					color: 0x3669FA,
 					title: `Hi!`,
-					description: `I'm **${this.client.user.tag}**!\n\nRun **${message.guild.configs.prefix}help** to see what commands I have!`,
+					description: `I'm **${this.client.user.tag}**!\n\nRun **${message.guild.settings.prefix}help** to see what commands I have!`,
 					thumbnail: {
 						url: this.client.user.displayAvatarURL(),
 					},
@@ -36,6 +37,8 @@ module.exports = class extends Monitor {
 		}
 
 		if (!message.member && validCommand.needsMember) await message.guild.members.fetch(message.author);
+		await message.member.settings.sync();
+
 		const timer = new Stopwatch();
 		if (this.client.options.typing) message.channel.startTyping();
 		message._registerCommand({ command: validCommand, prefix, prefixLength });
@@ -63,11 +66,11 @@ module.exports = class extends Monitor {
 
 	getPrefix (message) {
 		if (this.prefixMention.test(message.content)) return { length: this.nick.test(message.content) ? this.prefixMentionLength + 1 : this.prefixMentionLength, regex: this.prefixMention };
-		if (message.guildConfigs.disableNaturalPrefix !== true && this.client.options.regexPrefix) {
+		if (message.guildSettings.disableNaturalPrefix !== true && this.client.options.regexPrefix) {
 			const results = this.client.options.regexPrefix.exec(message.content);
 			if (results) return { length: results[0].length, regex: this.client.options.regexPrefix };
 		}
-		const prefix = message.guildConfigs.prefix || this.client.options.prefix;
+		const prefix = message.guildSettings.prefix || this.client.options.prefix;
 		if (Array.isArray(prefix)) {
 			for (let i = prefix.length - 1; i >= 0; i--) {
 				const testingPrefix = this.prefixes.get(prefix[i]) || this.generateNewPrefix(prefix[i]);
@@ -81,7 +84,7 @@ module.exports = class extends Monitor {
 	}
 
 	generateNewPrefix (prefix) {
-		const prefixObject = { length: prefix.length, regex: new RegExp(`^${regExpEsc(prefix)}`) };
+		const prefixObject = { length: prefix.length, regex: new RegExp(`^${regExpEsc(prefix)}`, this.prefixFlags) };
 		this.prefixes.set(prefix, prefixObject);
 		return prefixObject;
 	}
@@ -109,9 +112,7 @@ module.exports = class extends Monitor {
 		}
 	}
 
-	init () {
-		this.ignoreSelf = this.client.user.bot;
-		this.ignoreOthers = !this.client.user.bot;
+	async init () {
 		this.ignoreEdits = !this.client.options.commandEditing;
 		this.prefixMention = new RegExp(`^<@!?${this.client.user.id}>`);
 		this.prefixMentionLength = this.client.user.id.length + 3;

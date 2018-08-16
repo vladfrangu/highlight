@@ -2,6 +2,20 @@ const Client = require("./lib/HighlightClient");
 const config = require("../config.json");
 require("./StructureExtender");
 
+Client.use(require("klasa-member-gateway"));
+
+Client.defaultGuildSchema
+	.add("bannedWords", "string", { array: true })
+	.add("bot", folder => folder
+		.add("channel", "textchannel")
+		.add("redirect", "boolean"));
+
+Client.defaultMemberSchema
+	.add("words", "string", { array: true })
+	.add("regexes", "string", { array: true })
+	.add("blacklistedUsers", "user", { array: true })
+	.add("blacklistedChannels", "textchannel", { array: true });
+
 const client = new Client({
 	commandEditing: true,
 	commandLogging: true,
@@ -9,54 +23,28 @@ const client = new Client({
 	fetchAllMembers: true,
 	disabledEvents: [
 		"TYPING_START",
-		"MESSAGE_REACTION_ADD",
-		"MESSAGE_REACTION_REMOVE",
-		"MESSAGE_REACTION_REMOVE_ALL",
 		"VOICE_STATE_UPDATE",
 		"CHANNEL_PINS_UPDATE",
 	],
-	pieceDefaults: {
-		commands: { deletable: true },
-	},
+	pieceDefaults: { commands: { deletable: true } },
 	presence: {
 		activity: {
 			name: "for words",
 			type: "WATCHING",
 		},
 	},
-	consoleEvents: {
-		verbose: true,
+	consoleEvents: { verbose: true },
+	prefix: "no u.",
+	restTimeOffset: 0,
+	regexPrefix: /^((?:hey|hi )?highlight(?:,|!|\w)?)/i,
+	providers: {
+		default: config.provider,
+		rethinkdb: config.rethinkdb,
 	},
+	gateways: {
+		clientStorage: { provider: "json"	},
+		members: { providers: config.provider },
+	},
+	schedule: { interval: 1000 },
 });
-
-client.gateways.register("members", {
-	words: {
-		type: "string",
-		default: [],
-		min: null,
-		max: null,
-		array: true,
-		configurable: true,
-		sql: "TEXT",
-	},
-	blacklistedUsers: {
-		type: "user",
-		default: [],
-		min: null,
-		max: null,
-		array: true,
-		configurable: true,
-		sql: "TEXT",
-	},
-	blacklistedChannels: {
-		type: "textchannel",
-		default: [],
-		min: null,
-		max: null,
-		array: true,
-		configurable: true,
-		sql: "TEXT",
-	},
-}, { provider: "json" });
-
 client.login(config.token);

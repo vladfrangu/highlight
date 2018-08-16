@@ -1,7 +1,7 @@
 {
 	"token": "no token for u <3",
 	"provider": "json",
-	"rethinkdb":  {
+	"rethinkdb": {
 		"db": "highlight",
 		"user": "admin",
 		"password": "",

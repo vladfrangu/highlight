@@ -1,0 +1,1 @@
+exports.STRIP = /(_|\*|`|~)+/g;

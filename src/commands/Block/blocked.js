@@ -5,13 +5,13 @@ module.exports = class extends Command {
 		super(...args, {
 			runIn: ["text"],
 			description: `Shows your list of blocked members / channels`,
-			aliases: ["list"],
+			aliases: ["listblocked"],
 		});
 		this.needsMember = true;
 	}
 
 	async run (msg) {
-		if (!(msg.member.configs.blacklistedUsers || msg.member.configs.blacklistedChannels || []).length) {
+		if (!(msg.member.settings.blacklistedUsers || msg.member.settings.blacklistedChannels || []).length) {
 			return msg.send({
 				embed: {
 					color: 0xCC0F16,
@@ -19,8 +19,8 @@ module.exports = class extends Command {
 				},
 			});
 		}
-		const blacklistedUsers = msg.member.configs.blacklistedUsers ? (await Promise.all(msg.member.configs.blacklistedUsers.map(async id => `• ${(this.client.users.get(id) || await this.client.users.fetch(id)).tag || "Invalid User#0000"}`))).join("\n") : "";
-		const blacklistedChannels = msg.member.configs.blacklistedChannels ? msg.member.configs.blacklistedChannels.map(id => `• #${msg.guild.channels.get(id).name} (<#${id}>)`).join("\n") : "";
+		const blacklistedUsers = msg.member.settings.blacklistedUsers ? (await Promise.all(msg.member.settings.blacklistedUsers.map(async id => `• ${(this.client.users.get(id) || await this.client.users.fetch(id)).tag || "Invalid User#0000"}`))).join("\n") : "";
+		const blacklistedChannels = msg.member.settings.blacklistedChannels ? msg.member.settings.blacklistedChannels.map(id => `• #${msg.guild.channels.get(id).name} (<#${id}>)`).join("\n") : "";
 		const fields = [];
 		blacklistedUsers.length && fields.push({
 			name: `Blocked Users`,
@@ -30,7 +30,7 @@ module.exports = class extends Command {
 			name: `Blocked Channels`,
 			value: blacklistedChannels,
 		});
-		return msg.send(null, {
+		return msg.send({
 			embed: {
 				color: 0x3669FA,
 				fields,

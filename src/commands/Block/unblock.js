@@ -17,8 +17,8 @@ module.exports = class extends Command {
 	}
 
 	async _unblockUser (msg, user) {
-		if (msg.member.configs.blacklistedUsers) {
-			if (!msg.member.configs.blacklistedUsers.includes(user.id)) {
+		if (msg.member.settings.blacklistedUsers) {
+			if (!msg.member.settings.blacklistedUsers.includes(user.id)) {
 				return msg.send(null, {
 					embed: {
 						color: 0xCC0F16,
@@ -27,7 +27,7 @@ module.exports = class extends Command {
 				});
 			}
 		}
-		await msg.member.configs.update("blacklistedUsers", user, { action: "remove" });
+		await msg.member.settings.update("blacklistedUsers", user, { action: "remove" });
 		return msg.send(null, {
 			embed: {
 				color: 0x43B581,
@@ -37,8 +37,8 @@ module.exports = class extends Command {
 	}
 
 	async _unblockChannel (msg, channel) {
-		if (msg.member.configs.blacklistedChannels) {
-			if (!msg.member.configs.blacklistedChannels.includes(channel.id)) {
+		if (msg.member.settings.blacklistedChannels) {
+			if (!msg.member.settings.blacklistedChannels.includes(channel.id)) {
 				return msg.send(null, {
 					embed: {
 						color: 0xCC0F16,
@@ -47,7 +47,7 @@ module.exports = class extends Command {
 				});
 			}
 		}
-		await msg.member.configs.update("blacklistedChannels", channel, { action: "remove" });
+		await msg.member.settings.update("blacklistedChannels", channel, { action: "remove" });
 		return msg.send(null, {
 			embed: {
 				color: 0x43B581,

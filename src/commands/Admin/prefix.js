@@ -12,11 +12,11 @@ module.exports = class extends Command {
 
 	async run (msg, [prefix = null]) {
 		if (prefix) {
-			await msg.guild.configs.update("prefix", prefix);
+			await msg.guild.settings.update("prefix", prefix);
 			return msg.send({
 				embed: {
 					color: 0x43B581,
-					description: `You can now use \`${prefix}\` for running my commands in this server.`,
+					description: `You can now use \`${prefix}\` to run my commands in this server.`,
 					footer: {
 						text: `I'll still answer to your commands if you mention me.`,
 					},
@@ -26,7 +26,7 @@ module.exports = class extends Command {
 		return msg.send({
 			embed: {
 				color: 0x3669FA,
-				description: `The current server prefix is \`${msg.guild.configs.prefix}\``,
+				description: `The current server prefix is \`${msg.guild.settings.prefix}\``,
 				footer: {
 					text: `You can also mention me and I will answer to your commands.`,
 				},
