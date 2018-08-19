@@ -10,7 +10,7 @@ class HighlightCommand extends Command {
 					.setColor(0x3669FA)
 					.setDescription(`This command would be too spammy for this channel!\nPlease go to <#${bot.channel}> to see the results.`)
 					.setFooter("This message self-destructs in 10 seconds")
-			).then(m => m.delete(10000));
+			).then(m => m.delete({ time: 10000 }));
 			const channel = message.guild.channels.get(bot.channel);
 			if (channel) {
 				await channel.send(`${message.author},`);
