@@ -59,6 +59,7 @@ module.exports = class extends Monitor {
 		if (!_member) return msg.guild.removeCachedWord(chosenWord, member);
 		if (!msg.guild.members.has(_member.id)) return;
 		if (msg.mentions.users.has(_member.id)) return;
+		await _member.settings.sync(true);
 		if (_member.settings.blacklistedUsers.includes(msg.author.id) || _member.settings.blacklistedChannels.includes(msg.channel.id) || _member.id === msg.author.id) return;
 		if (!msg.channel.permissionsFor(_member).has("VIEW_CHANNEL")) return;
 		const messages = [...await this._fetchMessagesBefore(msg)];
