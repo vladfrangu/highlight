@@ -2,6 +2,7 @@ const { Util: { escapeMarkdown } } = require("discord.js");
 const { Monitor } = require("klasa");
 const moment = require("moment-timezone"); // Till klasa has timezone support
 const { STRIP } = require("../lib/Constants");
+const RE2 = require('re2');
 
 module.exports = class extends Monitor {
 	constructor (...args) {
@@ -21,7 +22,7 @@ module.exports = class extends Monitor {
 		if (msg.content) {
 			const responded = new Set();
 			for (let [regex, members] of msg.guild.regexes) {
-				regex = this.getRegex(regex);
+				regex = this.getRegex(msg, regex);
 				if (regex.test(msg.content)) {
 					for (const member of members) {
 						if (responded.has(member)) continue;
@@ -42,14 +43,15 @@ module.exports = class extends Monitor {
 		}
 	}
 
-	getRegex (regex) {
+	getRegex (msg, regex) {
 		const item = this.cache.get(regex);
 		if (item) return item;
 		try {
-			const newExp = new RegExp(regex, "gi");
+			const newExp = new RE2(regex, "gi");
 			this.cache.set(regex, newExp);
 			return newExp;
 		} catch (error) {
+			console.error(`${msg.author.tag} (${msg.author.id}) triggered an invalid regex in ${msg.guild.name};`, error.message);
 			return { test: () => false };
 		}
 	}
