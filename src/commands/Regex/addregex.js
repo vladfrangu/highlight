@@ -2,10 +2,6 @@ const { RichDisplay, util: { chunk } } = require("klasa");
 const { MessageEmbed, Util: { escapeMarkdown } } = require("discord.js");
 const Command = require("../../lib/HighlightCommand");
 
-const FORBIDDEN_ONES = ["\\.\\*", "\\.\\+", "\\.", "\\^\\.", "\\^\\.\\*", "\\^\\.\\+"];
-
-const FORBIDDEN_REGEX = new RegExp(FORBIDDEN_ONES.join("|"));
-
 module.exports = class extends Command {
 	constructor (...args) {
 		super(...args, {
@@ -31,27 +27,26 @@ module.exports = class extends Command {
 			return message.send(
 				new MessageEmbed()
 					.setColor(0xCC0F16)
-					.setDescription("You have too many regular expressions! Remove some, and merge them together!")
+					.setDescription("You have too many regular expressions! Remove some or merge them together!")
 			);
 		}
-		const added = [], already = [], banne = [];
+		const added = [], already = [];
 		let tooMany = false;
 		for (const reg of providedExpressions) {
 			if (regexes.includes(reg)) {
 				already.push(reg);
 			} else if ((regexes.length + added.length) >= 6) {
 				tooMany = true;
-			} else if (!FORBIDDEN_REGEX.test(reg)) {
+				break;
+			} else {
 				message.guild.addCachedRegexp(reg, message.member);
 				added.push(reg);
-			} else {
-				banne.push(reg);
 			}
 		}
 
 		if (added.length) await settings.update("regexes", added, { action: "add" });
 
-		if (!(added.length || already.length || banne.length)) {
+		if (!(added.length || already.length)) {
 			return message.send(
 				new MessageEmbed()
 					.setColor(0xCC0F16)
@@ -59,20 +54,11 @@ module.exports = class extends Command {
 			);
 		}
 
-		if (!(added.length || already.length) && banne.length) {
-			return message.send(
-				new MessageEmbed()
-					.setColor(0xCC0F16)
-					.setDescription(`All the regular expression${banne.length === 1 ? "" : "s"} you provided were blocked from being added with me due to them being too abusive.`)
-					.setFooter("This was done for your own good!")
-			);
-		}
-
 		const display = new RichDisplay(
 			new MessageEmbed()
 				.setColor(0x3669FA)
 		);
-		display.setFooterPrefix(`Total Added: ${added.length}${banne.length ? " | Some regular expressions were not added cause they were forbiddened" : ""}${tooMany ? " | You wanted to add too many regular expressions. You can't do that!" : ""} | Page `);
+		display.setFooterPrefix(`Total Added: ${added.length}${tooMany ? " | You wanted to add too many regular expressions. You can't do that!" : ""} | Page `);
 		const addedChunks = chunk(added, 20);
 		for (const chunky of addedChunks) {
 			display.addPage(
