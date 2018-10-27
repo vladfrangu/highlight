@@ -1,6 +1,6 @@
 # highlight
 
-A simple to use highlight bot made using klasa and discord.js.
+A very simple to use highlight bot made using klasa and discord.js.
 
 ## Installation
 
