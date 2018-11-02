@@ -22,7 +22,7 @@
   "homepage": "https://github.com/KingDGrizzle/highlight-klasa#readme",
   "dependencies": {
     "discord.js": "github:discordjs/discord.js",
-    "heapdump": "^0.3.9",
+    "heapdump": "^0.3.11",
     "klasa": "github:dirigeants/klasa",
     "klasa-member-gateway": "github:dirigeants/klasa-member-gateway",
     "moment-timezone": "^0.5.21",
