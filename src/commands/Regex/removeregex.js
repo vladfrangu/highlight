@@ -65,7 +65,7 @@ module.exports = class extends Command {
 		const inexistentChunks = chunk(inexistent, 20);
 		for (const chunky of inexistentChunks) {
 			display.addPage(
-				template => template.setTitle(`The following${chunky.length !== 1 ? `__${chunky.length}__` : ""} regex${chunky.length === 1 ? " was" : "es were"} not existent in your highlight list`)
+				template => template.setTitle(`The following${chunky.length !== 1 ? ` __${chunky.length}__` : ""} regex${chunky.length === 1 ? " was" : "es were"} not existent in your highlight list`)
 					.setDescription(chunky.map(regex => `• ${escapeMarkdown(regex)}`).join("\n"))
 			);
 		}
