@@ -11,7 +11,6 @@ module.exports = class extends Command {
 			usage: "<Word:str> [...]",
 			usageDelim: " ",
 			aliases: ["aword", "aw", "addwords", "awords", "aws", "addw"],
-			quotedStringSupport: true,
 		});
 
 		this.customizeResponse("Word",
