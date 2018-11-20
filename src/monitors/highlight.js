@@ -118,7 +118,7 @@ module.exports = class extends Monitor {
 				messages.push([
 					`[${moment(message.createdTimestamp).tz("Europe/London").format("HH[:]mm[:]ss")} UTC]`,
 					`${message.author.tag.replace(STRIP, "\\$1")}:`,
-					message.content.length === 0 ? "*Message has embed or attachment*" : message.content.length >= 600 ? `*The contents of this message were too large. Please click **[here](${message.url})** to see the message*` : message.content,
+					message.content.length === 0 ? "*Message has attachment*" : message.content.length >= 450 ? `*The contents of this message were too large. Please click **[here](${message.url})** to see the message*` : escapeMarkdown(message.content),
 				].join(" "));
 			}
 		}
