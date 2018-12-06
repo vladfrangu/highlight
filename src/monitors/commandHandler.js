@@ -30,7 +30,10 @@ module.exports = class extends Monitor {
 
 		const command = this.client.commands.get(commandText);
 		if (!command) return this.client.emit('commandUnknown', message, commandText);
-
+		if (command.needsMember) {
+			await message.guild.members.fetch(message.author);
+			await message.member.settings.sync(true);
+		}
 		return this.runCommand(message._registerCommand({ command, prefix, prefixLength }));
 	}
 
