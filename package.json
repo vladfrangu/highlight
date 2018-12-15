@@ -22,7 +22,7 @@
   "homepage": "https://github.com/vladfrangu/highlight#readme",
   "dependencies": {
     "discord.js": "github:discordjs/discord.js",
-    "heapdump": "^0.3.9",
+    "heapdump": "^0.3.12",
     "klasa": "github:dirigeants/klasa",
     "klasa-member-gateway": "github:dirigeants/klasa-member-gateway",
     "moment-timezone": "^0.5.21",
