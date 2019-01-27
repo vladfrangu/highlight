@@ -74,7 +74,7 @@ module.exports = class extends Monitor {
 			embed: {
 				color: 0x3669FA,
 				description: `${messages.join("\n")}`,
-				fields: [{ name: "Jump To Highlight Message", value: `**${msg.url}**` }],
+				fields: [{ name: "\u200b", value: `**[Jump to message](${msg.url})**` }],
 				timestamp: new Date(),
 				footer: {
 					text: `Highlighted`,
@@ -102,7 +102,7 @@ module.exports = class extends Monitor {
 			embed: {
 				color: 0x3669FA,
 				description: `${messages.join("\n")}`,
-				fields: [{ name: "Jump To Highlight Message", value: `**${msg.url}**` }],
+				fields: [{ name: "\u200b", value: `**[Jump to message](${msg.url})**` }],
 				timestamp: new Date(),
 				footer: {
 					text: `Highlighted`,
