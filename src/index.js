@@ -36,7 +36,7 @@ const client = new Client({
 	consoleEvents: { verbose: true },
 	prefix: "h!",
 	restTimeOffset: 0,
-	regexPrefix: /^((?:hey |hi )?highlight[,!\w]?/i,
+	regexPrefix: /^((?:hey |hi )?highlight[,!\w]?)/i,
 	providers: {
 		default: config.provider,
 		rethinkdb: config.rethinkdb,
