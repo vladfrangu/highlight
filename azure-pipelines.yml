@@ -3,7 +3,7 @@ resources:
     - repository: templates
       type: github
       name: dirigeants/pipelines
-      endpoint: vladfrangu
+      endpoint: kingdgrizzle
 
  jobs:
   - template: lint.yml@templates
