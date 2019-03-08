@@ -5,5 +5,5 @@ resources:
       name: dirigeants/pipelines
       endpoint: vladfrangu
 
- jobs:
+jobs:
   - template: lint.yml@templates
