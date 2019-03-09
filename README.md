@@ -1,4 +1,4 @@
-# highlight
+# highlight [![Build Status](https://dev.azure.com/vladfrangu/Bots/_apis/build/status/vladfrangu.highlight?branchName=master)](https://dev.azure.com/vladfrangu/Bots/_build/latest?definitionId=1&branchName=master)
 
 A simple to use highlight bot made using klasa and discord.js.
 
