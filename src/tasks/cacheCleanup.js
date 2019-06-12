@@ -73,6 +73,9 @@ module.exports = class MemorySweeper extends Task {
 				this.setColor(users)} [User]s | ${
 				this.setColor(emojis)} [Emoji]s | ${
 				this.setColor(messages)} [Message]s.`);
+		const { ws: manager } = this.client;
+		this.client.emit("verbose", `Manager Destroyed: ${manager.destroyed}; Shard 0: ${require('util').inspect(manager.shards.first())}`);
+		if (manager.shards.first().status !== 0) manager.shards.first().connect();
 	}
 
 	/**

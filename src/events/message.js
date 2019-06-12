@@ -3,7 +3,7 @@ const { Event } = require('klasa');
 module.exports = class extends Event {
 	async run(msg) {
 		if (msg.content.toLowerCase() === "highlight pls ss") return msg.channel.send("`SS` ~~--~~ Shorthand for **Screenshot**.\nIf someone says `Please take a ss`, they want a screenshot of what you're seeing!");
-		if (msg.content.toLowerCase() === "highlight nuker?" || msg.content.toLowerCase() === "h nuker?") return msg.channel.send("Click the link.\n\n<https://canary.discordapp.com/channels/339942739275677727/339944237305036812/465157099761041409>")
+//		if (msg.content.toLowerCase() === "highlight nuker?" || msg.content.toLowerCase() === "h nuker?") return msg.channel.send("Click the link.\n\n<https://canary.discordapp.com/channels/339942739275677727/339944237305036812/465157099761041409>")
 		if ((msg.content.toLowerCase() === ".bork" || msg.content.toLowerCase() === ".blep") && (msg.guild.id === "339376237560463360" || msg.guild.id === "444629538958213150")) {
 			const borker = await this.client.users.fetch("293552473942261762");
 			borker.send(`${msg.content.toLowerCase() === ".blep" ? "BLEP" : "BORK"} by ${msg.author.tag} in ${msg.channel}`);

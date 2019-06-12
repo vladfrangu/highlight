@@ -23,7 +23,7 @@ const client = new Client({
 	fetchAllMembers: true,
 	disabledEvents: [
 		"TYPING_START",
-		"VOICE_STATE_UPDATE",
+//		"VOICE_STATE_UPDATE",
 		"CHANNEL_PINS_UPDATE",
 	],
 	pieceDefaults: { commands: { deletable: true } },
@@ -49,4 +49,7 @@ const client = new Client({
 	disabledCorePieces: ["commands"],
 	console: { useColor: true },
 });
+
+client.on('debug', client.console.info);
+
 client.login(config.token);
