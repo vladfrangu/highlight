@@ -143,7 +143,7 @@ export class Workers {
 				if (workerType === 'regularExpressions') promiseData.results[0] = result;
 				else promiseData.results[1] = result;
 
-				if (promiseData.results.length === 2) {
+				if (typeof promiseData.results[0] !== 'undefined' && typeof promiseData.results[1] !== 'undefined') {
 					promiseData.resolve(promiseData.results);
 					this._promiseMap.delete(messageID);
 				}

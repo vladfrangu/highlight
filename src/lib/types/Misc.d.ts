@@ -8,4 +8,5 @@ export interface HighlightResult {
 export interface ParsedHighlightData {
 	memberID: string;
 	parsedContent: string;
+	trigger: string;
 }

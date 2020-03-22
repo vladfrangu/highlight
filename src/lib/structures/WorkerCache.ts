@@ -50,10 +50,10 @@ export class WorkerCache {
 				for (const [regexString, members] of guildData.entries()) {
 					const actualRegularExpression = this._getOrCacheRegularExpression(regexString);
 					if (!actualRegularExpression.test(content)) continue;
-					const parsedContent = content.replace(actualRegularExpression, (matchedValue) => `**${matchedValue}**`);
+					const parsedContent = content.trim().replace(actualRegularExpression, (matchedValue) => `**${matchedValue}**`);
 					for (const memberID of members) {
 						if (memberID === authorID) continue;
-						returnData.results.push({ memberID, parsedContent });
+						returnData.results.push({ memberID, parsedContent, trigger: actualRegularExpression.source });
 					}
 				}
 				break;
@@ -63,10 +63,10 @@ export class WorkerCache {
 				for (const word of splitWords) {
 					const possibleMembers = guildData.get(word);
 					if (!possibleMembers) continue;
-					const parsedContent = content.replace(new RegExp(word, 'gi'), (matchedValue) => `**${matchedValue}**`);
+					const parsedContent = content.replace(new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), (matchedValue) => `**${matchedValue}**`);
 					for (const memberID of possibleMembers) {
 						if (memberID === authorID) continue;
-						returnData.results.push({ memberID, parsedContent });
+						returnData.results.push({ memberID, parsedContent, trigger: word });
 					}
 				}
 				break;
