@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"alwaysStrict": true,
 		"declaration": false,
-		"emitDecoratorMetadata": true,
+		"esModuleInterop": true,
 		"experimentalDecorators": true,
 		"incremental": true,
 		"lib": ["esnext"],
@@ -23,7 +23,7 @@
 		"strictBindCallApply": true,
 		"strictNullChecks": true,
 		"strictPropertyInitialization": true,
-		"target": "esnext",
+		"target": "es2019",
 		"types": [
 			"node",
 			"node-fetch",

@@ -2,45 +2,49 @@
   "name": "highlight-bot",
   "version": "2.0.0",
   "description": "An utility bot written in Klasa to get highlighted when a word, or regular expression is said",
-  "homepage": "https://github.com/vladfrangu/highlight-klasa#readme",
+  "homepage": "https://github.com/vladfrangu/highlight#readme",
   "bugs": {
-    "url": "https://github.com/vladfrangu/highlight-klasa/issues"
+    "url": "https://github.com/vladfrangu/highlight/issues"
   },
   "license": "MIT",
   "author": {
     "name": "Vlad Frangu",
     "email": "kingdgrizzle@gmail.com"
   },
-  "main": "dist/src/index",
+  "main": "dist/index",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vladfrangu/highlight-klasa.git"
+    "url": "git+https://github.com/vladfrangu/highlight.git"
   },
   "scripts": {
-    "test:lint": "npx eslint --ext ts src/**/*.ts",
-    "build": "yarn tsc"
+    "test:lint": "eslint --ext ts src/**/*.ts",
+    "prebuild": "npx rimraf dist",
+    "build": "tsc"
   },
   "engines": {
     "node": ">= 12.0.0"
   },
   "dependencies": {
+    "@klasa/utils": "^0.0.4",
     "chainfetch": "^1.2.2",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "github:discordjs/discord.js#fe7df708e44e0280dfaf0f8e457b154781bb5140",
     "klasa": "github:dirigeants/klasa#settings",
     "klasa-member-gateway": "github:dirigeants/klasa-member-gateway#settings",
-    "moment-timezone": "^0.5.25",
-    "re2": "^1.10.0",
+    "moment-timezone": "^0.5.28",
+    "re2": "github:uhop/node-re2"
+  },
+  "optionalDependencies": {
     "rethinkdbdash": "^2.3.31"
   },
   "devDependencies": {
     "@kcp/eslint-config-lint": "github:KlasaCommunityPlugins/lint-files",
     "@types/moment-timezone": "^0.5.12",
-    "@types/node": "^12.0.10",
-    "@types/node-fetch": "^2.3.7",
-    "@types/ws": "^6.0.1",
-    "@typescript-eslint/eslint-plugin": "^1.10.3-alpha.13",
-    "@typescript-eslint/parser": "^1.10.3-alpha.13",
-    "eslint": "^6.0.0",
-    "typescript": "^3.5.2"
+    "@types/node": "^13.9.2",
+    "@types/node-fetch": "^2.5.5",
+    "@types/ws": "^7.2.3",
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "@typescript-eslint/parser": "^2.24.0",
+    "eslint": "^6.8.0",
+    "typescript": "^3.9.0-dev.20200321"
   }
 }
