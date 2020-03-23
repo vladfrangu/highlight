@@ -31,7 +31,7 @@ const client = new Highlight({
 	consoleEvents: { verbose: true },
 	createPiecesFolders: false,
 	disableEveryone: true,
-	fetchAllMembers: true,
+	fetchAllMembers: !process.argv.includes('--migrate-2.0'),
 	messageCacheLifetime: 120,
 	messageSweepInterval: 600,
 	noPrefixDM: true,
