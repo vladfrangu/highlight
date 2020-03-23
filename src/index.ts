@@ -31,8 +31,7 @@ const client = new Highlight({
 	consoleEvents: { verbose: true },
 	createPiecesFolders: false,
 	disableEveryone: true,
-	// TODO: update
-	fetchAllMembers: false,
+	fetchAllMembers: true,
 	messageCacheLifetime: 120,
 	messageSweepInterval: 600,
 	noPrefixDM: true,

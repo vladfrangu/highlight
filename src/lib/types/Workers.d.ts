@@ -54,7 +54,7 @@ interface HighlightParse extends BasePayload {
 // #endregion
 
 // #region Sent Payloads
-export type SentWorkerPayload = ValidateRegex | HandleHighlight | UpdateCache;
+export type SentWorkerPayload = ValidateRegex | HandleHighlight | UpdateCache | Eval;
 
 interface ValidateRegex extends BasePayload {
 	event: 'validateRegex';
@@ -80,6 +80,11 @@ interface UpdateCache extends BasePayload {
 		guildID: string;
 		entries: Map<string, Set<string>>;
 	};
+}
+
+interface Eval extends BasePayload {
+	event: 'eval';
+	data: string;
 }
 // #endregion
 

@@ -31,6 +31,11 @@ export class Workers {
 		await this.regexWorker.terminate();
 	}
 
+	eval(data: string) {
+		this._sendMessage(WorkerTypes.Regex, { event: 'eval', data });
+		this._sendMessage(WorkerTypes.Word, { event: 'eval', data });
+	}
+
 	validateRegex(input: string) {
 		return new Promise<boolean>((resolve, reject) => {
 			const listener = (data: ReceivedWorkerPayload) => {
@@ -85,7 +90,7 @@ export class Workers {
 			event: 'handleHighlight',
 			data: {
 				authorID: message.author.id,
-				content: message.content,
+				content: message.cleanContent,
 				guildID: message.guild!.id,
 				messageID: message.id,
 				type: 'regularExpressions',
@@ -96,7 +101,7 @@ export class Workers {
 			event: 'handleHighlight',
 			data: {
 				authorID: message.author.id,
-				content: message.content,
+				content: message.cleanContent,
 				guildID: message.guild!.id,
 				messageID: message.id,
 				type: 'words',

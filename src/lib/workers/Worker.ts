@@ -1,6 +1,7 @@
-import { isMainThread, parentPort, MessagePort } from 'worker_threads';
+import { isMainThread, parentPort, MessagePort, workerData } from 'worker_threads';
 import type { ReceivedWorkerPayload, SentWorkerPayload } from '../types/Workers';
 import { WorkerCache } from '../structures/WorkerCache';
+import { inspect } from 'util';
 
 const CACHE = new WorkerCache();
 
@@ -36,6 +37,16 @@ parentPort.on('message', (message: SentWorkerPayload) => {
 			const { authorID, content, guildID, messageID, type } = message.data;
 			const result = CACHE.parse(type, guildID, authorID, content);
 			sendToMaster({ event: 'highlightResult', data: { messageID, result } });
+			break;
+		}
+		case 'eval': {
+			console.log(workerData.type);
+			try {
+				const result = eval(message.data);
+				console.log(inspect(result, false, 2));
+			} catch {
+				console.log('ERROR');
+			}
 			break;
 		}
 		default:

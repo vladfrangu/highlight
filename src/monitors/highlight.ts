@@ -69,7 +69,7 @@ export default class extends Monitor {
 				'Your highlight',
 				type === 'regularExpressions' ? 'regular expression' : 'word',
 				`**${Util.escapeMarkdown(trigger)}** was mentioned by **${Util.escapeMarkdown(message.author.tag)}**`,
-				`in ${message.channel} of ${message.guild.toString()}`,
+				`in ${message.channel} of ${message.guild}`,
 			].join(' '), embed);
 		} catch {
 			this.client.emit('wtf', `Failed to DM ${memberID} in ${message.guild.id}`);

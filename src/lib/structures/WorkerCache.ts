@@ -50,7 +50,10 @@ export class WorkerCache {
 				for (const [regexString, members] of guildData.entries()) {
 					const actualRegularExpression = this._getOrCacheRegularExpression(regexString);
 					if (!actualRegularExpression.test(content)) continue;
-					const parsedContent = content.trim().replace(actualRegularExpression, (matchedValue) => `**${matchedValue}**`);
+					const parsedContent = content.trim().replace(actualRegularExpression, (matchedValue) => {
+						if (matchedValue.trim().length > 0) return `**${matchedValue}**`;
+						return matchedValue;
+					});
 					for (const memberID of members) {
 						if (memberID === authorID) continue;
 						returnData.results.push({ memberID, parsedContent, trigger: actualRegularExpression.source });
