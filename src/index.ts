@@ -42,7 +42,7 @@ const client = new Highlight({
 	messageSweepInterval: 600,
 	noPrefixDM: true,
 	pieceDefaults: {
-		commands: { deletable: true },
+		commands: { deletable: true, flagSupport: false },
 	},
 	prefix: 'h.',
 	prefixCaseInsensitive: true,
