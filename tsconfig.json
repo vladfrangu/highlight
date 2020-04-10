@@ -28,7 +28,8 @@
 			"node",
 			"node-fetch",
 			"discord.js"
-		]
+		],
+		"allowJs": true
 	},
 	"include": [
 		"src/**/*",
