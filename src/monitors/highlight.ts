@@ -73,7 +73,7 @@ export default class extends Monitor {
 				`in ${message.channel} of ${message.guild}`,
 			].join(' '), embed);
 		} catch {
-			this.client.emit('wtf', `Failed to DM ${memberID} in ${message.guild.id}`);
+			this.client.emit('wtf', `Failed to DM ${memberID} in ${message.guild.id} for trigger ${trigger}`);
 		}
 	}
 
