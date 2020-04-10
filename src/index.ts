@@ -41,6 +41,9 @@ const client = new Highlight({
 	messageCacheLifetime: 120,
 	messageSweepInterval: 600,
 	noPrefixDM: true,
+	pieceDefaults: {
+		commands: { deletable: true },
+	},
 	prefix: 'h.',
 	prefixCaseInsensitive: true,
 	presence: {
