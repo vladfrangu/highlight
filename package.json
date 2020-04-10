@@ -27,13 +27,16 @@
   "dependencies": {
     "@klasa/utils": "^0.0.4",
     "@skyra/decorators": "^1.0.0",
+    "bufferutil": "^4.0.1",
     "chainfetch": "^1.2.2",
     "discord.js": "github:discordjs/discord.js#fe7df708e44e0280dfaf0f8e457b154781bb5140",
     "klasa": "github:dirigeants/klasa#settings",
     "klasa-member-gateway": "github:dirigeants/klasa-member-gateway#settings",
     "moment-timezone": "^0.5.28",
     "node-fetch": "^2.6.0",
-    "re2": "github:uhop/node-re2"
+    "re2": "github:uhop/node-re2",
+    "utf-8-validate": "^5.0.2",
+    "zlib-sync": "^0.1.6"
   },
   "optionalDependencies": {
     "rethinkdbdash": "^2.3.31"
