@@ -31,6 +31,7 @@ export default class extends Event {
 			}
 			await this.client.settings!.update('migrated', true);
 			this.client.console.warn('Migration Done. Process will now exit. Remove the `--migrate-2.0` flag');
+			this.client.destroy();
 			process.exit(0);
 		}
 

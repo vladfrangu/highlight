@@ -35,7 +35,7 @@ const client = new Highlight({
 	console: { useColor: true },
 	consoleEvents: { verbose: true },
 	createPiecesFolders: false,
-	disabledCorePieces: ['commands'],
+	disabledCorePieces: ['commands'].concat(process.argv.includes('--migrate-2.0') ? ['monitors'] : []),
 	disableEveryone: true,
 	fetchAllMembers: !process.argv.includes('--migrate-2.0'),
 	messageCacheLifetime: 120,
