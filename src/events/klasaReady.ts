@@ -1,9 +1,11 @@
 import { Event } from 'klasa';
+import { initClean } from '@klasa/utils';
 
 export default class extends Event {
 	once = true;
 
 	async run() {
+		initClean(this.client.token!);
 		if (process.argv.includes('--migrate-2.0') && !this.client.settings!.get('migrated')) {
 			const provider = this.client.providers.default;
 			const docs: any[] = await provider.getAll('members');
@@ -32,9 +34,9 @@ export default class extends Event {
 			process.exit(0);
 		}
 
-		if (!this.client.schedule.tasks.some((task) => task.taskName === 'cleanup')) {
+		if (!this.client.schedule.tasks.some((task) => task.taskName === 'cleanup'))
 			await this.client.schedule.create('cleanup', '*/10 * * * *', { catchUp: true, id: 'cleanup' });
-		}
+
 
 		for (const guild of this.client.guilds.values()) {
 			for (const member of guild.members.values()) {

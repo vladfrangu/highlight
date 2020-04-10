@@ -1,4 +1,5 @@
 import re2 from 're2';
+
 import { tryRegex } from '../utils/Util';
 import type { HighlightResult, GuildWorkerType } from '../types/Misc';
 
@@ -56,16 +57,16 @@ export class WorkerCache {
 					});
 					for (const memberID of members) {
 						if (memberID === authorID) continue;
-						returnData.results.push({ memberID, parsedContent, trigger: actualRegularExpression.source });
+						returnData.results.push({ memberID, parsedContent, trigger: regexString });
 					}
 				}
 				break;
 			}
 			case 'words': {
-				const splitWords = content.toLowerCase().split(/\s*\b\s*/);
-				for (const word of splitWords) {
-					const possibleMembers = guildData.get(word);
-					if (!possibleMembers) continue;
+				// .split(/\s*\b\s*/)
+				const lowercasedContent = content.toLowerCase();
+				for (const [word, possibleMembers] of guildData.entries()) {
+					if (!lowercasedContent.includes(word.toLowerCase())) continue;
 					const parsedContent = content.replace(new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), (matchedValue) => `**${matchedValue}**`);
 					for (const memberID of possibleMembers) {
 						if (memberID === authorID) continue;

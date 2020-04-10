@@ -26,11 +26,13 @@
   },
   "dependencies": {
     "@klasa/utils": "^0.0.4",
+    "@skyra/decorators": "^1.0.0",
     "chainfetch": "^1.2.2",
     "discord.js": "github:discordjs/discord.js#fe7df708e44e0280dfaf0f8e457b154781bb5140",
     "klasa": "github:dirigeants/klasa#settings",
     "klasa-member-gateway": "github:dirigeants/klasa-member-gateway#settings",
     "moment-timezone": "^0.5.28",
+    "node-fetch": "^2.6.0",
     "re2": "github:uhop/node-re2"
   },
   "optionalDependencies": {
@@ -38,13 +40,13 @@
   },
   "devDependencies": {
     "@kcp/eslint-config-lint": "github:KlasaCommunityPlugins/lint-files",
-    "@types/moment-timezone": "^0.5.12",
-    "@types/node": "^13.9.2",
+    "@types/moment-timezone": "^0.5.13",
+    "@types/node": "^13.11.1",
     "@types/node-fetch": "^2.5.5",
     "@types/ws": "^7.2.3",
-    "@typescript-eslint/eslint-plugin": "^2.24.0",
-    "@typescript-eslint/parser": "^2.24.0",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
     "eslint": "^6.8.0",
-    "typescript": "^3.9.0-dev.20200321"
+    "typescript": "^3.9.0-dev.20200410"
   }
 }

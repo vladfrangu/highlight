@@ -53,3 +53,7 @@ export function tryRegex(input: string): [boolean, re2 | null] {
 		return [false, null];
 	}
 }
+
+export function pluralize(count: number, singular: string, plural: string) {
+	return count === 1 ? singular : plural;
+}

@@ -1,5 +1,6 @@
 import { Client } from 'klasa';
 import { Client as MemberClient } from 'klasa-member-gateway';
+
 import { Workers } from '../workers/Workers';
 
 Client.use(MemberClient);

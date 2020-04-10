@@ -1,6 +1,7 @@
 import { KlasaMessage, Monitor } from 'klasa';
 import { TextChannel, Util, MessageEmbed } from 'discord.js';
 import moment from 'moment-timezone';
+
 import { ParsedHighlightData, GuildWorkerType } from '../lib/types/Misc';
 
 export default class extends Monitor {
@@ -83,11 +84,11 @@ export default class extends Monitor {
 			returnData.push([
 				`[${moment(data.createdTimestamp).tz("Europe/London").format("HH[:]mm")} UTC] ${Util.escapeMarkdown(data.author.tag)}`,
 				data.content.length === 0 ?
-					(data.attachments.size === 0 ?
-						`*Message has an embed*` :
-						`*Message has an attachment*`) :
+					data.attachments.size === 0 ?
+						`*Message has an embed*\n*Click **[here](${data.url})** to see the message*` :
+						`*Message has an attachment*\n*Click **[here](${data.url})** to see the message*` :
 					data.content.length >= 600 ?
-						`*This message's content was too large. Please click **[here](${data.url})** to see the message*` :
+						`*This message's content was too large. Click **[here](${data.url})** to see the message*` :
 						data.content,
 			]);
 		}
@@ -107,11 +108,7 @@ export default class extends Monitor {
 
 		embed.addField(
 			`__**[${moment(message.createdTimestamp).tz("Europe/London").format("HH[:]mm")} UTC] ${Util.escapeMarkdown(message.author.tag)}**__`,
-			message.content.length === 0 ?
-				(message.attachments.size === 0 ?
-					`*Message has an embed*` :
-					`*Message has an attachment*`) :
-				parsedContent,
+			parsedContent,
 		);
 
 		return embed;

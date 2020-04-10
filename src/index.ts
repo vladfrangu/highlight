@@ -4,10 +4,6 @@ import { Highlight } from './lib/structures/Highlight';
 import { Intents } from './lib/structures/Intents';
 
 Highlight.defaultGuildSchema
-	.add('bot', (folder) => folder
-		.add('channel', 'TextChannel')
-		.add('redirect', 'Boolean'),
-	)
 	.add('permissions', (folder) => folder
 		.add('requiresRole', 'Boolean')
 		.add('allowedRoles', 'Role', { array: true }),
@@ -18,11 +14,20 @@ Highlight.defaultMemberSchema
 	.add('regularExpressions', 'string', { array: true })
 	.add('blacklist', (folder) => folder
 		.add('users', 'user', { array: true })
-		.add('channels', 'textchannel', { array: true })
+		.add('channels', 'textchannel', { array: true }),
 	);
 
 Highlight.defaultClientSchema
 	.add('migrated', 'Boolean', { configurable: false, default: false });
+
+Highlight.defaultPermissionLevels
+	.add(2, ({ member, guild }) => {
+		if (!member || !guild) return false;
+		const [rolesRequired, roleIDs] = guild.settings.pluck('permissions.requiresRole', 'permissions.allowedRoles') as [boolean, string[]];
+		// If the role requirement is set off, the command is usable
+		if (!rolesRequired) return true;
+		return roleIDs.some((id) => member.roles.has(id));
+	}, { fetch: true });
 
 const client = new Highlight({
 	commandEditing: true,
@@ -30,6 +35,7 @@ const client = new Highlight({
 	console: { useColor: true },
 	consoleEvents: { verbose: true },
 	createPiecesFolders: false,
+	disabledCorePieces: ['commands'],
 	disableEveryone: true,
 	fetchAllMembers: !process.argv.includes('--migrate-2.0'),
 	messageCacheLifetime: 120,

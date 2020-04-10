@@ -36,8 +36,7 @@ const HEADER = `\u001B[39m\u001B[94m[CACHE CLEANUP]\u001B[39m\u001B[90m`;
  * @version 2.0.0
  */
 export default class extends Task {
-
-	public run() {
+	run() {
 		const OLD_SNOWFLAKE = Util.binaryToID(((Date.now() - THRESHOLD) - EPOCH).toString(2).padStart(42, '0') + EMPTY);
 		let presences = 0;
 		let guildMembers = 0;
@@ -63,7 +62,7 @@ export default class extends Task {
 
 		// Per-Channel sweeper
 		for (const channel of this.client.channels.values()) {
-			if (this.isTextChannel(channel) && channel.lastMessageID) {
+			if (this._isTextChannel(channel) && channel.lastMessageID) {
 				channel.lastMessageID = null;
 				lastMessages++;
 			}
@@ -92,7 +91,7 @@ export default class extends Task {
 	 * < 100  : Green color
 	 * @param n The number to colorise
 	 */
-	public setColor(n: number) {
+	setColor(n: number) {
 		const text = String(n).padStart(5, ' ');
 		// Light Red color
 		if (n > 1000) return `\u001B[39m\u001B[91m${text}\u001B[39m\u001B[90m`;
@@ -102,7 +101,7 @@ export default class extends Task {
 		return `\u001B[39m\u001B[32m${text}\u001B[39m\u001B[90m`;
 	}
 
-	private isTextChannel(channel: Channel): channel is TextChannel {
+	private _isTextChannel(channel: Channel): channel is TextChannel {
 		return channel.type === 'text';
 	}
 }
