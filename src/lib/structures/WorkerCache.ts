@@ -63,10 +63,9 @@ export class WorkerCache {
 				break;
 			}
 			case 'words': {
-				// .split(/\s*\b\s*/)
-				const lowercasedContent = content.toLowerCase();
+				const splitWords = content.toLowerCase().split(/\s*\b\s*/);
 				for (const [word, possibleMembers] of guildData.entries()) {
-					if (!lowercasedContent.includes(word.toLowerCase())) continue;
+					if (!splitWords.includes(word.toLowerCase())) continue;
 					const parsedContent = content.replace(new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), (matchedValue) => `**${matchedValue}**`);
 					for (const memberID of possibleMembers) {
 						if (memberID === authorID) continue;
