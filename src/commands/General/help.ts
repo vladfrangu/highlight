@@ -55,7 +55,7 @@ export default class extends Command {
 			.setDescription(`Run \`${prefix}help <command>\` to find out more about a command`);
 		for (const [category, list] of commands) {
 			embed
-				.addField(`${category} Commands`, list.map(this.formatCommand.bind(this, message, prefix)).join('\n'), true);
+				.addField(`${category} Commands`, list.map(this.formatCommand.bind(this, message, prefix)).join('\n'));
 		}
 
 		return embed;

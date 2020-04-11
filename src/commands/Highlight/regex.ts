@@ -16,9 +16,11 @@ const NEEDS_REGEX = ['list', 'clear'];
 	extendedHelp: [
 		"→ If you want to see a list of all regular expressions you have",
 		'`{prefix}regularexpressions [list]` → Specifying `list` is optional as it is the default subcommand',
+		"",
 		"→ Adding, or removing a regular expression from your highlighting list",
 		"`{prefix}regularexpressions add .*` → Adds the specified regular expression, if it isn't added already.",
 		"`{prefix}regularexpressions remove .*` → Removes the specified regular expression, if it was added",
+		"",
 		"→ Clearing the regular expressions list, if you want to start from scratch",
 		"`{prefix}regularexpressions clear`",
 		"",

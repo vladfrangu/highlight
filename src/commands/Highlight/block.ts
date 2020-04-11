@@ -15,9 +15,11 @@ const NEEDS_ROLE = ['list', 'clear'];
 	extendedHelp: [
 		"→ If you want to see the which channels and users you have blocked in this server",
 		'`{prefix}block [list]` → Specifying `list` is optional as it is the default subcommand',
+		"",
 		"→ Adding, or removing a user / channel (or multiple users / channels) that cannot highlight you anymore. You can also use IDs with these subcommands",
 		"`{prefix}block add @Vladdy#0002 #bot-commands` → Adds the users / channels specified, if they aren't added already.",
 		"`{prefix}block remove @Vladdy#0002` → Removes the users / channels specified, if they were added",
+		"",
 		"→ Clearing the block list, if you are feeling nice",
 		"`{prefix}block clear`",
 	].join('\n'),

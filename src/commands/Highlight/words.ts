@@ -16,9 +16,11 @@ const NEEDS_WORD = ['list', 'clear'];
 	extendedHelp: [
 		"→ If you want to see a list of all words you have",
 		'`{prefix}words [list]` → Specifying `list` is optional as it is the default subcommand',
+		"",
 		"→ Adding, or removing a word (or multiple words) from your highlighting list",
 		"`{prefix}words add hi vlad` → Adds the specified words, if they aren't added already.",
 		"`{prefix}words remove vlad` → Removes the specified words, if they were added",
+		"",
 		"→ Clearing the word list, if you want to start from scratch",
 		"`{prefix}words clear`",
 	].join('\n'),
