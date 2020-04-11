@@ -7,6 +7,12 @@ import { MessageEmbed, Util } from 'discord.js';
 	runIn: ['text'],
 	usage: '[prefix:string{,12}]',
 	permissionLevel: 6,
+	extendedHelp: [
+		"→ If you want to see the current prefix in the server",
+		'`{prefix}allowedroles prefix`',
+		"→ Changing the server prefix to anything you'd like",
+		"`{prefix}prefix owo.`",
+	].join('\n'),
 })
 export default class extends Command {
 	async run(message: KlasaMessage, [prefix]: [string | undefined]) {

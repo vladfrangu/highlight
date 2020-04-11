@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-// Copyright (c) 2017-2019 dirigeants. All rights reserved. MIT license.
-import { Command, CommandOptions, KlasaMessage, RichDisplay } from 'klasa';
-import { MessageEmbed, Permissions, TextChannel } from 'discord.js';
+import { Command, CommandOptions, KlasaMessage } from 'klasa';
+import { MessageEmbed, TextChannel, Permissions, Util } from 'discord.js';
 import { isFunction } from '@klasa/utils';
 import { ApplyOptions } from '@skyra/decorators';
-
-const PERMISSIONS_RICHDISPLAY = new Permissions([Permissions.FLAGS.MANAGE_MESSAGES, Permissions.FLAGS.ADD_REACTIONS]);
-const time = 1000 * 60 * 3;
 
 @ApplyOptions<CommandOptions>({
 	aliases: ['commands', 'cmd', 'cmds'],
@@ -14,35 +10,24 @@ const time = 1000 * 60 * 3;
 	usage: '(Command:command)',
 })
 export default class extends Command {
-	// Cache the handlers
-	handlers = new Map();
-
 	async run(message: KlasaMessage, [command]: [Command | undefined]) {
 		if (command) {
-			return message.sendMessage([
-				`= ${command.name} = `,
-				isFunction(command.description) ? command.description(message.language) : command.description,
-				message.language.get('COMMAND_HELP_USAGE', command.usage.fullUsage(message)),
-				message.language.get('COMMAND_HELP_EXTENDED'),
-				isFunction(command.extendedHelp) ? command.extendedHelp(message.language) : command.extendedHelp,
-			], { code: 'asciidoc' });
+			const prefix = message.guildSettings.get('prefix') as string;
+			const embed = new MessageEmbed()
+				.setColor(0x3669FA)
+				.setTitle(`Help for the __${command.name}__ command`)
+				.setDescription(`→ ${isFunction(command.description) ? command.description(message.language) : command.description}`)
+				.addField(
+					'Usage',
+					`${Util.escapeMarkdown(prefix)}${command.usage.nearlyFullUsage}`,
+				)
+				.addField('Examples', ((isFunction(command.extendedHelp) ? command.extendedHelp(message.language) : command.extendedHelp) || 'No need for examples, just run it!').replace(/\{prefix\}/g, prefix));
+
+			return message.sendMessage(embed);
 		}
 
-		if (!('all' in message.flags) && message.guild && (message.channel as TextChannel).permissionsFor(this.client.user!)?.has(PERMISSIONS_RICHDISPLAY)) {
-			// Finish the previous handler
-			const previousHandler = this.handlers.get(message.author.id);
-			if (previousHandler) previousHandler.stop();
-
-			const handler = await (await this.buildDisplay(message)).run(await message.send('Loading Commands...'), {
-				filter: (_reaction, user) => user.id === message.author.id,
-				time,
-				firstLast: false,
-				jump: false,
-			});
-			handler.on('end', () => this.handlers.delete(message.author.id));
-			this.handlers.set(message.author.id, handler);
-			return null;
-		}
+		if (!('all' in message.flagArgs) && message.guild && (message.channel as TextChannel).permissionsFor(this.client.user!)?.has(Permissions.FLAGS.EMBED_LINKS))
+			return message.send(await this.buildEmbed(message));
 
 		return message.author.send(await this.buildHelp(message), { split: { char: '\n' } })
 			.then(() => { if (message.channel.type !== 'dm') message.sendMessage(message.language.get('COMMAND_HELP_DM')); return null; })
@@ -55,31 +40,30 @@ export default class extends Command {
 
 		const helpMessage = [];
 		for (const [category, list] of commands)
-			helpMessage.push(`**${category} Commands**:\n`, list.map(this.formatCommand.bind(this, message, prefix, false)).join('\n'), '');
+			helpMessage.push(`**${category} Commands**:\n`, list.map(this.formatCommand.bind(this, message, prefix)).join('\n'), '');
 
 
 		return helpMessage.join('\n');
 	}
 
-	async buildDisplay(message: KlasaMessage) {
+	async buildEmbed(message: KlasaMessage) {
 		const commands = await this._fetchCommands(message);
 		const prefix = message.guildSettings.get('prefix') as string;
-		const display = new RichDisplay();
 		const color = message.member!.displayColor;
+		const embed = new MessageEmbed()
+			.setColor(color)
+			.setDescription(`Run \`${prefix}help <command>\` to find out more about a command`);
 		for (const [category, list] of commands) {
-			display.addPage(new MessageEmbed()
-				.setTitle(`${category} Commands`)
-				.setColor(color)
-				.setDescription(list.map(this.formatCommand.bind(this, message, prefix, true)).join('\n')),
-			);
+			embed
+				.addField(`${category} Commands`, list.map(this.formatCommand.bind(this, message, prefix)).join('\n'), true);
 		}
 
-		return display;
+		return embed;
 	}
 
-	formatCommand(message: KlasaMessage, prefix: string, richDisplay: boolean, command: Command) {
+	formatCommand(message: KlasaMessage, prefix: string, command: Command) {
 		const description = isFunction(command.description) ? command.description(message.language) : command.description;
-		return richDisplay ? `• ${prefix}${command.name} → ${description}` : `• **${prefix}${command.name}** → ${description}`;
+		return `• **${prefix}${command.name}** → ${description}`;
 	}
 
 	async _fetchCommands(message: KlasaMessage) {

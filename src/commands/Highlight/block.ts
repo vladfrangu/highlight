@@ -12,8 +12,19 @@ const NEEDS_ROLE = ['list', 'clear'];
 	subcommands: true,
 	usage: '<add|remove|clear|list:default> (userOrChannel:userchannel)',
 	usageDelim: ' ',
+	extendedHelp: [
+		"→ If you want to see the which channels and users you have blocked in this server",
+		'`{prefix}block [list]` → Specifying `list` is optional as it is the default subcommand',
+		"→ Adding, or removing a user / channel (or multiple users / channels) that cannot highlight you anymore. You can also use IDs with these subcommands",
+		"`{prefix}block add @Vladdy#0002 #bot-commands` → Adds the users / channels specified, if they aren't added already.",
+		"`{prefix}block remove @Vladdy#0002` → Removes the users / channels specified, if they were added",
+		"→ Clearing the block list, if you are feeling nice",
+		"`{prefix}block clear`",
+	].join('\n'),
 })
 export default class extends Command {
+	needsMember = true;
+
 	async list(message: KlasaMessage) {
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
@@ -68,6 +79,8 @@ export default class extends Command {
 		if (changes[1].length)
 			embed.addField(`The following ${pluralize(changes[1].length, 'channel', 'channels')} ${pluralize(changes[1].length, 'has', 'have')} been blocked`, `- ${changes[1].map((channel) => `${channel} — ${channel.id}`).join('\n- ')}`);
 
+		if (!changes[0].length && !changes[1].length) embed.setDescription('No changes have been made to your block list..');
+
 		return message.send(embed);
 	}
 
@@ -113,6 +126,8 @@ export default class extends Command {
 
 		if (removedChannels.size)
 			embed.addField(`The following ${pluralize(changes[1].length, 'channel', 'channels')} ${pluralize(changes[1].length, 'has', 'have')} been blocked`, `- ${[...removedChannels].map((channel) => `${channel} — ${channel.id}`).join('\n- ')}`);
+
+		if (!changes[0].length && !changes[1].length) embed.setDescription('No changes have been made to your block list..');
 
 		return message.send(embed);
 	}

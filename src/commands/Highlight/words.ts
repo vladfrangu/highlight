@@ -6,15 +6,26 @@ import { pluralize } from '../../lib/utils/Util';
 const NEEDS_WORD = ['list', 'clear'];
 
 @ApplyOptions<CommandOptions>({
-	aliases: ['word'],
+	aliases: ['word', 'w'],
 	description: 'Control what words will highlight you',
 	permissionLevel: 2,
 	runIn: ['text'],
 	subcommands: true,
 	usage: '<add|remove|set|clear|list:default> (words:string) [...]',
 	usageDelim: ' ',
+	extendedHelp: [
+		"→ If you want to see a list of all words you have",
+		'`{prefix}words [list]` → Specifying `list` is optional as it is the default subcommand',
+		"→ Adding, or removing a word (or multiple words) from your highlighting list",
+		"`{prefix}words add hi vlad` → Adds the specified words, if they aren't added already.",
+		"`{prefix}words remove vlad` → Removes the specified words, if they were added",
+		"→ Clearing the word list, if you want to start from scratch",
+		"`{prefix}words clear`",
+	].join('\n'),
 })
 export default class extends Command {
+	needsMember = true;
+
 	async list(message: KlasaMessage) {
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
@@ -49,7 +60,7 @@ export default class extends Command {
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)
-			.setDescription('No changes have been made..');
+			.setDescription('No new words have been added..');
 
 		if (addedWords.length) {
 			embed.setTitle(`The following ${pluralize(addedWords.length, 'word', 'words')} have been added to your list`)
@@ -81,7 +92,7 @@ export default class extends Command {
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)
-			.setDescription('No changes have been made..');
+			.setDescription('No words have been removed..');
 
 		if (removed.size) {
 			embed.setTitle(`The following ${pluralize(removed.size, 'word', 'words')} have been removed from your list`)
@@ -95,10 +106,13 @@ export default class extends Command {
 	async set(message: KlasaMessage, words: string[]) {
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
+		const old = message.member.settings.get('words') as string[];
 		// Make sure there are no duplicates
 		const wordSet = new Set(words.map((it) => it.toLowerCase()));
 
 		await message.member.settings.update('words', [...wordSet], { arrayAction: 'overwrite' });
+		message.guild.removeWords(old, message.author.id);
+		message.guild.addWords([...wordSet], message.author.id);
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)

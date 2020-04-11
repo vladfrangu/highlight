@@ -18,6 +18,17 @@ const EMOJI_MAP = new Map([
 	subcommands: true,
 	usage: '<toggle|add|remove|set|clear|status:default> (roles:roles)',
 	usageDelim: ' ',
+	extendedHelp: [
+		"→ If you want to see the current status of the allowed roles check, and which roles can use the highlighting features, if enabled",
+		'`{prefix}allowedroles [status]` → Specifying `status` is optional as it is the default subcommand',
+		"→ Toggling the allowed role check",
+		"`{prefix}allowedroles toggle` → Enables (✅) or disables (❌) the role checking",
+		"→ Adding, or removing a role (or multiple roles) from being able to use highlighting features if the role checking is enabled",
+		"`{prefix}allowedroles add @Proficient 339959033937264641` → Adds the roles specified, if they aren't added already",
+		"`{prefix}allowedroles remove @Proficient` → Removes the roles specified, if they were added",
+		"→ Clearing the role list, if you want to start from a blank slate",
+		"`{prefix}allowedroles clear`",
+	].join('\n'),
 })
 export default class extends Command {
 	async status(message: KlasaMessage) {
@@ -65,7 +76,7 @@ export default class extends Command {
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)
-			.setDescription('No changes have been made..');
+			.setDescription('No new roles have been added..');
 
 		if (newRoles.length) {
 			embed.setTitle(`The following ${pluralize(newRoles.length, 'role', 'roles')} can now use Highlight features`)
@@ -95,7 +106,7 @@ export default class extends Command {
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)
-			.setDescription('No changes have been made..');
+			.setDescription('No roles have been removed..');
 
 		if (removed.size) {
 			embed.setTitle(`The following ${pluralize(removed.size, 'role', 'roles')} cannot use Highlight features anymore`)

@@ -6,15 +6,28 @@ import { pluralize, tryRegex } from '../../lib/utils/Util';
 const NEEDS_REGEX = ['list', 'clear'];
 
 @ApplyOptions<CommandOptions>({
-	aliases: ['regexes', 'rr', 'regularexpressions'],
+	aliases: ['regexes', 'rr', 'regularexpressions', 'regularexpression'],
 	description: 'Control what regular expressions will highlight you',
 	permissionLevel: 2,
 	runIn: ['text'],
 	subcommands: true,
 	usage: '<add|remove|clear|list:default> (regularExpression:string)',
 	usageDelim: ' ',
+	extendedHelp: [
+		"→ If you want to see a list of all regular expressions you have",
+		'`{prefix}regularexpressions [list]` → Specifying `list` is optional as it is the default subcommand',
+		"→ Adding, or removing a regular expression from your highlighting list",
+		"`{prefix}regularexpressions add .*` → Adds the specified regular expression, if it isn't added already.",
+		"`{prefix}regularexpressions remove .*` → Removes the specified regular expression, if it was added",
+		"→ Clearing the regular expressions list, if you want to start from scratch",
+		"`{prefix}regularexpressions clear`",
+		"",
+		"*If you like your DMs, don't add `.*` or anything similar...*",
+	].join('\n'),
 })
 export default class extends Command {
+	needsMember = true;
+
 	async list(message: KlasaMessage) {
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
@@ -65,7 +78,7 @@ Use a site like [regexr](https://regexr.com/) to validate it and try again!`),
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)
-			.setDescription('No changes have been made..');
+			.setDescription('No new regular expression was added..');
 
 		if (added) {
 			embed
@@ -102,7 +115,7 @@ Use a site like [regexr](https://regexr.com/) to validate it and try again!`),
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)
-			.setDescription('No changes have been made..');
+			.setDescription('No regular expressions have been removed..');
 
 		if (removed) {
 			embed
