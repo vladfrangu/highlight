@@ -11,6 +11,8 @@ import { getCPUUsage } from '../../lib/utils/Util';
 export default class extends Command {
 	async run(message: KlasaMessage) {
 		const { _generalStatistics, _uptimeStatistics, _usageStatistics } = this;
+		// @ts-expect-error
+		await this.client.api.channels(message.channel.id).typing.post();
 		const CPU_USAGE = await getCPUUsage();
 		_usageStatistics.CPU_USAGE = CPU_USAGE;
 		return message.sendLocale('COMMAND_STATS', [_generalStatistics, _uptimeStatistics, _usageStatistics]);
