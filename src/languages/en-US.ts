@@ -30,7 +30,7 @@ export default class extends Language {
 				`• **Client**: ${duration(uptime.CLIENT, 2)}`,
 			].join('\n'))
 			.addField('Server Usage', [
-				`• **CPU Load**: ${usage.CPU_LOAD.join('% | ')}%`,
+				`• **CPU Usage**: ${usage.CPU_USAGE!}%`,
 				`• **Heap**: ${usage.RAM_USED} (Total: ${usage.RAM_TOTAL})`,
 			].join('\n')) as unknown as string,
 	};

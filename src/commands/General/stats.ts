@@ -1,7 +1,8 @@
 import { version } from 'discord.js';
 import { Command, CommandOptions, KlasaMessage } from 'klasa';
 import { ApplyOptions } from '@skyra/decorators';
-import { loadavg, uptime } from 'os';
+import { uptime } from 'os';
+import { getCPUUsage } from '../../lib/utils/Util';
 
 @ApplyOptions<CommandOptions>({
 	aliases: ['stats'],
@@ -9,7 +10,10 @@ import { loadavg, uptime } from 'os';
 })
 export default class extends Command {
 	async run(message: KlasaMessage) {
-		return message.sendLocale('COMMAND_STATS', [this._generalStatistics, this._uptimeStatistics, this._usageStatistics]);
+		const { _generalStatistics, _uptimeStatistics, _usageStatistics } = this;
+		const CPU_USAGE = await getCPUUsage();
+		_usageStatistics.CPU_USAGE = CPU_USAGE;
+		return message.sendLocale('COMMAND_STATS', [_generalStatistics, _uptimeStatistics, _usageStatistics]);
 	}
 
 	private get _generalStatistics(): StatsGeneral {
@@ -33,7 +37,6 @@ export default class extends Command {
 	private get _usageStatistics(): StatsUsage {
 		const usage = process.memoryUsage();
 		return {
-			CPU_LOAD: loadavg().map((load) => Math.round(load * 10000) / 100) as [number, number, number],
 			RAM_TOTAL: `${Math.round(100 * (usage.heapTotal / 1048576)) / 100}MB`,
 			RAM_USED: `${Math.round(100 * (usage.heapUsed / 1048576)) / 100}MB`,
 		};
@@ -55,7 +58,7 @@ export interface StatsUptime {
 }
 
 export interface StatsUsage {
-	CPU_LOAD: [number, number, number];
+	CPU_USAGE?: number;
 	RAM_TOTAL: string;
 	RAM_USED: string;
 }
