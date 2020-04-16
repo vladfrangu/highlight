@@ -24,7 +24,7 @@ const NEEDS_REGEX = ['list', 'clear'];
 		"→ Clearing the regular expressions list, if you want to start from scratch",
 		"`{prefix}regularexpressions clear`",
 		"",
-		"*If you like your DMs, don't add `.*` or anything similar...*",
+		"*If you like your DMs, don't add* `.*` *or anything similar...*",
 	].join('\n'),
 })
 export default class extends Command {
