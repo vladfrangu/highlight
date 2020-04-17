@@ -88,7 +88,7 @@ export default class extends Monitor {
 						`*Message has an embed*\n*Click **[here](${data.url})** to see the message*` :
 						`*Message has an attachment*\n*Click **[here](${data.url})** to see the message*` :
 					data.content.length >= 600 ?
-						`*This message's content was too large. Click **[here](${data.url})** to see the message*` :
+						`*This message's content was too large.*\n*Click **[here](${data.url})** to see the message*` :
 						data.content,
 			]);
 		}
