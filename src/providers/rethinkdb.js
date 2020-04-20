@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { Provider, Type, util: { mergeDefault, isObject, makeObject, chunk } } = require("klasa");
 const rethink = require("rethinkdbdash");
 
