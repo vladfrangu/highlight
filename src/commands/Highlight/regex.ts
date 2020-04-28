@@ -48,7 +48,6 @@ export default class extends Command {
 		return message.send(embed);
 	}
 	async add(message: KlasaMessage, [regularExpression]: [string]) {
-		regularExpression = regularExpression.toLowerCase();
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
 		const previousExpressions = message.member.settings.get('regularExpressions') as string[];
@@ -84,7 +83,6 @@ Use a site like [regexr](https://regexr.com/) to validate it and try again!`),
 
 		if (added) {
 			embed
-				// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 				.setDescription(`Your regular expression was added to the list: \`${Util.escapeMarkdown(regularExpression, {
 					bold: false,
 					italic: false,
@@ -99,7 +97,6 @@ Use a site like [regexr](https://regexr.com/) to validate it and try again!`),
 	}
 
 	async remove(message: KlasaMessage, [regularExpression]: [string]) {
-		regularExpression = regularExpression.toLowerCase();
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
 		const previousExpressions = [...message.member.settings.get('regularExpressions') as string[]];
@@ -121,7 +118,6 @@ Use a site like [regexr](https://regexr.com/) to validate it and try again!`),
 
 		if (removed) {
 			embed
-				// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 				.setDescription(`Your regular expression was removed from the list: \`${Util.escapeMarkdown(regularExpression, {
 					bold: false,
 					italic: false,
