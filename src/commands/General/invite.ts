@@ -10,7 +10,7 @@ export default class extends Command {
 				.setColor(0x3669FA)
 				.setTitle('Thanks for choosing me!')
 				.setDescription(`Click [here](https://discordapp.com/api/oauth2/authorize?client_id=${this.client.user!.id}&permissions=84992&scope=bot) to add me to your server! 😄`)
-				.setThumbnail(this.client.user!.displayAvatarURL({ size: 512 })),
+				.setThumbnail(this.client.user!.displayAvatarURL({ size: 512, format: 'png', dynamic: true })),
 		);
 	}
 }
