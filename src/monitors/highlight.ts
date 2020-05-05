@@ -98,7 +98,7 @@ export default class extends Monitor {
 	private _prepareEmbed(previous: Array<[string, string]>, message: KlasaMessage, parsedContent: string) {
 		const embed = new MessageEmbed()
 			.setColor(0x3669FA)
-			.setAuthor(Util.escapeMarkdown(message.author.tag), message.author.displayAvatarURL())
+			.setAuthor(Util.escapeMarkdown(message.author.tag), message.author.displayAvatarURL({ size: 128, format: 'png', dynamic: true }))
 			.setTimestamp()
 			.setDescription(`**[Click here to jump to the highlight message](${message.url})**`)
 			.setFooter('Highlighted');
