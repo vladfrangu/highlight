@@ -13,7 +13,7 @@ export default class extends Language {
 			.setColor(0x3669FA)
 			.setTitle('Are you lost?')
 			.setDescription(`Run **${prefix}help** to see what commands I have`)
-			.setThumbnail(this.client.user!.displayAvatarURL({ format: 'png', dynamic: true })) as unknown as string,
+			.setThumbnail(this.client.user!.displayAvatarURL({ size: 512, format: 'png', dynamic: true })) as unknown as string,
 		COMMAND_STATS: (stats: StatsGeneral, uptime: StatsUptime, usage: StatsUsage) => new MessageEmbed()
 			.setColor(0x3669FA)
 			.addField('Statistics', [
