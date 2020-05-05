@@ -3,7 +3,7 @@
 <div align="center">
 	<p>
 		<a href="https://discord.gg/C6D9bge">
-			<img src="https://discordapp.com/api/guilds/479665229396049920/embed.png" alt="Discord" />
+			<img src="https://discord.com/api/guilds/479665229396049920/embed.png" alt="Discord" />
 		</a>
 		<a href="https://www.patreon.com/kingdgrizzle">
 			<img src="https://img.shields.io/badge/donate-patreon-F96854.svg" alt="Patreon" />
