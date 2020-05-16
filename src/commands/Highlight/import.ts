@@ -8,7 +8,8 @@ import { pluralize } from '../../lib/utils/Util';
 	description: 'Import your words or regular expressions from a different guild.',
 	permissionLevel: 2,
 	runIn: ['text'],
-	usage: '<regex|words:default> <Guild:guild>',
+	usage: '<regex|words:default> <guild:guild>',
+	usageDelim: ' ',
 	extendedHelp: [
 		"→ If you want to import words from a guild",
 		'`{prefix}import [words] 479665229396049920` → Specifying `words` is optional as it is the default subcommand',
