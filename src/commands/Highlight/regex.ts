@@ -47,6 +47,7 @@ export default class extends Command {
 
 		return message.send(embed);
 	}
+
 	async add(message: KlasaMessage, [regularExpression]: [string]) {
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
