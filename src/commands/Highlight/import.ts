@@ -26,6 +26,7 @@ export default class extends Command {
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
 		const member = await guild.members.fetch(message.author);
+		await member.settings.sync(true);
 
 		if (!member) {
 			return message.send(new MessageEmbed()
@@ -63,6 +64,7 @@ export default class extends Command {
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
 		const member = await guild.members.fetch(message.author);
+		await member.settings.sync(true);
 
 		if (!member) {
 			return message.send(new MessageEmbed()
@@ -80,10 +82,8 @@ export default class extends Command {
 		for (const regex of regularExpressions)
 			if (!previousExpressions.includes(regex)) added.push(regex);
 
-		if (added.length) {
-			await message.member.settings.update('regularExpressions', added, { arrayAction: 'add' });
-			for (const regex of added) message.guild.addRegularExpression(regex, message.author.id);
-		}
+		await message.member.settings.update('regularExpressions', added, { arrayAction: 'add' });
+		message.guild.addRegularExpressions(added, message.author.id);
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)
