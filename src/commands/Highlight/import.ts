@@ -28,7 +28,7 @@ export default class extends Command {
 		if (!member) {
 			return message.send(new MessageEmbed()
 				.setColor(0x43B581)
-				.setDescription('You do not appear to be in that guild.')
+				.setDescription('You do not appear to be in that guild.'),
 			);
 		}
 
@@ -65,7 +65,7 @@ export default class extends Command {
 		if (!member) {
 			return message.send(new MessageEmbed()
 				.setColor(0x43B581)
-				.setDescription('You do not appear to be in that guild.')
+				.setDescription('You do not appear to be in that guild.'),
 			);
 		}
 
@@ -75,7 +75,7 @@ export default class extends Command {
 
 		const added = [];
 
-		for (const regex of regularExpressions) 
+		for (const regex of regularExpressions)
 			if (!previousExpressions.includes(regex)) added.push(regex);
 
 		if (added.length) {
@@ -97,7 +97,7 @@ export default class extends Command {
 					spoiler: false,
 					strikethrough: false,
 					underline: false,
-				})).join('\`\n- \`')}\``)
+				})).join('`\n- `')}\``)
 				.setFooter('Remember; regular expressions are case insensitive!');
 		}
 
