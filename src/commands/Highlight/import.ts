@@ -81,7 +81,7 @@ export default class extends Command {
 			if (!previousExpressions.includes(regex)) added.push(regex);
 
 		if (added.length) {
-			await message.member.settings.update('words', added, { arrayAction: 'add' });
+			await message.member.settings.update('regularExpressions', added, { arrayAction: 'add' });
 			for (const regex of added) message.guild.addRegularExpression(regex, message.author.id);
 		}
 
