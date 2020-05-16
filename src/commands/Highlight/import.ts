@@ -5,7 +5,7 @@ import { pluralize } from '../../lib/utils/Util';
 
 @ApplyOptions<CommandOptions>({
 	aliases: ['i'],
-	description: 'Import your words from a different Guild.',
+	description: 'Import your words or regular expressions from a different guild.',
 	permissionLevel: 2,
 	runIn: ['text'],
 	usage: '<regex|words:default> <Guild:guild>',
