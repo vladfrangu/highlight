@@ -45,7 +45,7 @@ export default class extends Command {
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)
-			.setDescription('No new words or regular expressions have been added..');
+			.setDescription('No new words or regular expressions have been imported..');
 
 		if (added.length) {
 			embed.setTitle(`The following words or expressions have been added to your list`)
