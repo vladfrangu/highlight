@@ -52,7 +52,7 @@ export default class extends Command {
 			.setDescription('No new words have been added..');
 
 		if (addedWords.length) {
-			embed.setTitle(`The following ${pluralize(addedWords.length, 'word', 'words')} have been added to your list`)
+			embed.setTitle(`The following ${pluralize(addedWords.length, 'word has', 'words have')} been added to your list`)
 				// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 				.setDescription(`- ${addedWords.sort().map((word) => Util.escapeMarkdown(word)).join('\n- ')}`);
 		}
@@ -91,7 +91,7 @@ export default class extends Command {
 
 		if (added.length) {
 			embed
-				.setTitle(`The following ${pluralize(added.length, 'expression', 'expressions')} have been added to your list`)
+				.setTitle(`The following ${pluralize(added.length, 'expression has', 'expressions have')} been added to your list`)
 				// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 				.setDescription(`- \`${added.sort().map((expression) => Util.escapeMarkdown(expression, {
 					bold: false,

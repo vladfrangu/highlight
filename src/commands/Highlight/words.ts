@@ -65,7 +65,7 @@ export default class extends Command {
 			.setDescription('No new words have been added..');
 
 		if (addedWords.length) {
-			embed.setTitle(`The following ${pluralize(addedWords.length, 'word', 'words')} have been added to your list`)
+			embed.setTitle(`The following ${pluralize(addedWords.length, 'word has', 'words have')} been added to your list`)
 				// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 				.setDescription(`- ${addedWords.sort().map((word) => Util.escapeMarkdown(word)).join('\n- ')}`);
 		}
@@ -97,7 +97,7 @@ export default class extends Command {
 			.setDescription('No words have been removed..');
 
 		if (removed.size) {
-			embed.setTitle(`The following ${pluralize(removed.size, 'word', 'words')} have been removed from your list`)
+			embed.setTitle(`The following ${pluralize(removed.size, 'word has', 'words have')} been removed from your list`)
 				// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 				.setDescription(`- ${[...removed].sort().map((word) => Util.escapeMarkdown(word)).join('\n- ')}`);
 		}
@@ -118,7 +118,7 @@ export default class extends Command {
 
 		const embed = new MessageEmbed()
 			.setColor(0x43B581)
-			.setTitle(`The following ${pluralize(wordSet.size, 'word', 'words')} have been set in your list`)
+			.setTitle(`The following ${pluralize(wordSet.size, 'word has', 'words have')} been set in your list`)
 			// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 			.setDescription(`- ${[...wordSet].sort().map((word) => Util.escapeMarkdown(word)).join('\n- ')}`);
 

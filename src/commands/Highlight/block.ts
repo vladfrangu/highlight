@@ -75,11 +75,11 @@ export default class extends Command {
 
 		if (changes[0].length) {
 			const tags = await Promise.all(changes[0].map(this._fetchTag.bind(this)));
-			embed.addField(`The following ${pluralize(changes[0].length, 'user', 'users')} ${pluralize(changes[0].length, 'has', 'have')} been blocked`, `- ${tags.join('\n- ')}`);
+			embed.addField(`The following ${pluralize(changes[0].length, 'user has', 'users have')} been blocked`, `- ${tags.join('\n- ')}`);
 		}
 
 		if (changes[1].length)
-			embed.addField(`The following ${pluralize(changes[1].length, 'channel', 'channels')} ${pluralize(changes[1].length, 'has', 'have')} been blocked`, `- ${changes[1].map((channel) => `${channel} — ${channel.id}`).join('\n- ')}`);
+			embed.addField(`The following ${pluralize(changes[1].length, 'channel has', 'channels have')} been blocked`, `- ${changes[1].map((channel) => `${channel} — ${channel.id}`).join('\n- ')}`);
 
 		if (!changes[0].length && !changes[1].length) embed.setDescription('No changes have been made to your block list..');
 
@@ -123,11 +123,11 @@ export default class extends Command {
 
 		if (removedUsers.size) {
 			const tags = await Promise.all([...removedUsers].map(this._fetchTag.bind(this)));
-			embed.addField(`The following ${pluralize(changes[0].length, 'user', 'users')} ${pluralize(changes[0].length, 'has', 'have')} been unblocked`, `- ${tags.join('\n- ')}`);
+			embed.addField(`The following ${pluralize(changes[0].length, 'user has', 'users have')} been unblocked`, `- ${tags.join('\n- ')}`);
 		}
 
 		if (removedChannels.size)
-			embed.addField(`The following ${pluralize(changes[1].length, 'channel', 'channels')} ${pluralize(changes[1].length, 'has', 'have')} been blocked`, `- ${[...removedChannels].map((channel) => `${channel} — ${channel.id}`).join('\n- ')}`);
+			embed.addField(`The following ${pluralize(changes[1].length, 'channel has', 'channels have')} been blocked`, `- ${[...removedChannels].map((channel) => `${channel} — ${channel.id}`).join('\n- ')}`);
 
 		if (!changes[0].length && !changes[1].length) embed.setDescription('No changes have been made to your block list..');
 
