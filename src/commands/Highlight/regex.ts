@@ -149,7 +149,7 @@ Use a site like [regexr](https://regexr.com/) to validate it and try again!`),
 	async init() {
 		this.createCustomResolver('string', async(arg, possible, message, params) => {
 			if (NEEDS_REGEX.includes(params[0])) return undefined;
-			return this.client.arguments.get('string')!.run(arg, possible, message);
+			return this.client.arguments.get('...string')!.run(arg, possible, message);
 		});
 	}
 }
