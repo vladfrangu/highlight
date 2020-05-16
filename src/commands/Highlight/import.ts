@@ -16,6 +16,7 @@ import { pluralize } from '../../lib/utils/Util';
 		"→ Importing your regular expressions from a guild",
 		"`{prefix}import regex 479665229396049920` → Adds your regular expressions from that guild, if they aren't added already.",
 	].join('\n'),
+	subcommands: true,
 })
 export default class extends Command {
 	needsMember = true;
