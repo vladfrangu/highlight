@@ -22,7 +22,7 @@ import { pluralize } from '../../lib/utils/Util';
 export default class extends Command {
 	needsMember = true;
 
-	async words(message: KlasaMessage, [guild]: KlasaGuild[]) {
+	async words(message: KlasaMessage, [guild]: [KlasaGuild]) {
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
 		const member = await guild.members.fetch(message.author);
