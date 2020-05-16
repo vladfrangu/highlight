@@ -58,7 +58,7 @@ export default class extends Command {
 		return message.send(embed);
 	}
 
-	async regex(message: KlasaMessage, [guild]: KlasaGuild[]) {
+	async regex(message: KlasaMessage, [guild]: [KlasaGuild]) {
 		if (!message.guild || !message.member) throw new Error('Unreachable');
 
 		const member = await guild.members.fetch(message.author);
