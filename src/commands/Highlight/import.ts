@@ -48,7 +48,7 @@ export default class extends Command {
 			.setDescription('No new words or regular expressions have been imported..');
 
 		if (added.length) {
-			embed.setTitle(`The following words or expressions have been added to your list`)
+			embed.setTitle(`The following words or regular expressions have been added to your list`)
 				// eslint-disable-next-line @typescript-eslint/require-array-sort-compare
 				.setDescription(`- \`${added.sort().map((word) => Util.escapeMarkdown(word)).join('`\n- `')}\``);
 		}
