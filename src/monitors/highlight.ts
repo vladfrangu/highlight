@@ -73,7 +73,7 @@ export default class extends Monitor {
 				`in ${message.channel} of ${message.guild}`,
 			].join(' '), embed);
 		} catch {
-			this.client.emit('wtf', `Failed to DM ${memberID} in ${message.guild.id} for trigger ${trigger}`);
+			this.client.emit('wtf', `Failed to DM ${memberID} in ${message.guild.id} for trigger ${trigger} by ${message.author.id}`);
 		}
 	}
 
@@ -98,13 +98,12 @@ export default class extends Monitor {
 	private _prepareEmbed(previous: Array<[string, string]>, message: KlasaMessage, parsedContent: string) {
 		const embed = new MessageEmbed()
 			.setColor(0x3669FA)
-			.setAuthor(Util.escapeMarkdown(message.author.tag), message.author.displayAvatarURL({ size: 128, format: 'png', dynamic: true }))
+			.setAuthor(Util.escapeMarkdown(message.author.tag) + ` (${message.author.id})`, message.author.displayAvatarURL({ size: 128, format: 'png', dynamic: true }))
 			.setTimestamp()
 			.setDescription(`**[Click here to jump to the highlight message](${message.url})**`)
 			.setFooter('Highlighted');
 
-		if (previous.length)
-			for (const [name, value] of previous) embed.addField(name, value);
+		for (const [name, value] of previous) embed.addField(name, value);
 
 		embed.addField(
 			`__**[${moment(message.createdTimestamp).tz("Europe/London").format("HH[:]mm")} UTC] ${Util.escapeMarkdown(message.author.tag)}**__`,
