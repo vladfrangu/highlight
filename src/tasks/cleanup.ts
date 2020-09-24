@@ -38,22 +38,16 @@ const HEADER = `\u001B[39m\u001B[94m[CACHE CLEANUP]\u001B[39m\u001B[90m`;
 export default class extends Task {
 	run() {
 		const OLD_SNOWFLAKE = Util.binaryToID(((Date.now() - THRESHOLD) - EPOCH).toString(2).padStart(42, '0') + EMPTY);
-		let presences = 0;
 		let guildMembers = 0;
 		let lastMessages = 0;
 		let users = 0;
 
 		// Per-Guild sweeper
 		for (const guild of this.client.guilds.values()) {
-			// Clear presences
-			presences += guild.presences.size;
-			guild.presences.clear();
-
 			// Clear members that haven't send a message in the last 30 minutes
 			const { me } = guild;
 			for (const [id, member] of guild.members) {
 				if (member === me) continue;
-				if (member.voice.channelID) continue;
 				if (member.lastMessageID && member.lastMessageID > OLD_SNOWFLAKE) continue;
 				guild.members.delete(id);
 				guildMembers++;
@@ -78,7 +72,6 @@ export default class extends Task {
 		// Emit a log
 		this.client.emit('verbose',
 			`${HEADER} ${
-				this.setColor(presences)} [Presence]s | ${
 				this.setColor(guildMembers)} [GuildMember]s | ${
 				this.setColor(users)} [User]s | ${
 				this.setColor(lastMessages)} [Last Message]s.`);
