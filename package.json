@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@klasa/utils": "^0.0.4",
-    "@skyra/decorators": "^1.0.0",
+    "@skyra/decorators": "^3.0.0",
     "bufferutil": "^4.0.1",
     "chainfetch": "^1.2.2",
     "discord.js": "github:discordjs/discord.js#fe7df708e44e0280dfaf0f8e457b154781bb5140",
