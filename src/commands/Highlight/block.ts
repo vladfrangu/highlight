@@ -127,7 +127,7 @@ export default class extends Command {
 		}
 
 		if (removedChannels.size)
-			embed.addField(`The following ${pluralize(changes[1].length, 'channel has', 'channels have')} been blocked`, `- ${[...removedChannels].map((channel) => `${channel} — ${channel.id}`).join('\n- ')}`);
+			embed.addField(`The following ${pluralize(changes[1].length, 'channel has', 'channels have')} been unblocked`, `- ${[...removedChannels].map((channel) => `${channel} — ${channel.id}`).join('\n- ')}`);
 
 		if (!changes[0].length && !changes[1].length) embed.setDescription('No changes have been made to your block list..');
 
