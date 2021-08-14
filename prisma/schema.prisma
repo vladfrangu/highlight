@@ -1,0 +1,47 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["nativeTypes"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model GuildSettings {
+  @@map("guild_settings")
+
+  guildID      String @id @map("guild_id") @db.Text
+  prefix       String                      @db.Text
+}
+
+model GuildPermissions {
+  @@map("guild_permissions")
+
+  guildID      String   @id @map("guild_id")      @db.Text
+  requiresRole Boolean      @map("requires_role") @db.Boolean
+  allowedRoles String[]     @map("allowed_roles") @db.Text
+}
+
+model Members {
+  @@map("members")
+
+  guildID            String   @map("guild_id")            @db.Text
+  userID             String   @map("user_id")             @db.Text
+  words              String[]                             @db.Text
+  regularExpressions String[] @map("regular_expressions") @db.Text
+  ignoredUsers       String[] @map("ignored_users")       @db.Text
+  ignoredChannels    String[] @map("ignored_channels")    @db.Text
+
+  @@id([guildID, userID])
+}
+
+model Schedules {
+  @@map("schedules")
+
+  id        Int      @id                 @db.Integer      @default(autoincrement())
+  taskID    String       @map("task_id") @db.Text
+  time      DateTime                     @db.Timestamp(6)
+  recurring String?                      @db.VarChar(50)
+  data      Json?                        @db.JsonB
+}

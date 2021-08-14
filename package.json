@@ -1,0 +1,60 @@
+{
+	"name": "highlight-bot",
+	"version": "3.0.0",
+	"description": "An utility bot written in Sapphire to get highlighted when a word, or regular expression is said",
+	"main": "dist/Highlight.js",
+	"scripts": {
+		"start": "npm run cleanbuild && node .",
+		"lint": "eslint --fix src --ext ts",
+		"test:lint": "eslint src --ext mjs,js,ts",
+		"build": "tsc -b src",
+		"cleanbuild": "npx rimraf dist && tsc -b src",
+		"build:ci": "tsc -b src --noEmit --incremental false",
+		"watch": "tsc -b src -w",
+		"dev": "npm run start"
+	},
+	"private": true,
+	"author": {
+		"name": "Vlad Frangu",
+		"email": "kingdgrizzle@gmail.com"
+	},
+	"engines": {
+		"node": ">= 14.0.0"
+	},
+	"dependencies": {
+		"@mikro-orm/sql-highlighter": "^1.0.1",
+		"@prisma/client": "^2.16.1",
+		"@sapphire/decorators": "^2.0.3",
+		"@sapphire/discord.js-utilities": "^1.4.1",
+		"@sapphire/framework": "^1.0.0-alpha.10",
+		"@sapphire/plugin-logger": "^1.0.7",
+		"@sapphire/stopwatch": "^1.0.4",
+		"@sapphire/time-utilities": "^1.2.8",
+		"@sapphire/type": "^1.1.4",
+		"@sapphire/utilities": "^1.4.4",
+		"bufferutil": "^4.0.3",
+		"colorette": "^1.2.1",
+		"discord-api-types": "^0.12.1",
+		"discord.js": "^12.5.1",
+		"dotenv": "^8.2.0",
+		"node-fetch": "^2.6.1",
+		"prisma": "^2.16.1",
+		"re2": "^1.15.9",
+		"tslib": "^2.1.0",
+		"utf-8-validate": "^5.0.4",
+		"zlib-sync": "^0.1.7"
+	},
+	"devDependencies": {
+		"@sapphire/eslint-config": "^2.1.1",
+		"@sapphire/ts-config": "^2.0.0",
+		"@types/node": "^14.14.27",
+		"@types/node-fetch": "^2.5.8",
+		"@typescript-eslint/eslint-plugin": "^4.15.0",
+		"@typescript-eslint/parser": "^4.15.0",
+		"eslint": "^7.20.0",
+		"eslint-config-prettier": "^7.2.0",
+		"eslint-plugin-prettier": "^3.3.1",
+		"prettier": "^2.2.1",
+		"typescript": "^4.1.5"
+	}
+}

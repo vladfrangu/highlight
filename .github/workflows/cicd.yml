@@ -1,0 +1,29 @@
+name: Continuous Integration / Deployment
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+jobs:
+  testing:
+    name: ESLint and TypeScript compilation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run test:lint
+
+      - name: Run TSC
+        run: npm run build:ci
