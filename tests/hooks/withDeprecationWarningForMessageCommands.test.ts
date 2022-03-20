@@ -1,0 +1,290 @@
+import { createInfoEmbed } from '#utils/embeds';
+import { bold, hyperlink, inlineCode } from '@discordjs/builders';
+import { jest } from '@jest/globals';
+import { MessageLimits } from '@sapphire/discord-utilities';
+import { deepClone } from '@sapphire/utilities';
+import { OAuth2Routes, PermissionFlagsBits } from 'discord-api-types/v10';
+import { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu, Permissions } from 'discord.js';
+
+jest.mock('@sapphire/pieces', () => {
+	const actual = jest.requireActual('@sapphire/pieces') as typeof import('@sapphire/pieces');
+	return {
+		...actual,
+		container: {
+			client: {
+				generateInvite: jest.fn(
+					(
+						options: Parameters<import('discord.js').Client['generateInvite']>[0] = {
+							scopes: ['bot', 'applications.commands'],
+						},
+					) => {
+						const query = new URLSearchParams({
+							client_id: '1',
+							scope: options.scopes.join(' '),
+						});
+
+						if (options.permissions) {
+							const resolved = Permissions.resolve(options.permissions);
+							if (resolved) {
+								query.set('permissions', resolved.toString());
+							}
+						}
+
+						if (options.guild) {
+							query.set('guild_id', options.guild as string);
+						}
+
+						return `${OAuth2Routes.authorizationURL}?${query.toString()}`;
+					},
+				),
+			},
+		},
+	};
+});
+
+afterAll(() => {
+	jest.unmock('@sapphire/pieces');
+});
+
+const { container } = await import('@sapphire/pieces');
+const { withDeprecationWarningForMessageCommands, withDeprecationWarningOnEmbedForMessageCommands } = await import(
+	'#hooks/withDeprecationWarningForMessageCommands'
+);
+
+const invite = container.client.generateInvite({
+	scopes: ['bot', 'applications.commands'],
+	permissions: new Permissions([
+		PermissionFlagsBits.ViewChannel,
+		PermissionFlagsBits.ReadMessageHistory,
+		PermissionFlagsBits.SendMessages,
+		PermissionFlagsBits.EmbedLinks,
+	]),
+	guild: '1',
+});
+
+const authButton = new MessageButton()
+	.setStyle('LINK')
+	.setURL(invite)
+	.setLabel('Re-authorize me with slash commands!')
+	.setEmoji('🤖');
+
+describe('message command deprecation hooks884198887756283955', () => {
+	describe('withDeprecationWarningOnEmbedForMessageCommands', () => {
+		describe('given embed with too many fields, then it should update the description', () => {
+			const twentyFiveFields = () => Array.from({ length: 25 }, () => ({ name: 'example', value: 'owo' }));
+
+			test('given no button notice, it should just warn about the migration', () => {
+				const embed = createInfoEmbed().setFields(twentyFiveFields());
+				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test');
+
+				expect(embed.description).toEqual(
+					[
+						`> ${bold('Did you know?')}`,
+						`> Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
+						`> You should use the ${bold(inlineCode(`/test`))} slash command instead!`,
+					].join('\n'),
+				);
+			});
+
+			test('given button notice, it should warn about the migration and link in the event of missing components', () => {
+				const embed = createInfoEmbed().setFields(twentyFiveFields());
+				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test', invite);
+
+				expect(embed.description).toEqual(
+					[
+						`> ${bold('Did you know?')}`,
+						`> Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
+						`> You should use the ${bold(inlineCode(`/test`))} slash command instead!`,
+						`> If you don't see the slash commands popping up when you type ${bold(
+							inlineCode(`/test`),
+						)}, click the ${bold('Re-authorize')} button if present (or click ${bold(
+							hyperlink('here to re-authorize', invite),
+						)}) and try again!`,
+					].join('\n'),
+				);
+			});
+
+			test('given embed with existing description, it should append the warning to the description', () => {
+				const embed = createInfoEmbed('Hey there!').setFields(twentyFiveFields());
+				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test');
+
+				expect(embed.description).toEqual(
+					[
+						'Hey there!',
+						'',
+						`> ${bold('Did you know?')}`,
+						`> Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
+						`> You should use the ${bold(inlineCode(`/test`))} slash command instead!`,
+					].join('\n'),
+				);
+			});
+		});
+
+		describe('given embed with enough space for a field, then it should add a field about the migration', () => {
+			test('given no button notice, it should just warn about the migration', () => {
+				const embed = createInfoEmbed();
+				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test');
+
+				expect(embed.fields).toHaveLength(1);
+				expect(embed.fields[0].name).toEqual('Did you know?');
+				expect(embed.fields[0].value).toEqual(
+					[
+						`Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
+						`You should use the ${bold(inlineCode(`/test`))} slash command instead!`,
+					].join('\n'),
+				);
+			});
+
+			test('given button notice, it should warn about the migration and link in the event of missing components', () => {
+				const embed = createInfoEmbed();
+				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test', invite);
+
+				expect(embed.fields).toHaveLength(1);
+				expect(embed.fields[0].name).toEqual('Did you know?');
+				expect(embed.fields[0].value).toEqual(
+					[
+						`Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
+						`You should use the ${bold(inlineCode(`/test`))} slash command instead!`,
+						`If you don't see the slash commands popping up when you type ${bold(
+							inlineCode(`/test`),
+						)}, click the ${bold('Re-authorize')} button if present (or click ${bold(
+							hyperlink('here to re-authorize', invite),
+						)}) and try again!`,
+					].join('\n'),
+				);
+			});
+		});
+	});
+
+	describe('withDeprecationWarningForMessageCommands', () => {
+		test('given options received from an interaction, then it should return the exact same data', () => {
+			const original = { content: 'hi' };
+
+			const result = withDeprecationWarningForMessageCommands({
+				commandName: 'test',
+				guildId: '1',
+				options: deepClone(original),
+				receivedFromMessage: false,
+			});
+
+			expect(result).toStrictEqual(original);
+		});
+
+		describe('given options received from a message, then it should return the data with extra information about the deprecation', () => {
+			test('given only content, it should add an embed and button', () => {
+				const original = { content: 'Hi' };
+
+				const result = withDeprecationWarningForMessageCommands({
+					commandName: 'test',
+					guildId: '1',
+					options: deepClone(original),
+					receivedFromMessage: true,
+				});
+
+				const expected = {
+					...original,
+					embeds: [withDeprecationWarningOnEmbedForMessageCommands(createInfoEmbed(), 'test', invite)],
+					components: [new MessageActionRow().addComponents(authButton)],
+				};
+
+				expect(result).toStrictEqual(expected);
+			});
+
+			test('given an embed, it should enhance it with the deprecation warning', () => {
+				const original = { embeds: [new MessageEmbed(createInfoEmbed('Hey there!'))] };
+
+				const result = withDeprecationWarningForMessageCommands({
+					commandName: 'test',
+					guildId: '1',
+					options: deepClone(original),
+					receivedFromMessage: true,
+				});
+
+				const expected = {
+					embeds: [withDeprecationWarningOnEmbedForMessageCommands(original.embeds[0], 'test', invite)],
+					components: [new MessageActionRow().addComponents(authButton)],
+				};
+
+				expect(result).toStrictEqual(expected);
+			});
+
+			test('given content and an action row, it should add another action row', () => {
+				const original = { content: 'Hi', components: [new MessageActionRow()] };
+
+				const result = withDeprecationWarningForMessageCommands({
+					commandName: 'test',
+					guildId: '1',
+					options: deepClone(original),
+					receivedFromMessage: true,
+				});
+
+				const expected = {
+					...original,
+					embeds: [withDeprecationWarningOnEmbedForMessageCommands(createInfoEmbed(), 'test', invite)],
+					components: [...original.components, new MessageActionRow().addComponents(authButton)],
+				};
+
+				expect(result).toStrictEqual(expected);
+			});
+
+			test('given content and maximum action rows, it should add the auth button on the first available action row', () => {
+				const original = {
+					content: 'Hi',
+					components: Array.from({ length: MessageLimits.MaximumActionRows }, () => new MessageActionRow()),
+				};
+
+				const result = withDeprecationWarningForMessageCommands({
+					commandName: 'test',
+					guildId: '1',
+					options: deepClone(original),
+					receivedFromMessage: true,
+				});
+
+				const expected = {
+					content: 'Hi',
+					embeds: [withDeprecationWarningOnEmbedForMessageCommands(createInfoEmbed(), 'test', invite)],
+					components: [...original.components],
+				};
+
+				// Add the button to the "first" free row
+				expected.components[0].addComponents(authButton);
+
+				expect(result).toStrictEqual(expected);
+			});
+
+			test('given content and maximum action rows, where some have select menus, it should add the auth button on the first available action row', () => {
+				const original = {
+					content: 'Hi',
+					components: Array.from({ length: MessageLimits.MaximumActionRows }, (_, index) => {
+						const row = new MessageActionRow();
+
+						// Even rows get a select menu
+						if (index % 2 === 0) {
+							row.setComponents(new MessageSelectMenu());
+						}
+
+						return row;
+					}),
+				};
+
+				const result = withDeprecationWarningForMessageCommands({
+					commandName: 'test',
+					guildId: '1',
+					options: deepClone(original),
+					receivedFromMessage: true,
+				});
+
+				const expected = {
+					content: 'Hi',
+					embeds: [withDeprecationWarningOnEmbedForMessageCommands(createInfoEmbed(), 'test', invite)],
+					components: [...original.components],
+				};
+
+				// Add the button to the "first" free row
+				expected.components[1].addComponents(authButton);
+
+				expect(result).toStrictEqual(expected);
+			});
+		});
+	});
+});

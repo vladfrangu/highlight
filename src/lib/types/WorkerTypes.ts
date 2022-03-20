@@ -1,13 +1,18 @@
-import type { Members } from '@prisma/client';
-import type { WorkerType } from '../structures/HighlightManager';
+import type { Member } from '@prisma/client';
+
+export enum WorkerType {
+	Word,
+	RegularExpression,
+}
 
 export interface HighlightResult {
 	type: WorkerType;
 	results: ParsedHighlightData[];
+	memberIds: string[];
 }
 
 export interface ParsedHighlightData {
-	memberID: string;
+	memberId: string;
 	parsedContent: string;
 	trigger: string;
 }
@@ -17,12 +22,12 @@ export interface WorkerData {
 }
 
 // #region Worker Commands
-export const enum WorkerCommands {
-	HandleHighlight = 'handleHighlight',
-	RemoveTriggerForUser = 'removeTriggerForUser',
-	UpdateCacheForGuild = 'updateCacheForGuild',
-	UpdateFullCache = 'updateFullCache',
-	ValidateRegularExpression = 'validateRegularExpression',
+export enum WorkerCommands {
+	HandleHighlight,
+	RemoveTriggerForUser,
+	UpdateCacheForGuild,
+	UpdateFullCache,
+	ValidateRegularExpression,
 }
 
 export type WorkerCommandsUnion =
@@ -36,27 +41,27 @@ export type HandleHighlightCommand = BaseCommand<
 	WorkerCommands.HandleHighlight,
 	{
 		content: string;
-		authorID: string;
-		guildID: string;
-		messageID: string;
+		authorId: string;
+		guildId: string;
+		messageId: string;
 	}
 >;
 
 export type RemoveTriggerForUserCommand = BaseCommand<
 	WorkerCommands.RemoveTriggerForUser,
 	{
-		guildID: string;
-		memberID: string;
+		guildId: string;
+		memberId: string;
 		trigger: string;
 	}
 >;
 
 export type UpdateCacheForGuildCommand = BaseCommand<
 	WorkerCommands.UpdateCacheForGuild,
-	{ guildID: string; members: Members[] }
+	{ guildId: string; members: Member[] }
 >;
 
-export type UpdateFullCacheCommand = BaseCommand<WorkerCommands.UpdateFullCache, { members: Members[] }>;
+export type UpdateFullCacheCommand = BaseCommand<WorkerCommands.UpdateFullCache, { members: Member[] }>;
 
 export type ValidateRegularExpressionCommand = BaseCommand<
 	WorkerCommands.ValidateRegularExpression,
@@ -65,11 +70,11 @@ export type ValidateRegularExpressionCommand = BaseCommand<
 // #endregion
 
 // #region Worker Responses
-export const enum WorkerResponseTypes {
-	DeleteInvalidRegularExpression = 'deleteInvalidRegularExpression',
-	HighlightResult = 'highlightResult',
-	Ready = 'ready',
-	ValidateRegularExpressionResult = 'validateRegularExpressionResult',
+export enum WorkerResponseTypes {
+	DeleteInvalidRegularExpression,
+	HighlightResult,
+	Ready,
+	ValidateRegularExpressionResult,
 }
 
 export type WorkerResponse =
@@ -80,13 +85,13 @@ export type WorkerResponse =
 
 export type DeleteInvalidRegularExpressionResponse = BaseResponse<
 	WorkerResponseTypes.DeleteInvalidRegularExpression,
-	{ guildID: string; memberID: string; value: string }
+	{ guildId: string; memberId: string; value: string }
 >;
 
 export type HighlightResultResponse = BaseResponse<
 	WorkerResponseTypes.HighlightResult,
 	{
-		messageID: string;
+		messageId: string;
 		result: HighlightResult;
 	}
 >;
@@ -99,12 +104,12 @@ export type ValidateRegularExpressionResultResponse = BaseResponse<
 >;
 // #endregion
 
-interface BaseCommand<C extends WorkerCommands, D extends unknown> {
+interface BaseCommand<C extends WorkerCommands, D> {
 	command: C;
 	data: D;
 }
 
-interface BaseResponse<C extends WorkerResponseTypes, D extends unknown> {
+interface BaseResponse<C extends WorkerResponseTypes, D> {
 	command: C;
 	data: D;
 }

@@ -1,8 +1,3 @@
-import { cyan } from 'colorette';
-import type { Message } from 'discord.js';
-import { join } from 'path';
-import { Worker } from 'worker_threads';
-import type { Client } from '../Client';
 import {
 	DeleteInvalidRegularExpressionResponse,
 	HighlightResult,
@@ -10,14 +5,14 @@ import {
 	WorkerCommandsUnion,
 	WorkerResponse,
 	WorkerResponseTypes,
-} from '../types/WorkerTypes';
+	WorkerType,
+} from '#types/WorkerTypes';
+import { container } from '@sapphire/framework';
+import { remove } from 'confusables';
+import type { Message } from 'discord.js';
+import { Worker } from 'worker_threads';
 
-const WORKER_PATH = join(__dirname, 'Worker.js');
-
-export enum WorkerType {
-	Word,
-	RegularExpression,
-}
+const WORKER_PATH = new URL('../workers/Worker.js', import.meta.url);
 
 type ResultsTuple = [words: HighlightResult, regularExpressions: HighlightResult];
 
@@ -42,9 +37,7 @@ export class HighlightManager {
 	 */
 	private destroyed = false;
 
-	public constructor(public client: Client) {}
-
-	public async init() {
+	public async start() {
 		this.initializeWorkers();
 		await this.updateAllCaches();
 	}
@@ -55,19 +48,19 @@ export class HighlightManager {
 	}
 
 	public async updateAllCaches() {
-		const members = await this.client.prisma.members.findMany();
+		const members = await container.prisma.member.findMany();
 		this.broadcastCommand({
 			command: WorkerCommands.UpdateFullCache,
 			data: { members },
 		});
 	}
 
-	public async updateCacheForGuildID(guildID: string) {
-		const members = await this.client.prisma.members.findMany({ where: { guildID } });
+	public async updateCacheForGuildID(guildId: string) {
+		const members = await container.prisma.member.findMany({ where: { guildId } });
 		this.broadcastCommand({
 			command: WorkerCommands.UpdateCacheForGuild,
 			data: {
-				guildID,
+				guildId,
 				members,
 			},
 		});
@@ -116,22 +109,22 @@ export class HighlightManager {
 		this.broadcastCommand({
 			command: WorkerCommands.HandleHighlight,
 			data: {
-				authorID: message.author.id,
-				content: message.content,
-				guildID: message.guild!.id,
-				messageID: message.id,
+				authorId: message.author.id,
+				content: remove(message.content),
+				guildId: message.guild!.id,
+				messageId: message.id,
 			},
 		});
 
 		return promise;
 	}
 
-	public removeTriggerForUser(guildID: string, memberID: string, trigger: string) {
+	public removeTriggerForUser(guildId: string, memberId: string, trigger: string) {
 		this.broadcastCommand({
 			command: WorkerCommands.RemoveTriggerForUser,
 			data: {
-				guildID,
-				memberID,
+				guildId,
+				memberId,
 				trigger,
 			},
 		});
@@ -149,8 +142,10 @@ export class HighlightManager {
 		// eslint-disable-next-line no-multi-assign
 		const worker = (this.workers[type] = new Worker(WORKER_PATH, { workerData: { type } }));
 		worker.once('exit', (exitCode) => {
-			this.client.logger.info(
-				`[${cyan(WorkerType[type])}] Exited with code ${exitCode}${this.destroyed ? '' : ' :: Respawning'}`,
+			container.logger.info(
+				`[${container.colors.cyan(`${WorkerType[type]} Worker`)}]: Exited with code ${exitCode}.${
+					this.destroyed ? '' : ' Respawning...'
+				}`,
 			);
 			worker.removeAllListeners();
 			this.createWorkerType(type);
@@ -167,7 +162,7 @@ export class HighlightManager {
 	}
 
 	private onWorkerResponse(type: WorkerType, payload: WorkerResponse) {
-		const colored = cyan(WorkerType[type]);
+		const colored = container.colors.cyan(`${WorkerType[type]} Worker`);
 
 		switch (payload.command) {
 			case WorkerResponseTypes.DeleteInvalidRegularExpression: {
@@ -175,12 +170,12 @@ export class HighlightManager {
 				break;
 			}
 			case WorkerResponseTypes.HighlightResult: {
-				const { messageID, result } = payload.data;
-				const promiseData = this.#promiseMap.get(messageID);
+				const { messageId, result } = payload.data;
+				const promiseData = this.#promiseMap.get(messageId);
 
 				if (!promiseData) {
-					this.client.logger.warn(
-						`Parsed highlight for message "${messageID}", but there was no promise in the promise map`,
+					container.logger.warn(
+						`Parsed highlight for message "${messageId}", but there was no promise in the promise map`,
 					);
 					return;
 				}
@@ -190,20 +185,34 @@ export class HighlightManager {
 
 				if (typeof promiseData.results[0] !== 'undefined' && typeof promiseData.results[1] !== 'undefined') {
 					promiseData.resolve(promiseData.results);
-					this.#promiseMap.delete(messageID);
+					this.#promiseMap.delete(messageId);
 				}
 
 				break;
 			}
 			case WorkerResponseTypes.Ready: {
-				this.client.logger.info(`[${colored}] :: READY`);
+				container.logger.info(`[${colored}]: READY`);
 				break;
 			}
 		}
 	}
 
-	private async deleteInvalidRegularExpression(_data: DeleteInvalidRegularExpressionResponse['data']) {
-		// TODO: delete regular expression and warn user in DMs
-		// For real this time LMAO
+	private async deleteInvalidRegularExpression(data: DeleteInvalidRegularExpressionResponse['data']) {
+		const memberData = await container.prisma.member.findFirst({
+			where: { guildId: data.guildId, userId: data.memberId },
+		});
+
+		if (!memberData) {
+			container.logger.warn(`Received invalid regular expression for member but no member data could be found`, data);
+			return;
+		}
+
+		const newRegularExpressions = memberData.regularExpressions.filter((regex) => regex !== data.value);
+		await container.prisma.member.update({
+			where: { guildId_userId: { guildId: data.guildId, userId: data.memberId } },
+			data: { regularExpressions: newRegularExpressions },
+		});
+
+		// TODO: warn user in DMs
 	}
 }

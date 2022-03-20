@@ -1,0 +1,17 @@
+{
+	"extends": "../tsconfig.json",
+	"include": ["."],
+	"references": [{ "path": "../" }],
+	"compilerOptions": {
+		"rootDir": "./",
+		"paths": {
+			"#internals/*": ["../src/lib/internals/*.ts"],
+			"#hooks/*": ["../src/lib/utils/hooks/*.ts"],
+			"#setup": ["../src/lib/setup.ts"],
+			"#types/*": ["../src/lib/types/*.ts"],
+			"#utils/*": ["../src/lib/utils/*.ts"],
+			"#workers/*": ["../src/lib/workers/*.ts"],
+			"#test/*": ["./__shared__/*.ts"]
+		}
+	}
+}

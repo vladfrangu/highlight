@@ -1,49 +1,72 @@
-import '@sapphire/plugin-logger/register';
+import '#setup';
+import { HighlightClient } from '#structures/HighlightClient';
+import { container, LogLevel } from '@sapphire/framework';
+import { Time } from '@sapphire/time-utilities';
+import { GatewayIntentBits } from 'discord-api-types/v10';
+import { Intents, Options } from 'discord.js';
 
-// Load .env
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { parse } from 'dotenv';
-const env = parse(readFileSync(join(__dirname, '../', '.env'))) as { DISCORD_TOKEN: string };
-process.env.DISCORD_TOKEN = env.DISCORD_TOKEN;
-
-// Load the rest of the dependencies
-import { inspect } from 'util';
-import { options, red } from 'colorette';
-import { Intents } from 'discord.js';
-import { LogLevel } from '@sapphire/framework';
-import { Client } from './lib/Client';
-
-inspect.defaultOptions.depth = 2;
-options.enabled = true;
-
-const client = new Client({
+const client = new HighlightClient({
 	presence: {
-		activity: {
-			name: 'messages fly by!',
-			type: 'WATCHING',
-		},
+		activities: [
+			{
+				name: 'messages fly by!',
+				type: 'WATCHING',
+			},
+		],
 	},
 	restTimeOffset: 0,
-	ws: {
-		intents: new Intents([
-			Intents.FLAGS.DIRECT_MESSAGES,
-			Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-			Intents.FLAGS.GUILD_MESSAGES,
-			Intents.FLAGS.GUILDS,
-		]),
+	intents: new Intents([
+		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildMessageTyping,
+		GatewayIntentBits.Guilds,
+	]),
+	makeCache: Options.cacheWithLimits({
+		MessageManager: {
+			maxSize: 50,
+		},
+		UserManager: {
+			maxSize: 200,
+			keepOverLimit: (user) => user.id === user.client.user!.id,
+		},
+		GuildMemberManager: {
+			maxSize: 200,
+			keepOverLimit: (member) => member.user.id === member.client.user!.id,
+		},
+		// Useless props for the bot
+		GuildEmojiManager: { maxSize: 0 },
+		GuildStickerManager: { maxSize: 0 },
+	}),
+	sweepers: {
+		// Members, users and messages are needed for the bot to function
+		guildMembers: {
+			interval: Time.Minute * 15,
+			// Sweep all members except the bot member
+			filter: () => (member) => member.user.id !== member.client.user!.id,
+		},
+		users: {
+			interval: Time.Minute * 15,
+			// Sweep all users except the bot user
+			filter: () => (user) => user.id !== user.client.user!.id,
+		},
+		messages: {
+			interval: Time.Minute * 5,
+			lifetime: Time.Minute * 15,
+		},
 	},
-	messageCacheMaxSize: 50,
 	caseInsensitiveCommands: true,
-	loadDefaultErrorEvents: true,
 	logger: {
-		stylize: true,
 		depth: 2,
-		level: Reflect.has(process.env, 'PM2_HOME') ? LogLevel.Debug : LogLevel.Trace,
+		level: Reflect.has(process.env, 'PM2_HOME') ? LogLevel.Info : LogLevel.Debug,
 	},
+	loadMessageCommandListeners: true,
+	loadDefaultErrorListeners: true,
 });
 
-client.login().catch((error) => {
-	client.logger.error(red('Failed to launch the bot:'), error);
-	client.destroy();
-});
+try {
+	await client.login();
+} catch (err) {
+	container.logger.fatal(container.colors.redBright('Failed to start Highlight'));
+	container.logger.error((err as Error).message);
+	await client.destroy();
+}

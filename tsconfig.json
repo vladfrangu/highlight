@@ -1,0 +1,28 @@
+{
+	"extends": "@sapphire/ts-config",
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"noEmitHelpers": true,
+		"importHelpers": true,
+		"removeComments": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"importsNotUsedAsValues": "error",
+		"noImplicitOverride": true,
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"tsBuildInfoFile": "./dist/.tsbuildinfo",
+		"paths": {
+			"#internals/*": ["./src/lib/internals/*.ts"],
+			"#hooks/*": ["./src/lib/utils/hooks/*.ts"],
+			"#setup": ["./src/lib/setup.ts"],
+			"#structures/*": ["./src/lib/structures/*.ts"],
+			"#types/*": ["./src/lib/types/*.ts"],
+			"#utils/*": ["./src/lib/utils/*.ts"],
+			"#workers/*": ["./src/lib/workers/*.ts"]
+		}
+	},
+	"include": ["src"]
+}
