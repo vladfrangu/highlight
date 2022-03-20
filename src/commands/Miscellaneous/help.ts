@@ -15,7 +15,7 @@ const randomMissingPermissionMessages = [
 	'🔒 You do not have permission to run this command here.',
 	"🧐 Something feels off...how do you know about this command? (You don't have permissions to run this command here)",
 	'🤐 I cannot tell you about this command! You do not have permissions to run it here!',
-	"😱 Woah, woah, woah! i don't know how you know about this command, but you cannot run it here!",
+	"😱 Woah, woah, woah! I don't know how you know about this command, but you cannot run it here!",
 ];
 
 @ApplyOptions<Command.Options>({
