@@ -213,6 +213,8 @@ export class HelpCommand extends Command {
 		matches: Command[],
 		isMessage = false,
 	) {
+		const empathyChance = Math.random() * 100 < 5;
+
 		if (!matches.length) {
 			await messageOrInteraction.reply(
 				withDeprecationWarningForMessageCommands({
@@ -222,9 +224,11 @@ export class HelpCommand extends Command {
 					options: {
 						embeds: [
 							createErrorEmbed(
-								`👀 I don't know of a command called ${bold(inlineCode(input))}. Try running ${bold(
-									inlineCode('/help'),
-								)} to see all available commands!`,
+								`${
+									empathyChance
+										? '🍌 Not even the empathy banana knows of a command called'
+										: "👀 I don't know of a command called"
+								} ${bold(inlineCode(input))}. Try running ${bold(inlineCode('/help'))} to see all available commands!`,
 							),
 						],
 						ephemeral: true,
@@ -245,9 +249,11 @@ export class HelpCommand extends Command {
 				options: {
 					embeds: [
 						createErrorEmbed(
-							`🔎 I couldn't find a command called ${bold(
-								inlineCode(input),
-							)}. Maybe one of these match your search: ${list}`,
+							`${
+								empathyChance
+									? "🍌 The magnifier broke, but fear not! Empathy banana is here to let you know that I couldn't find a command called"
+									: "🔎 I couldn't find a command called"
+							} ${bold(inlineCode(input))}. Maybe one of these match your search: ${list}`,
 						),
 					],
 					ephemeral: true,
