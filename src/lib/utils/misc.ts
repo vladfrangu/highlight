@@ -15,3 +15,11 @@ export function pluralize(count: number, singular: string, plural: string) {
 export const andList = new Intl.ListFormat('en-US', { type: 'conjunction', style: 'long' });
 
 export const orList = new Intl.ListFormat('en-US', { type: 'disjunction', style: 'long' });
+
+export const enum Emojis {
+	ChatInputCommands = '<:chatinputcommands:955124528483283004>',
+}
+
+export const enum HelpDetailedDescriptionReplacers {
+	UserMention = '{user_mention}',
+}

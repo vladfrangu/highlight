@@ -7,7 +7,7 @@ import { Command } from '@sapphire/framework';
 import type { Message } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
-	description: 'Is the application alive? Find out!',
+	description: 'Find out if Highlight is alive and processing messages!',
 	chatInputCommand: {
 		register: true,
 		guildIds: useDevelopmentGuildIds(),
