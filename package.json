@@ -5,7 +5,7 @@
 	"main": "dist/Highlight.js",
 	"type": "module",
 	"scripts": {
-		"build:ci": "tsc --noEmit --incremental false",
+		"build:ci": "tsc --noEmit",
 		"build": "tsc",
 		"clean": "npx rimraf dist",
 		"cleanbuild": "npm run clean && tsc",
