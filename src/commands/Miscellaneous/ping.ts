@@ -23,12 +23,12 @@ export class PingCommand extends Command {
 	}
 
 	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
-		return this._sharedRun(interaction);
+		return this._sharedRun(interaction, false);
 	}
 
 	protected async _sharedRun(
 		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
-		isMessage = false,
+		isMessage: boolean,
 	) {
 		const diffFromDiscordToUs = Date.now() - messageOrInteraction.createdTimestamp;
 

@@ -2,7 +2,7 @@ import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createErrorEmbed, createSuccessEmbed } from '#utils/embeds';
 import { Emojis, HelpDetailedDescriptionReplacers, orList } from '#utils/misc';
-import { bold, inlineCode, quote } from '@discordjs/builders';
+import { bold, inlineCode, italic, quote } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { AutoCompleteLimits } from '@sapphire/discord-utilities';
 import { Args, ChatInputCommand, Command, MessageCommand, Result } from '@sapphire/framework';
@@ -21,19 +21,20 @@ const randomMissingPermissionMessages = [
 @ApplyOptions<Command.Options>({
 	description: 'See what commands are available to you, and how to use them',
 	detailedDescription: [
-		"If you want to list all commands you have access to, here's how to run it:",
+		quote("If you want to list all commands you have access to, here's how to run it:"),
 		'',
 		`For ${Emojis.ChatInputCommands} chat input commands: ${bold(inlineCode('/help'))}`,
 		`For message based commands: ${bold(inlineCode(`${HelpDetailedDescriptionReplacers.UserMention} help`))}`,
 		'',
-		`If you want to get help for a specific command, here are some examples that you can use.`,
-		quote(
-			`You should replace ${inlineCode('<command_name>')} with a command name (like ${inlineCode('help')} for example)`,
+		quote(`If you want to get help for a specific command, here are some examples that you can use.`),
+		'',
+		italic(
+			`You should replace ${inlineCode('<command-name>')} with a command name (like ${inlineCode('help')} for example)`,
 		),
 		'',
-		`For ${Emojis.ChatInputCommands} chat input commands: ${bold(inlineCode(`/help command:<command_name>`))}`,
+		`For ${Emojis.ChatInputCommands} chat input commands: ${bold(inlineCode(`/help command:<command-name>`))}`,
 		`For message based commands: ${bold(
-			inlineCode(`${HelpDetailedDescriptionReplacers.UserMention} help <command_name>`),
+			inlineCode(`${HelpDetailedDescriptionReplacers.UserMention} help <command-name>`),
 		)}`,
 	].join('\n'),
 })
@@ -211,7 +212,7 @@ export class HelpCommand extends Command {
 		messageOrInteraction: Message | Command.ChatInputInteraction,
 		input: string,
 		matches: Command[],
-		isMessage = false,
+		isMessage: boolean,
 	) {
 		const empathyChance = Math.random() * 100 < 5;
 
@@ -318,7 +319,7 @@ export class HelpCommand extends Command {
 	private async sendSingleCommandHelp(
 		messageOrInteraction: Message | Command.ChatInputInteraction,
 		command: Command,
-		isMessage = false,
+		isMessage: boolean,
 	) {
 		const canRun = await this.canRunCommand(messageOrInteraction, command, isMessage);
 
@@ -344,30 +345,28 @@ export class HelpCommand extends Command {
 
 		const description = [command.description];
 
-		if (['-', '_'].some((char) => command.name.includes(char))) {
-			description.push(
-				'',
-				quote(
-					`For message based commands, if the command name includes a ${bold(inlineCode('-'))} or ${bold(
-						inlineCode('_'),
-					)}, the dashes/underscores are optional in the command name. (for example ${bold(
-						inlineCode('allowed-roles'),
-					)} can be used as ${bold(inlineCode('allowedroles'))} too)`,
-				),
-			);
-		}
-
-		const responseEmbed = createSuccessEmbed(description.join('\n')).setTitle(
-			`/${command.name} - ${command.category ?? 'Category-less'} Command`,
-		);
-
 		if (command.detailedDescription) {
 			const final = (command.detailedDescription as string).replaceAll(
 				HelpDetailedDescriptionReplacers.UserMention,
 				`@${this.container.client.user!.username}`,
 			);
 
-			responseEmbed.addField('📝 | Usage examples', final);
+			description.push('', bold('📝 | Usage examples'), '', final);
+		}
+
+		const responseEmbed = createSuccessEmbed(description.join('\n')).setTitle(
+			`/${command.name} - ${command.category ?? 'Category-less'} Command`,
+		);
+
+		if (['-', '_'].some((char) => command.name.includes(char))) {
+			responseEmbed.addField(
+				'A note about message based commands and dashes/underscores',
+				`Since the command name includes a ${bold(inlineCode('-'))} or ${bold(
+					inlineCode('_'),
+				)}, the dashes/underscores are optional in the command name when using message commands. (for example ${bold(
+					inlineCode(command.name),
+				)} can be used as ${bold(inlineCode(command.name.replace(/-_/g, '')))} too)`,
+			);
 		}
 
 		const supportsMessageCommands = command.supportsMessageCommands();
@@ -404,7 +403,7 @@ export class HelpCommand extends Command {
 
 	private async replyWithAllCommandsTheUserCanRun(
 		messageOrInteraction: Message | Command.ChatInputInteraction,
-		isMessage = false,
+		isMessage: boolean,
 	) {
 		// Step 1. Get all commands the user can run
 		const commandsTheUserCanRun = (
@@ -433,7 +432,7 @@ export class HelpCommand extends Command {
 
 		const embed = createSuccessEmbed(
 			`Here is a list of all commands you can run in this server! You can run ${bold(
-				inlineCode('/help <command_name>'),
+				inlineCode('/help <command-name>'),
 			)} to find out more about each command. 🎉`,
 		);
 

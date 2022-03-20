@@ -22,14 +22,11 @@ export class SupportCommand extends Command {
 		return this._sharedRun(message, true);
 	}
 
-	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
-		return this._sharedRun(interaction);
+	public override chatInputRun(interaction: Command.ChatInputInteraction) {
+		return this._sharedRun(interaction, false);
 	}
 
-	protected async _sharedRun(
-		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
-		isMessage = false,
-	) {
+	protected async _sharedRun(messageOrInteraction: Message | Command.ChatInputInteraction, isMessage: boolean) {
 		const embed = createInfoEmbed(
 			[
 				italic("It's dangerous to go alone if you are lost..."),

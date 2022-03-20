@@ -60,7 +60,7 @@ const client = new HighlightClient({
 		level: Reflect.has(process.env, 'PM2_HOME') ? LogLevel.Info : LogLevel.Debug,
 	},
 	loadMessageCommandListeners: true,
-	loadDefaultErrorListeners: true,
+	loadDefaultErrorListeners: false,
 });
 
 try {
