@@ -39,10 +39,10 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			`  ${versionString}`,
 			'',
 			userTagInColor,
-			`${colors.magenta('  Guild count:              ')}${colors.cyanBright(
+			`${colors.magenta('               Guild count: ')}${colors.cyanBright(
 				client.guilds.cache.size.toLocaleString(),
 			)}`,
-			`${colors.magenta('  Invite application:       ')}${colors.cyanBright(
+			`${colors.magenta('        Invite application: ')}${colors.cyanBright(
 				client.generateInvite({
 					scopes: ['bot', 'applications.commands'],
 					permissions: new Permissions([
@@ -53,7 +53,7 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 					]),
 				}),
 			)}`,
-			`${colors.magenta('  Public prefix:            ')}${colors.cyanBright('/')}`,
+			`${colors.magenta('             Public prefix: ')}${colors.cyanBright('/')}`,
 			`${colors.magenta('  Developer command prefix: ')}${colors.cyanBright(`@${client.user!.username}`)}`,
 		];
 
