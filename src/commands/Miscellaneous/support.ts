@@ -7,7 +7,7 @@ import { Command } from '@sapphire/framework';
 import { Message, MessageActionRow, MessageButton } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
-	description: 'Gives you a link to the support server for this application',
+	description: 'Get a link to the support server for this application',
 	chatInputCommand: {
 		register: true,
 		guildIds: useDevelopmentGuildIds(),

@@ -18,7 +18,7 @@ const highlightVersion = JSON.parse(await readFile(new URL('../../../package.jso
 
 @ApplyOptions<Command.Options>({
 	aliases: ['stats'],
-	description: 'Gives you some statistics about this application',
+	description: 'Find out some statistics about this application',
 	chatInputCommand: {
 		register: true,
 		guildIds: useDevelopmentGuildIds(),

@@ -62,7 +62,7 @@ enum GuildNotificationStyle {
 model GuildPermission {
   guildId                   String   @id @map("guild_id") @db.Text
   // If the user running the command needs to have one of the allowed roles to actually use highlight
-  requiresOneOfAllowedRoles Boolean  @map("requires_one_of_allowed_roles") @db.Boolean
+  requiresOneOfAllowedRoles Boolean  @default(false) @map("requires_one_of_allowed_roles") @db.Boolean
   // The roles that are allowed to use highlight
   allowedRoles              String[] @map("allowed_roles") @db.Text
 

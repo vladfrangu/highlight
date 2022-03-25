@@ -7,7 +7,7 @@ import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message, MessageActionRow, MessageButton, Permissions } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
-	description: 'Gives you a link with which you can invite the application to your server',
+	description: 'Get a link with which you can invite the application to your server',
 	chatInputCommand: {
 		register: true,
 		guildIds: useDevelopmentGuildIds(),

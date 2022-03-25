@@ -5,7 +5,7 @@ import { Emojis, HelpDetailedDescriptionReplacers, orList } from '#utils/misc';
 import { bold, inlineCode, quote, roleMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Args, Command, err, Identifiers, UserError } from '@sapphire/framework';
-import type { Message } from 'discord.js';
+import type { Message, Role } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	generateDashLessAliases: true,
@@ -51,9 +51,12 @@ export class AllowedRolesCommand extends Command {
 			case 'toggle':
 			case 'add':
 			case 'remove':
+			case 'clear':
 				return Args.ok(parameter.toLowerCase());
 			default: {
-				const list = orList.format(['add', 'remove', 'status', 'toggle'].sort().map((item) => bold(inlineCode(item))));
+				const list = orList.format(
+					['add', 'remove', 'status', 'toggle', 'clear'].sort().map((item) => bold(inlineCode(item))),
+				);
 
 				return err(
 					new UserError({
@@ -67,7 +70,7 @@ export class AllowedRolesCommand extends Command {
 		}
 	});
 
-	public override chatInputRun(interaction: Command.ChatInputInteraction) {
+	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
 		const subcommand = interaction.options.getSubcommand(true);
 
 		switch (subcommand.toLowerCase()) {
@@ -88,6 +91,12 @@ export class AllowedRolesCommand extends Command {
 				const role = interaction.options.getRole('role', true);
 
 				return this.removeSubcommand(interaction, role, false);
+			}
+			case 'clear': {
+				return this.clearSubcommand(interaction, false);
+			}
+			default: {
+				throw new Error(`Subcommand ${subcommand} is not handled!`);
 			}
 		}
 	}
@@ -139,6 +148,12 @@ export class AllowedRolesCommand extends Command {
 
 				return this.removeSubcommand(message, role, true);
 			}
+			case 'clear': {
+				return this.clearSubcommand(message, true);
+			}
+			default: {
+				throw new Error(`Subcommand ${subcommand} is not handled!`);
+			}
 		}
 	}
 
@@ -165,7 +180,8 @@ export class AllowedRolesCommand extends Command {
 							.setName('remove')
 							.setDescription('Removes the role from the allowed role list')
 							.addRoleOption((role) => role.setName('role').setDescription('The role to remove').setRequired(true)),
-					),
+					)
+					.addSubcommand((clear) => clear.setName('clear').setDescription('Clears the allowed role list')),
 			{
 				guildIds: useDevelopmentGuildIds(),
 				idHints: [
@@ -176,7 +192,10 @@ export class AllowedRolesCommand extends Command {
 		);
 	}
 
-	private async statusSubcommand(messageOrInteraction: Message | Command.ChatInputInteraction, isMessage: boolean) {
+	private async statusSubcommand(
+		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
+		isMessage: boolean,
+	) {
 		const dbData = await this.container.prisma.guildPermission.findFirst({
 			where: { guildId: messageOrInteraction.guildId! },
 		});
@@ -226,23 +245,162 @@ export class AllowedRolesCommand extends Command {
 		);
 	}
 
-	private toggleSubcommand(_messageOrInteraction: Message | Command.ChatInputInteraction, _isMessage: boolean) {
-		throw new Error('Method not implemented.');
+	private async toggleSubcommand(
+		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
+		isMessage: boolean,
+	) {
+		const previousDbState = await this.container.prisma.guildPermission.findFirst({
+			where: { guildId: messageOrInteraction.guildId! },
+			select: { requiresOneOfAllowedRoles: true },
+		});
+
+		const previousValue = previousDbState?.requiresOneOfAllowedRoles ?? false;
+		const newValue = !previousValue;
+
+		await this.container.prisma.guildPermission.upsert({
+			where: { guildId: messageOrInteraction.guildId! },
+			create: { guildId: messageOrInteraction.guildId!, requiresOneOfAllowedRoles: newValue },
+			update: { requiresOneOfAllowedRoles: newValue },
+		});
+
+		const embed = createInfoEmbed(
+			`The requirement of allowed roles for members in order to use Highlight has been turned ${bold(
+				newValue ? 'on' : 'off',
+			)}`,
+		);
+
+		await messageOrInteraction.reply(
+			withDeprecationWarningForMessageCommands({
+				commandName: this.name,
+				guildId: messageOrInteraction.guildId,
+				receivedFromMessage: isMessage,
+				options: {
+					ephemeral: true,
+					embeds: [embed],
+				},
+			}),
+		);
 	}
 
-	private addSubcommand(
-		_messageOrInteraction: Message | Command.ChatInputInteraction,
-		_role: unknown,
-		_isMessage: boolean,
+	private async addSubcommand(
+		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
+		role: Role,
+		isMessage: boolean,
 	) {
-		throw new Error('Method not implemented.');
+		this.checkEveryoneRoleId(messageOrInteraction.guild!.roles.everyone.id, role.id);
+
+		const dbData = await this.container.prisma.guildPermission.findFirst({
+			where: { guildId: messageOrInteraction.guildId! },
+			select: { allowedRoles: true },
+		});
+
+		if (dbData?.allowedRoles.includes(role.id)) {
+			throw new UserError({
+				identifier: 'already-present',
+				message: `The role ${role} is already present in the allowed role list.`,
+			});
+		}
+
+		const roleSet = new Set(dbData?.allowedRoles ?? []);
+		roleSet.add(role.id);
+		const roleArray = [...roleSet];
+
+		await this.container.prisma.guildPermission.upsert({
+			where: { guildId: messageOrInteraction.guildId! },
+			update: { allowedRoles: roleArray },
+			create: { guildId: messageOrInteraction.guildId!, allowedRoles: roleArray },
+		});
+
+		const embed = createInfoEmbed(`Added the role ${role} to the allowed role list`);
+
+		await messageOrInteraction.reply(
+			withDeprecationWarningForMessageCommands({
+				commandName: this.name,
+				guildId: messageOrInteraction.guildId,
+				receivedFromMessage: isMessage,
+				options: {
+					ephemeral: true,
+					embeds: [embed],
+				},
+			}),
+		);
 	}
 
-	private removeSubcommand(
-		_messageOrInteraction: Message | Command.ChatInputInteraction,
-		_role: unknown,
-		_isMessage: boolean,
+	private async removeSubcommand(
+		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
+		role: Role,
+		isMessage: boolean,
 	) {
-		throw new Error('Method not implemented.');
+		this.checkEveryoneRoleId(messageOrInteraction.guild!.roles.everyone.id, role.id);
+
+		const dbData = await this.container.prisma.guildPermission.findFirst({
+			where: { guildId: messageOrInteraction.guildId! },
+			select: { allowedRoles: true },
+		});
+
+		if (!dbData || !dbData.allowedRoles.includes(role.id)) {
+			throw new UserError({
+				identifier: 'not-already-present',
+				message: `The role ${role} is not present in the allowed role list.`,
+			});
+		}
+
+		const roleSet = new Set(dbData?.allowedRoles ?? []);
+		roleSet.delete(role.id);
+		const roleArray = [...roleSet];
+
+		await this.container.prisma.guildPermission.upsert({
+			where: { guildId: messageOrInteraction.guildId! },
+			update: { allowedRoles: roleArray },
+			create: { guildId: messageOrInteraction.guildId!, allowedRoles: roleArray },
+		});
+
+		const embed = createInfoEmbed(`Removed the role ${role} from the allowed role list`);
+
+		await messageOrInteraction.reply(
+			withDeprecationWarningForMessageCommands({
+				commandName: this.name,
+				guildId: messageOrInteraction.guildId,
+				receivedFromMessage: isMessage,
+				options: {
+					ephemeral: true,
+					embeds: [embed],
+				},
+			}),
+		);
+	}
+
+	private async clearSubcommand(
+		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
+		isMessage: boolean,
+	) {
+		await this.container.prisma.guildPermission.upsert({
+			where: { guildId: messageOrInteraction.guildId! },
+			create: { guildId: messageOrInteraction.guildId!, allowedRoles: [] },
+			update: { allowedRoles: [] },
+		});
+
+		const embed = createInfoEmbed(`The allowed roles list has been ${bold('cleared')}!`);
+
+		await messageOrInteraction.reply(
+			withDeprecationWarningForMessageCommands({
+				commandName: this.name,
+				guildId: messageOrInteraction.guildId,
+				receivedFromMessage: isMessage,
+				options: {
+					ephemeral: true,
+					embeds: [embed],
+				},
+			}),
+		);
+	}
+
+	private checkEveryoneRoleId(everyoneRoleId: string, providedRoleId: string) {
+		if (providedRoleId === everyoneRoleId) {
+			throw new UserError({
+				identifier: 'everyone-role-id',
+				message: 'The provided role is the @everyone role. Please provide a different role.',
+			});
+		}
 	}
 }

@@ -24,5 +24,5 @@
 			"#workers/*": ["./src/lib/workers/*.ts"]
 		}
 	},
-	"include": ["src", "src/listeners/errorRelated/listenerError.ts"]
+	"include": ["src", "src/**/*.d.ts"]
 }

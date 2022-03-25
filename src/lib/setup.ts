@@ -38,8 +38,13 @@ container.prisma.$on('query', (event) => {
 		const paramsArray = JSON.parse(event.params) as unknown[];
 		const newQuery = event.query.replace(/\$(\d+)/g, (_, number) => {
 			const value = paramsArray[Number(number) - 1];
+
 			if (typeof value === 'string') {
 				return `"${value}"`;
+			}
+
+			if (Array.isArray(value)) {
+				return `'${JSON.stringify(value)}'`;
 			}
 
 			return String(value);
