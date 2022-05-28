@@ -4,10 +4,16 @@ import { createInfoEmbed } from '#utils/embeds';
 import { Emojis, HelpDetailedDescriptionReplacers, orList } from '#utils/misc';
 import { bold, inlineCode, quote, roleMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Args, Command, err, Identifiers, UserError } from '@sapphire/framework';
+import { Command, Identifiers, UserError } from '@sapphire/framework';
+import {
+	ChatInputSubcommandMappings,
+	MessageSubcommandMappings,
+	SubcommandMappingsArray,
+	SubCommandPluginCommand,
+} from '@sapphire/plugin-subcommands';
 import type { Message, Role } from 'discord.js';
 
-@ApplyOptions<Command.Options>({
+@ApplyOptions<SubCommandPluginCommand.Options>({
 	generateDashLessAliases: true,
 	generateUnderscoreLessAliases: true,
 	description: 'Controls who can use Highlight in your server',
@@ -42,120 +48,74 @@ import type { Message, Role } from 'discord.js';
 			inlineCode(`${HelpDetailedDescriptionReplacers.UserMention} allowed-roles clear`),
 		)}`,
 	].join('\n'),
+	// TODO: yeet this in favor of perms v2
 	preconditions: ['GuildStaff'],
 })
-export class AllowedRolesCommand extends Command {
-	private readonly subcommandMatcher = Args.make((parameter) => {
-		switch (parameter.toLowerCase()) {
-			case 'status':
-			case 'toggle':
-			case 'add':
-			case 'remove':
-			case 'clear':
-				return Args.ok(parameter.toLowerCase());
-			default: {
-				const list = orList.format(
-					['add', 'remove', 'status', 'toggle', 'clear'].sort().map((item) => bold(inlineCode(item))),
-				);
-
-				return err(
-					new UserError({
-						identifier: 'invalid-subcommand',
-						message: `The subcommand you provided (${bold(
-							inlineCode(parameter),
-						)}) is not a valid one. Expected one of: ${list}`,
-					}),
-				);
-			}
-		}
-	});
-
-	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
-		const subcommand = interaction.options.getSubcommand(true);
-
-		switch (subcommand.toLowerCase()) {
-			case 'status': {
-				return this.statusSubcommand(interaction, false);
-			}
-			case 'toggle': {
-				return this.toggleSubcommand(interaction, false);
-			}
-			case 'add': {
-				// Get the role
-				const role = interaction.options.getRole('role', true);
-
-				return this.addSubcommand(interaction, role, false);
-			}
-			case 'remove': {
-				// Get the role
-				const role = interaction.options.getRole('role', true);
-
-				return this.removeSubcommand(interaction, role, false);
-			}
-			case 'clear': {
-				return this.clearSubcommand(interaction, false);
-			}
-			default: {
-				throw new Error(`Subcommand ${subcommand} is not handled!`);
-			}
-		}
-	}
-
-	public override async messageRun(message: Message, args: Args) {
-		const subcommand = await args.pick(this.subcommandMatcher).catch((err: UserError) => {
-			const list = orList.format(['add', 'remove', 'status', 'toggle'].sort().map((item) => bold(inlineCode(item))));
-
-			throw err.identifier === Identifiers.ArgsMissing
-				? new UserError({
-						identifier: 'no-args',
-						message: `You need to provide one of the following subcommands: ${list}`,
-				  })
-				: err;
-		});
-
-		switch (subcommand) {
-			case 'status': {
-				return this.statusSubcommand(message, true);
-			}
-			case 'toggle': {
-				return this.toggleSubcommand(message, true);
-			}
-			case 'add': {
-				// Get the role
-				const role = await args.pick('role').catch((err: UserError) => {
-					throw new UserError({
-						identifier: 'no-role',
-						message:
-							err.identifier === Identifiers.ArgsMissing
-								? 'You need to provide a role to add.'
-								: 'That is not a valid role.',
+export class AllowedRolesCommand extends SubCommandPluginCommand {
+	protected readonly subcommandMappings: SubcommandMappingsArray = [
+		new MessageSubcommandMappings([
+			{ name: 'status', to: (message) => this.statusSubcommand(message, true) },
+			{ name: 'toggle', to: (message) => this.toggleSubcommand(message, true) },
+			{
+				name: 'add',
+				to: async (message, args) => {
+					// Get the role
+					const role = await args.pick('role').catch((err: UserError) => {
+						throw new UserError({
+							identifier: 'no-role',
+							message:
+								err.identifier === Identifiers.ArgsMissing
+									? 'You need to provide a role to add.'
+									: 'That is not a valid role.',
+						});
 					});
-				});
 
-				return this.addSubcommand(message, role, true);
-			}
-			case 'remove': {
-				// Get the role
-				const role = await args.pick('role').catch((err: UserError) => {
-					throw new UserError({
-						identifier: 'no-role',
-						message:
-							err.identifier === Identifiers.ArgsMissing
-								? 'You need to provide a role to remove.'
-								: 'That is not a valid role.',
+					return this.addSubcommand(message, role, true);
+				},
+			},
+			{
+				name: 'remove',
+				to: async (message, args) => {
+					// Get the role
+					const role = await args.pick('role').catch((err: UserError) => {
+						throw new UserError({
+							identifier: 'no-role',
+							message:
+								err.identifier === Identifiers.ArgsMissing
+									? 'You need to provide a role to remove.'
+									: 'That is not a valid role.',
+						});
 					});
-				});
 
-				return this.removeSubcommand(message, role, true);
-			}
-			case 'clear': {
-				return this.clearSubcommand(message, true);
-			}
-			default: {
-				throw new Error(`Subcommand ${subcommand} is not handled!`);
-			}
-		}
-	}
+					return this.removeSubcommand(message, role, true);
+				},
+			},
+			{ name: 'clear', to: (message) => this.clearSubcommand(message, true) },
+		]),
+		new ChatInputSubcommandMappings([
+			{ name: 'status', to: (interaction) => this.statusSubcommand(interaction as never, false) },
+			{ name: 'toggle', to: (interaction) => this.toggleSubcommand(interaction as never, true) },
+			{
+				name: 'add',
+				to: (interaction) => {
+					// Get the role
+					const role = interaction.options.getRole('role', true) as Role;
+
+					return this.addSubcommand(interaction as never, role, false);
+				},
+			},
+			{
+				name: 'remove',
+				to: (interaction) => {
+					// Get the role
+					const role = interaction.options.getRole('role', true) as Role;
+
+					return this.removeSubcommand(interaction as never, role, false);
+				},
+			},
+			{ name: 'clear', to: (interaction) => this.clearSubcommand(interaction as never, false) },
+		]),
+	];
 
 	public override registerApplicationCommands(registry: Command.Registry) {
 		registry.registerChatInputCommand(

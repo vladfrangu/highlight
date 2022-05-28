@@ -2,8 +2,8 @@
 	"extends": "@sapphire/ts-config",
 	"compilerOptions": {
 		"target": "ESNext",
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
+		"module": "Node16",
+		"moduleResolution": "Node16",
 		"noEmitHelpers": true,
 		"importHelpers": true,
 		"removeComments": true,

@@ -1,11 +1,13 @@
 import { useErrorWebhook } from '#hooks/useErrorWebhook';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createErrorEmbed } from '#utils/embeds';
+import { orList, pluralize } from '#utils/misc';
 import { bold, codeBlock, inlineCode } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
 	Awaitable,
 	ChatInputCommandErrorPayload,
+	Command,
 	container,
 	ContextMenuCommandErrorPayload,
 	Events,
@@ -14,7 +16,13 @@ import {
 	Piece,
 	UserError,
 } from '@sapphire/framework';
-import { MessageActionRow, MessageButton, MessageOptions } from 'discord.js';
+import {
+	MessageSubcommandMappings,
+	SubcommandMappingsArray,
+	SubCommandPluginCommand,
+	SubcommandPluginIdentifiers,
+} from '@sapphire/plugin-subcommands';
+import { InteractionReplyOptions, MessageActionRow, MessageButton, MessageOptions } from 'discord.js';
 import { randomUUID } from 'node:crypto';
 
 @ApplyOptions<Listener.Options>({
@@ -25,8 +33,9 @@ export class MessageCommandError extends Listener<typeof Events.MessageCommandEr
 	public override async run(error: unknown, { message, command }: MessageCommandErrorPayload) {
 		const maybeError = error as Error;
 
-		await makeAndSendErrorEmbed(
+		await makeAndSendErrorEmbed<MessageOptions>(
 			maybeError,
+			command,
 			(options) =>
 				message.channel.send(
 					withDeprecationWarningForMessageCommands({
@@ -49,8 +58,9 @@ export class ChatInputCommandError extends Listener<typeof Events.ChatInputComma
 	public override async run(error: unknown, { interaction, command }: ChatInputCommandErrorPayload) {
 		const maybeError = error as Error;
 
-		await makeAndSendErrorEmbed(
+		await makeAndSendErrorEmbed<InteractionReplyOptions>(
 			maybeError,
+			command,
 			(options) => {
 				if (interaction.replied) {
 					return interaction.followUp({
@@ -79,8 +89,9 @@ export class ContextMenuCommandError extends Listener<typeof Events.ContextMenuC
 	public override async run(error: unknown, { interaction, command }: ContextMenuCommandErrorPayload) {
 		const maybeError = error as Error;
 
-		await makeAndSendErrorEmbed(
+		await makeAndSendErrorEmbed<InteractionReplyOptions>(
 			maybeError,
+			command,
 			(options) => {
 				if (interaction.replied) {
 					return interaction.followUp({
@@ -101,26 +112,87 @@ export class ContextMenuCommandError extends Listener<typeof Events.ContextMenuC
 	}
 }
 
-async function makeAndSendErrorEmbed(
+async function makeAndSendErrorEmbed<Options>(
 	error: Error | UserError,
-	callback: (options: MessageOptions) => Awaitable<unknown>,
+	command: Command,
+	callback: (options: Options) => Awaitable<unknown>,
 	piece: Piece,
 ) {
+	const errorUuid = randomUUID();
+	const webhook = useErrorWebhook();
+	const { name, location } = piece;
+
 	if (error instanceof UserError) {
+		if (error.identifier === SubcommandPluginIdentifiers.MessageSubcommandNoMatch) {
+			const casted = command as SubCommandPluginCommand;
+
+			const mappings = casted['subcommandsInternalMapping'] as SubcommandMappingsArray;
+
+			const foundMessageMapping = mappings.find(
+				(mapping): mapping is MessageSubcommandMappings => mapping instanceof MessageSubcommandMappings,
+			);
+
+			if (!foundMessageMapping) {
+				await webhook.send({
+					content: `Encountered missing message command mapping for command ${inlineCode(
+						command.name,
+					)}. Take a look @here!\nUUID: ${bold(inlineCode(errorUuid))}`,
+				});
+
+				await callback({
+					embeds: [
+						createErrorEmbed(
+							`😖 I seem to have forgotten to map subcommands properly for you. Please report this error ID to my developer: ${bold(
+								inlineCode(errorUuid),
+							)}!`,
+						),
+					],
+					components: [
+						new MessageActionRow().setComponents([
+							new MessageButton()
+								.setStyle('LINK')
+								.setURL(process.env.SUPPORT_SERVER_INVITE!)
+								.setEmoji('🆘')
+								.setLabel('Support server'),
+						]),
+					],
+				} as never);
+
+				return;
+			}
+
+			const actualSubcommandNames = foundMessageMapping.subcommands
+				.map((entry) => bold(inlineCode(entry.name)))
+				.sort((a, b) => a.localeCompare(b));
+
+			const prettyList = orList.format(actualSubcommandNames);
+
+			await callback({
+				embeds: [
+					createErrorEmbed(
+						`The subcommand you provided is unknown to me or you didn't provide any! ${pluralize(
+							actualSubcommandNames.length,
+							'This is',
+							'These are',
+						)} the ${pluralize(actualSubcommandNames.length, 'subcommand', 'subcommands')} I know about: ${prettyList}`,
+					),
+				],
+			} as never);
+
+			return;
+		}
+
 		const errorEmbed = createErrorEmbed(error.message);
 
 		await callback({
 			embeds: [errorEmbed],
 			allowedMentions: { parse: [] },
-		});
+		} as never);
 
 		return;
 	}
 
-	const webhook = useErrorWebhook();
-	const { name, location } = piece;
 	container.logger.error(`Encountered error on command ${name} at path ${location.full}`, error);
-	const errorUuid = randomUUID();
 
 	await webhook.send({
 		content: `Encountered an unexpected error, take a look @here!\nUUID: ${bold(inlineCode(errorUuid))}`,
@@ -152,5 +224,5 @@ async function makeAndSendErrorEmbed(
 		],
 		embeds: [errorEmbed],
 		allowedMentions: { parse: [] },
-	});
+	} as never);
 }
