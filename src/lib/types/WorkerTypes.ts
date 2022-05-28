@@ -1,6 +1,6 @@
 import type { Member } from '@prisma/client';
 
-export const enum WorkerType {
+export enum WorkerType {
 	Word,
 	RegularExpression,
 }

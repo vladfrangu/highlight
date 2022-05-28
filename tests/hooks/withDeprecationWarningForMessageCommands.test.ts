@@ -68,7 +68,7 @@ const authButton = new MessageButton()
 	.setLabel('Re-authorize me with slash commands!')
 	.setEmoji('🤖');
 
-describe('message command deprecation hooks884198887756283955', () => {
+describe('message command deprecation hooks', () => {
 	describe('withDeprecationWarningOnEmbedForMessageCommands', () => {
 		describe('given embed with too many fields, then it should update the description', () => {
 			const twentyFiveFields = () => Array.from({ length: 25 }, () => ({ name: 'example', value: 'owo' }));
