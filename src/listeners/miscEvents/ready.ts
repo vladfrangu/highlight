@@ -1,7 +1,7 @@
 import { pluralize } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, LogLevel } from '@sapphire/framework';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Permissions } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 

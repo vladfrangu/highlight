@@ -12,7 +12,7 @@ sendToMainProcess({ command: WorkerResponseTypes.Ready, data: { ready: true } })
 
 // Create keep-alive interval
 setInterval(() => {
-	sendToMainProcess({ command: 'heartbeat' } as any);
+	sendToMainProcess({ command: 69_420 } as any);
 }, 45_000);
 
 parentPort.on('message', (payload: WorkerCommandsUnion) => {

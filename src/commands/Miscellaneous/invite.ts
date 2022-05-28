@@ -3,7 +3,7 @@ import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecation
 import { createInfoEmbed } from '#utils/embeds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message, MessageActionRow, MessageButton, Permissions } from 'discord.js';
 
 @ApplyOptions<Command.Options>({

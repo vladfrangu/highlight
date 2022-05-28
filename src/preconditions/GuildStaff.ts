@@ -1,7 +1,7 @@
 import { orList } from '#utils/misc';
 import { bold } from '@discordjs/builders';
 import { Precondition } from '@sapphire/framework';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { CommandInteraction, Message, Permissions } from 'discord.js';
 
 export class GuildStaff extends Precondition {

@@ -1,4 +1,5 @@
 import '#setup';
+
 import { HighlightClient } from '#structures/HighlightClient';
 import { container, LogLevel } from '@sapphire/framework';
 import { Time } from '@sapphire/time-utilities';

@@ -1,6 +1,6 @@
 import type { Member } from '@prisma/client';
 
-export enum WorkerType {
+export const enum WorkerType {
 	Word,
 	RegularExpression,
 }
@@ -22,7 +22,7 @@ export interface WorkerData {
 }
 
 // #region Worker Commands
-export enum WorkerCommands {
+export const enum WorkerCommands {
 	HandleHighlight,
 	RemoveTriggerForUser,
 	UpdateCacheForGuild,
@@ -70,7 +70,7 @@ export type ValidateRegularExpressionCommand = BaseCommand<
 // #endregion
 
 // #region Worker Responses
-export enum WorkerResponseTypes {
+export const enum WorkerResponseTypes {
 	DeleteInvalidRegularExpression,
 	HighlightResult,
 	Ready,

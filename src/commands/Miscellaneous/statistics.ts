@@ -4,7 +4,7 @@ import { createInfoEmbed } from '#utils/embeds';
 import { bold, hyperlink, italic } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, version as sapphireVersion } from '@sapphire/framework';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message, MessageActionRow, MessageButton, Permissions } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 import typescript from 'typescript';

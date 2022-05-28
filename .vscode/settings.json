@@ -1,0 +1,4 @@
+{
+	"typescript.preferences.importModuleSpecifierEnding": "index",
+	"javascript.preferences.importModuleSpecifierEnding": "index"
+}

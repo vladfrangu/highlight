@@ -1,5 +1,5 @@
 // Sapphire config
-import { container, ApplicationCommandRegistries, RegisterBehavior } from '@sapphire/framework';
+import { ApplicationCommandRegistries, container, RegisterBehavior } from '@sapphire/framework';
 import '@sapphire/plugin-logger/register';
 
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.Overwrite);
@@ -9,7 +9,7 @@ import { inspect } from 'node:util';
 inspect.defaultOptions.depth = 2;
 
 // Global color utility
-import { createColors, Colorette } from 'colorette';
+import { Colorette, createColors } from 'colorette';
 container.colors = createColors({ useColor: true });
 
 declare module '@sapphire/pieces' {
@@ -19,8 +19,8 @@ declare module '@sapphire/pieces' {
 }
 
 // Prisma
-import Prisma from '@prisma/client';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
+import Prisma from '@prisma/client';
 
 container.prisma = new Prisma.PrismaClient({
 	errorFormat: 'pretty',

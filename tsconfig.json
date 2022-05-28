@@ -8,6 +8,8 @@
 		"importHelpers": true,
 		"removeComments": true,
 		"skipLibCheck": true,
+		"declaration": false,
+		"declarationMap": false,
 		"sourceMap": true,
 		"importsNotUsedAsValues": "error",
 		"noImplicitOverride": true,

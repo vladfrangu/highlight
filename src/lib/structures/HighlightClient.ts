@@ -18,7 +18,7 @@ export class HighlightClient extends SapphireClient {
 		try {
 			await container.prisma.$disconnect();
 		} catch {}
-		void container.highlightManager.destroy();
+		await container.highlightManager.destroy();
 		return super.destroy();
 	}
 }
