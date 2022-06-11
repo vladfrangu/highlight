@@ -131,12 +131,12 @@ async function makeAndSendErrorEmbed<Options>(
 			let foundMessageMapping = mappings.find(
 				(m) =>
 					(m.type === 'method' && m.name === ctx.possibleSubcommandGroupOrName) ||
-					(m.type === 'group' && m.entries.some((entry) => entry.name === ctx.possibleSubcommandGroupOrName)),
+					(m.type === 'group' && m.entries.some((entry) => entry.name === ctx.possibleSubcommandName)),
 			);
 
 			if (foundMessageMapping?.type === 'group') {
 				foundMessageMapping = foundMessageMapping.entries.find(
-					(m) => m.type === 'method' && m.name === ctx.possibleSubcommandGroupOrName,
+					(m) => m.type === 'method' && m.name === ctx.possibleSubcommandName,
 				);
 			}
 
@@ -153,7 +153,7 @@ async function makeAndSendErrorEmbed<Options>(
 					embeds: [
 						createErrorEmbed(
 							`😖 I seem to have forgotten to map the ${inlineCode(
-								ctx.possibleSubcommandGroupOrName!,
+								ctx.possibleSubcommandName ?? ctx.possibleSubcommandGroupOrName!,
 							)} properly for you. Please report this error ID to my developer: ${bold(inlineCode(errorUuid))}!`,
 						),
 					],
