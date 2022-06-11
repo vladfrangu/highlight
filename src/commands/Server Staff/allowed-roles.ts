@@ -50,25 +50,21 @@ export class AllowedRolesCommand extends SubcommandPluginCommand {
 	public readonly subcommandMappings: SubcommandMappingArray<this> = [
 		{
 			name: 'status',
-			type: 'method',
 			messageRun: (message) => this.statusSubcommand(message, true),
 			chatInputRun: (interaction: Command.ChatInputInteraction<'cached'>) => this.statusSubcommand(interaction, false),
 		},
 		{
 			name: 'toggle',
-			type: 'method',
 			messageRun: (message) => this.toggleSubcommand(message, true),
 			chatInputRun: (interaction: Command.ChatInputInteraction<'cached'>) => this.toggleSubcommand(interaction, false),
 		},
 		{
 			name: 'clear',
-			type: 'method',
 			messageRun: (message) => this.clearSubcommand(message, true),
 			chatInputRun: (interaction: Command.ChatInputInteraction<'cached'>) => this.clearSubcommand(interaction, false),
 		},
 		{
 			name: 'add',
-			type: 'method',
 			messageRun: async (message, args) => {
 				// Get the role
 				const role = await args.pick('role').catch((err: UserError) => {
@@ -92,7 +88,6 @@ export class AllowedRolesCommand extends SubcommandPluginCommand {
 		},
 		{
 			name: 'remove',
-			type: 'method',
 			messageRun: async (message, args) => {
 				// Get the role
 				const role = await args.pick('role').catch((err: UserError) => {
