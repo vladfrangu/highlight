@@ -17,9 +17,8 @@ import {
 	UserError,
 } from '@sapphire/framework';
 import {
-	MessageSubcommandMappings,
-	SubcommandMappingsArray,
-	SubCommandPluginCommand,
+	MessageSubcommandNoMatchContext,
+	SubcommandPluginCommand,
 	SubcommandPluginIdentifiers,
 } from '@sapphire/plugin-subcommands';
 import { InteractionReplyOptions, MessageActionRow, MessageButton, MessageOptions } from 'discord.js';
@@ -124,27 +123,38 @@ async function makeAndSendErrorEmbed<Options>(
 
 	if (error instanceof UserError) {
 		if (error.identifier === SubcommandPluginIdentifiers.MessageSubcommandNoMatch) {
-			const casted = command as SubCommandPluginCommand;
+			const casted = command as SubcommandPluginCommand;
+			const ctx = error.context as MessageSubcommandNoMatchContext;
 
-			const mappings = casted['subcommandsInternalMapping'] as SubcommandMappingsArray;
+			const mappings = casted.parsedSubcommandMappings;
 
-			const foundMessageMapping = mappings.find(
-				(mapping): mapping is MessageSubcommandMappings => mapping instanceof MessageSubcommandMappings,
+			let foundMessageMapping = mappings.find(
+				(m) =>
+					(m.type === 'method' && m.name === ctx.possibleSubcommandGroupOrName) ||
+					(m.type === 'group' && m.entries.some((entry) => entry.name === ctx.possibleSubcommandGroupOrName)),
 			);
+
+			if (foundMessageMapping?.type === 'group') {
+				foundMessageMapping = foundMessageMapping.entries.find(
+					(m) => m.type === 'method' && m.name === ctx.possibleSubcommandGroupOrName,
+				);
+			}
 
 			if (!foundMessageMapping) {
 				await webhook.send({
 					content: `Encountered missing message command mapping for command ${inlineCode(
 						command.name,
-					)}. Take a look @here!\nUUID: ${bold(inlineCode(errorUuid))}`,
+					)}, subcommand ${inlineCode(ctx.possibleSubcommandGroupOrName!)}. Take a look @here!\nUUID: ${bold(
+						inlineCode(errorUuid),
+					)}`,
 				});
 
 				await callback({
 					embeds: [
 						createErrorEmbed(
-							`😖 I seem to have forgotten to map subcommands properly for you. Please report this error ID to my developer: ${bold(
-								inlineCode(errorUuid),
-							)}!`,
+							`😖 I seem to have forgotten to map the ${inlineCode(
+								ctx.possibleSubcommandGroupOrName!,
+							)} properly for you. Please report this error ID to my developer: ${bold(inlineCode(errorUuid))}!`,
 						),
 					],
 					components: [
@@ -161,7 +171,7 @@ async function makeAndSendErrorEmbed<Options>(
 				return;
 			}
 
-			const actualSubcommandNames = foundMessageMapping.subcommands
+			const actualSubcommandNames = mappings
 				.map((entry) => bold(inlineCode(entry.name)))
 				.sort((a, b) => a.localeCompare(b));
 

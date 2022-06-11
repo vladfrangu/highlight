@@ -5,15 +5,10 @@ import { Emojis, HelpDetailedDescriptionReplacers, orList } from '#utils/misc';
 import { bold, inlineCode, quote, roleMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, Identifiers, UserError } from '@sapphire/framework';
-import {
-	ChatInputSubcommandMappings,
-	MessageSubcommandMappings,
-	SubcommandMappingsArray,
-	SubCommandPluginCommand,
-} from '@sapphire/plugin-subcommands';
+import { SubcommandMappingArray, SubcommandPluginCommand } from '@sapphire/plugin-subcommands';
 import type { Message, Role } from 'discord.js';
 
-@ApplyOptions<SubCommandPluginCommand.Options>({
+@ApplyOptions<SubcommandPluginCommand.Options>({
 	generateDashLessAliases: true,
 	generateUnderscoreLessAliases: true,
 	description: 'Controls who can use Highlight in your server',
@@ -51,70 +46,74 @@ import type { Message, Role } from 'discord.js';
 	// TODO: yeet this in favor of perms v2
 	preconditions: ['GuildStaff'],
 })
-export class AllowedRolesCommand extends SubCommandPluginCommand {
-	protected readonly subcommandMappings: SubcommandMappingsArray = [
-		new MessageSubcommandMappings([
-			{ name: 'status', to: (message) => this.statusSubcommand(message, true) },
-			{ name: 'toggle', to: (message) => this.toggleSubcommand(message, true) },
-			{
-				name: 'add',
-				to: async (message, args) => {
-					// Get the role
-					const role = await args.pick('role').catch((err: UserError) => {
-						throw new UserError({
-							identifier: 'no-role',
-							message:
-								err.identifier === Identifiers.ArgsMissing
-									? 'You need to provide a role to add.'
-									: 'That is not a valid role.',
-						});
+export class AllowedRolesCommand extends SubcommandPluginCommand {
+	public readonly subcommandMappings: SubcommandMappingArray<this> = [
+		{
+			name: 'status',
+			type: 'method',
+			messageRun: (message) => this.statusSubcommand(message, true),
+			chatInputRun: (interaction: Command.ChatInputInteraction<'cached'>) => this.statusSubcommand(interaction, false),
+		},
+		{
+			name: 'toggle',
+			type: 'method',
+			messageRun: (message) => this.toggleSubcommand(message, true),
+			chatInputRun: (interaction: Command.ChatInputInteraction<'cached'>) => this.toggleSubcommand(interaction, false),
+		},
+		{
+			name: 'clear',
+			type: 'method',
+			messageRun: (message) => this.clearSubcommand(message, true),
+			chatInputRun: (interaction: Command.ChatInputInteraction<'cached'>) => this.clearSubcommand(interaction, false),
+		},
+		{
+			name: 'add',
+			type: 'method',
+			messageRun: async (message, args) => {
+				// Get the role
+				const role = await args.pick('role').catch((err: UserError) => {
+					throw new UserError({
+						identifier: 'no-role',
+						message:
+							err.identifier === Identifiers.ArgsMissing
+								? 'You need to provide a role to add.'
+								: 'That is not a valid role.',
 					});
+				});
 
-					return this.addSubcommand(message, role, true);
-				},
+				return this.addSubcommand(message, role, true);
 			},
-			{
-				name: 'remove',
-				to: async (message, args) => {
-					// Get the role
-					const role = await args.pick('role').catch((err: UserError) => {
-						throw new UserError({
-							identifier: 'no-role',
-							message:
-								err.identifier === Identifiers.ArgsMissing
-									? 'You need to provide a role to remove.'
-									: 'That is not a valid role.',
-						});
+			chatInputRun: async (interaction: Command.ChatInputInteraction<'cached'>) => {
+				// Get the role
+				const role = interaction.options.getRole('role', true) as Role;
+
+				return this.addSubcommand(interaction as never, role, false);
+			},
+		},
+		{
+			name: 'remove',
+			type: 'method',
+			messageRun: async (message, args) => {
+				// Get the role
+				const role = await args.pick('role').catch((err: UserError) => {
+					throw new UserError({
+						identifier: 'no-role',
+						message:
+							err.identifier === Identifiers.ArgsMissing
+								? 'You need to provide a role to remove.'
+								: 'That is not a valid role.',
 					});
+				});
 
-					return this.removeSubcommand(message, role, true);
-				},
+				return this.removeSubcommand(message, role, true);
 			},
-			{ name: 'clear', to: (message) => this.clearSubcommand(message, true) },
-		]),
-		new ChatInputSubcommandMappings([
-			{ name: 'status', to: (interaction) => this.statusSubcommand(interaction as never, false) },
-			{ name: 'toggle', to: (interaction) => this.toggleSubcommand(interaction as never, true) },
-			{
-				name: 'add',
-				to: (interaction) => {
-					// Get the role
-					const role = interaction.options.getRole('role', true) as Role;
+			chatInputRun: async (interaction: Command.ChatInputInteraction<'cached'>) => {
+				// Get the role
+				const role = interaction.options.getRole('role', true) as Role;
 
-					return this.addSubcommand(interaction as never, role, false);
-				},
+				return this.removeSubcommand(interaction as never, role, false);
 			},
-			{
-				name: 'remove',
-				to: (interaction) => {
-					// Get the role
-					const role = interaction.options.getRole('role', true) as Role;
-
-					return this.removeSubcommand(interaction as never, role, false);
-				},
-			},
-			{ name: 'clear', to: (interaction) => this.clearSubcommand(interaction as never, false) },
-		]),
+		},
 	];
 
 	public override registerApplicationCommands(registry: Command.Registry) {
@@ -152,7 +151,7 @@ export class AllowedRolesCommand extends SubCommandPluginCommand {
 		);
 	}
 
-	private async statusSubcommand(
+	public async statusSubcommand(
 		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
 		isMessage: boolean,
 	) {
