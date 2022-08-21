@@ -8,14 +8,6 @@ import { Message, MessageActionRow, MessageButton } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Get a link to the support server for this application',
-	chatInputCommand: {
-		register: true,
-		guildIds: useDevelopmentGuildIds(),
-		idHints: [
-			// HighlightDev - Sapphire Guild Command
-			'950164487057580073',
-		],
-	},
 })
 export class SupportCommand extends Command {
 	public override messageRun(message: Message) {
@@ -24,6 +16,16 @@ export class SupportCommand extends Command {
 
 	public override chatInputRun(interaction: Command.ChatInputInteraction) {
 		return this._sharedRun(interaction, false);
+	}
+
+	public override registerApplicationCommands(registry: Command.Registry) {
+		registry.registerChatInputCommand((support) => support.setName(this.name).setDescription(this.description), {
+			guildIds: useDevelopmentGuildIds(),
+			idHints: [
+				// HighlightDev - Sapphire Guild Command
+				'950164487057580073',
+			],
+		});
 	}
 
 	protected async _sharedRun(messageOrInteraction: Message | Command.ChatInputInteraction, isMessage: boolean) {

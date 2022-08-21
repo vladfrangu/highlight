@@ -8,14 +8,6 @@ import { Message, MessageActionRow, MessageButton, Permissions } from 'discord.j
 
 @ApplyOptions<Command.Options>({
 	description: 'Get a link with which you can invite the application to your server',
-	chatInputCommand: {
-		register: true,
-		guildIds: useDevelopmentGuildIds(),
-		idHints: [
-			// HighlightDev - Sapphire Guild Command
-			'950166288959946752',
-		],
-	},
 })
 export class InviteCommand extends Command {
 	public override messageRun(message: Message) {
@@ -24,6 +16,16 @@ export class InviteCommand extends Command {
 
 	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
 		return this._sharedRun(interaction, false);
+	}
+
+	public override registerApplicationCommands(registry: Command.Registry) {
+		registry.registerChatInputCommand((invite) => invite.setName(this.name).setDescription(this.description), {
+			guildIds: useDevelopmentGuildIds(),
+			idHints: [
+				// HighlightDev - Sapphire Guild Command
+				'950166288959946752',
+			],
+		});
 	}
 
 	protected async _sharedRun(

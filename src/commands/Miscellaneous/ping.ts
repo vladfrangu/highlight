@@ -8,14 +8,6 @@ import type { Message } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Find out if Highlight is alive and processing messages',
-	chatInputCommand: {
-		register: true,
-		guildIds: useDevelopmentGuildIds(),
-		idHints: [
-			// HighlightDev - Sapphire Guild Command
-			'950159487006818314',
-		],
-	},
 })
 export class PingCommand extends Command {
 	public override messageRun(message: Message) {
@@ -24,6 +16,16 @@ export class PingCommand extends Command {
 
 	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
 		return this._sharedRun(interaction, false);
+	}
+
+	public override registerApplicationCommands(registry: Command.Registry) {
+		registry.registerChatInputCommand((ping) => ping.setName(this.name).setDescription(this.description), {
+			guildIds: useDevelopmentGuildIds(),
+			idHints: [
+				// HighlightDev - Sapphire Guild Command
+				'950159487006818314',
+			],
+		});
 	}
 
 	protected async _sharedRun(

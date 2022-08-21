@@ -19,14 +19,6 @@ const highlightVersion = JSON.parse(await readFile(new URL('../../../package.jso
 @ApplyOptions<Command.Options>({
 	aliases: ['stats'],
 	description: 'Find out some statistics about this application',
-	chatInputCommand: {
-		register: true,
-		guildIds: useDevelopmentGuildIds(),
-		idHints: [
-			// HighlightDev - Sapphire Guild Command
-			'950174971618005062',
-		],
-	},
 })
 export class StatisticsCommand extends Command {
 	public override messageRun(message: Message) {
@@ -35,6 +27,16 @@ export class StatisticsCommand extends Command {
 
 	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
 		return this._sharedRun(interaction, false);
+	}
+
+	public override registerApplicationCommands(registry: Command.Registry) {
+		registry.registerChatInputCommand((statistics) => statistics.setName(this.name).setDescription(this.description), {
+			guildIds: useDevelopmentGuildIds(),
+			idHints: [
+				// HighlightDev - Sapphire Guild Command
+				'950174971618005062',
+			],
+		});
 	}
 
 	protected async _sharedRun(

@@ -287,7 +287,7 @@ export class HelpCommand extends Command {
 			);
 		}
 
-		if (!globalResult.success) {
+		if (!globalResult.isOk()) {
 			return false;
 		}
 
@@ -308,7 +308,7 @@ export class HelpCommand extends Command {
 			);
 		}
 
-		if (!localResult.success) {
+		if (!localResult.isOk()) {
 			return false;
 		}
 
