@@ -1,26 +1,26 @@
 import { GuildIds, testSubjectTriggerUserId, testSubjectUserId } from '#test/constants';
 import { WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
-import { jest } from '@jest/globals';
+import type { MockedFunction, SpyInstance } from 'vitest';
 
-jest.unstable_mockModule('#workers/common', () => {
+vi.mock('#workers/common', () => {
 	return {
-		checkParentPort: jest.fn(() => true),
-		sendToMainProcess: jest.fn(),
+		checkParentPort: vi.fn(() => true),
+		sendToMainProcess: vi.fn(),
 	};
 });
 
 const { WorkerCache } = await import('#workers/WorkerCache');
 const { sendToMainProcess } = await import('#workers/common');
 
-const sendToMainProcessSpy = sendToMainProcess as jest.MockedFunction<typeof sendToMainProcess>;
+const sendToMainProcessSpy = sendToMainProcess as MockedFunction<typeof sendToMainProcess>;
 
 afterAll(() => {
-	jest.unmock('#workers/common');
+	vi.unmock('#workers/common');
 });
 
 describe('WorkerCache', () => {
 	const cache = new WorkerCache();
-	const removeTriggerForUserSpy = jest.spyOn(cache, 'removeTriggerForUser');
+	const removeTriggerForUserSpy = vi.spyOn(cache, 'removeTriggerForUser');
 
 	afterEach(() => {
 		cache['guildMap'].clear();
@@ -61,8 +61,8 @@ describe('WorkerCache', () => {
 
 		test('should have cached the provided regular expressions and subsequent calls should return cached value', () => {
 			const cachedExpressions = cache['validRegularExpressions'];
-			const setValidRegexSpy = jest.spyOn(cache, 'setValidRegex' as any) as unknown as jest.SpyInstance<
-				void,
+			const setValidRegexSpy = vi.spyOn(cache, 'setValidRegex' as any) as unknown as SpyInstance<
+				[],
 				[regex: string, valid: boolean]
 			>;
 

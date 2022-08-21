@@ -5,10 +5,10 @@ import { Emojis, HelpDetailedDescriptionReplacers, orList } from '#utils/misc';
 import { bold, inlineCode, quote, roleMention } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, Identifiers, UserError } from '@sapphire/framework';
-import { SubcommandMappingArray, SubcommandPluginCommand } from '@sapphire/plugin-subcommands';
+import { SubcommandMappingArray, Subcommand } from '@sapphire/plugin-subcommands';
 import type { Message, Role } from 'discord.js';
 
-@ApplyOptions<SubcommandPluginCommand.Options>({
+@ApplyOptions<Subcommand.Options>({
 	generateDashLessAliases: true,
 	generateUnderscoreLessAliases: true,
 	description: 'Controls who can use Highlight in your server',
@@ -46,8 +46,8 @@ import type { Message, Role } from 'discord.js';
 	// TODO: yeet this in favor of perms v2
 	preconditions: ['GuildStaff'],
 })
-export class AllowedRolesCommand extends SubcommandPluginCommand {
-	public readonly subcommandMappings: SubcommandMappingArray<this> = [
+export class AllowedRolesCommand extends Subcommand {
+	public readonly subcommandMappings: SubcommandMappingArray = [
 		{
 			name: 'status',
 			messageRun: (message) => this.statusSubcommand(message, true),

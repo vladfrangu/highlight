@@ -1,18 +1,17 @@
 import { createInfoEmbed } from '#utils/embeds';
 import { bold, hyperlink, inlineCode } from '@discordjs/builders';
-import { jest } from '@jest/globals';
 import { MessageLimits } from '@sapphire/discord-utilities';
 import { deepClone } from '@sapphire/utilities';
 import { OAuth2Routes, PermissionFlagsBits } from 'discord-api-types/v10';
 import { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu, Permissions } from 'discord.js';
 
-jest.mock('@sapphire/pieces', () => {
-	const actual = jest.requireActual('@sapphire/pieces') as typeof import('@sapphire/pieces');
+vi.mock('@sapphire/framework', async () => {
+	const actual = (await vi.importActual('@sapphire/framework')) as typeof import('@sapphire/framework');
 	return {
 		...actual,
 		container: {
 			client: {
-				generateInvite: jest.fn(
+				generateInvite: vi.fn(
 					(
 						options: Parameters<import('discord.js').Client['generateInvite']>[0] = {
 							scopes: ['bot', 'applications.commands'],
@@ -43,10 +42,10 @@ jest.mock('@sapphire/pieces', () => {
 });
 
 afterAll(() => {
-	jest.unmock('@sapphire/pieces');
+	vi.unmock('@sapphire/framework');
 });
 
-const { container } = await import('@sapphire/pieces');
+const { container } = await import('@sapphire/framework');
 const { withDeprecationWarningForMessageCommands, withDeprecationWarningOnEmbedForMessageCommands } = await import(
 	'#hooks/withDeprecationWarningForMessageCommands'
 );

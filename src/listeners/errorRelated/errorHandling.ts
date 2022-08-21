@@ -16,11 +16,7 @@ import {
 	Piece,
 	UserError,
 } from '@sapphire/framework';
-import {
-	MessageSubcommandNoMatchContext,
-	SubcommandPluginCommand,
-	SubcommandPluginIdentifiers,
-} from '@sapphire/plugin-subcommands';
+import { MessageSubcommandNoMatchContext, Subcommand, SubcommandPluginIdentifiers } from '@sapphire/plugin-subcommands';
 import { InteractionReplyOptions, MessageActionRow, MessageButton, MessageOptions } from 'discord.js';
 import { randomUUID } from 'node:crypto';
 
@@ -123,7 +119,7 @@ async function makeAndSendErrorEmbed<Options>(
 
 	if (error instanceof UserError) {
 		if (error.identifier === SubcommandPluginIdentifiers.MessageSubcommandNoMatch) {
-			const casted = command as SubcommandPluginCommand;
+			const casted = command as Subcommand;
 			const ctx = error.context as MessageSubcommandNoMatchContext;
 
 			const mappings = casted.parsedSubcommandMappings;
