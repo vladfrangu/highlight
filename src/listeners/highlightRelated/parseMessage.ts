@@ -14,3 +14,4 @@
 // Step 4. Ensure the users highlight after afk delay in guild was passed
 // Step 5. Ensure the author of the message that should be highlighted for the member or the channel is not ignored
 // Step 6. Create embed based on the guild's style
+// Step 6.1. Regardless of the guild style that is set, if the member that got highlighted cannot read the channel history, then they won't get extra context

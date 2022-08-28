@@ -50,23 +50,13 @@ model ChannelWithBotParsing {
 // hopefully prevent certain abuse vectors by leaving it at the guild's choice how the embed should look
 enum GuildNotificationStyle {
   // User#0000 highlighted you in #channel (+ optional message history is possible with who wrote the messages)
-  WithContextAndAuthor         @map("WITH_CONTEXT_AND_AUTHOR")
+  WithContextAndAuthor        @map("WITH_CONTEXT_AND_AUTHOR")
   // A user highlighted you in #channel (+ optional message history but no author data)
-  WithContextButNoAuthor       @map("WITH_CONTEXT_BUT_NO_AUTHOR")
+  WithContextButNoAuthor      @map("WITH_CONTEXT_BUT_NO_AUTHOR")
   // User#0000 highlighted you in #channel (without message history)
-  WithoutContextButWithAuthor  @map("WITHOUT_CONTEXT_BUT_WITH_AUTHOR")
+  WithoutContextButWithAuthor @map("WITHOUT_CONTEXT_BUT_WITH_AUTHOR")
   // A user highlighted you in #channel (without message history and author data)
-  WithoutContextOrAuthor       @map("WITHOUT_CONTEXT_OR_AUTHOR")
-}
-
-model GuildPermission {
-  guildId                   String   @id @map("guild_id") @db.Text
-  // If the user running the command needs to have one of the allowed roles to actually use highlight
-  requiresOneOfAllowedRoles Boolean  @default(false) @map("requires_one_of_allowed_roles") @db.Boolean
-  // The roles that are allowed to use highlight
-  allowedRoles              String[] @map("allowed_roles") @db.Text
-
-  @@map("guild_permissions")
+  WithoutContextOrAuthor      @map("WITHOUT_CONTEXT_OR_AUTHOR")
 }
 
 model Member {
