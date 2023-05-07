@@ -20,6 +20,7 @@ const client = new HighlightClient({
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.GuildMessageTyping,
 		GatewayIntentBits.Guilds,
+		GatewayIntentBits.MessageContent,
 	]),
 	makeCache: Options.cacheWithLimits({
 		MessageManager: {

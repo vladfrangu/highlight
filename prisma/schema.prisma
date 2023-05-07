@@ -8,16 +8,16 @@ datasource db {
 }
 
 model User {
-  id                             String    @id @db.Text
+  id                     String    @id @db.Text
   // /highlight opt-in/opt-out
-  optedOut                       Boolean   @default(false) @map("opted_out")
-  optedOutAt                     DateTime? @map("opted_out_at")
+  optedOut               Boolean   @default(false) @map("opted_out")
+  optedOutAt             DateTime? @map("opted_out_at")
   // Used to say "only send me highlights after I've been away from the channel for x seconds"
   // null means always send messages
   // /highlight grace-period set/clear/show
-  gracePeriod                    Int?      @map("grace_period")
+  gracePeriod            Int?      @map("grace_period")
   // /highlight adult-channel-highlights enable/disable
-  shouldHighlightInAdultChannels Boolean   @default(false) @map("adult_channel_highlights")
+  adultChannelHighlights Boolean   @default(false) @map("adult_channel_highlights")
 
   // Support globally ignoring users
   // /highlight ignored-users add/remove/list/clear [user_id]
@@ -39,9 +39,9 @@ model GuildSetting {
 // Some people have requested that highlight parses bot messages too :shrug:
 // There can be legit use cases I suppose, so for now this is added as an option
 model ChannelWithBotParsing {
-  channelId                            String   @id @map("channel_id") @db.Text
-  userTagThatRequestedChannelToBeAdded String   @map("user_tag_that_requested_channel_to_be_added") @db.Text
-  addedAt                              DateTime @default(now()) @map("added_at")
+  channelId String   @id @map("channel_id") @db.Text
+  userId    String   @map("user_id") @db.Text
+  addedAt   DateTime @default(now()) @map("added_at")
 
   @@map("channels_with_bot_parsing")
 }

@@ -9,8 +9,8 @@
 // Steps per result
 // Step 1. Ensure the member that should be highlighted hasn't also opted out
 // Step 1.1. If channel is NSFW, ensure the user opted into getting highlights from NSFW channels
-// Step 2. Ensure the user wasn't mentioned in the message
-// Step 3. Ensure the member that should be highlighted can see the channel
+// Step 2. Ensure the member that should be highlighted can see the channel
+// Step 3. Ensure the user wasn't mentioned in the message, or the message isn't in reply to the user
 // Step 4. Ensure the users highlight after afk delay in guild was passed
 // Step 5. Ensure the author of the message that should be highlighted for the member or the channel is not ignored
 // Step 6. Create embed based on the guild's style
