@@ -1,4 +1,4 @@
-import { Events, Listener, ListenerErrorPayload } from '@sapphire/framework';
+import { Events, Listener, type ListenerErrorPayload } from '@sapphire/framework';
 
 export class CoreEvent extends Listener<typeof Events.ListenerError> {
 	public override run(error: unknown, context: ListenerErrorPayload) {

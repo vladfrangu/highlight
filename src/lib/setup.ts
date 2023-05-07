@@ -1,15 +1,38 @@
-// Sapphire config
+// #region Sapphire config
 import { ApplicationCommandRegistries, container, RegisterBehavior } from '@sapphire/framework';
 import '@sapphire/plugin-logger/register';
-
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.Overwrite);
+// #endregion
 
-// NodeJS inspect settings
+// #region Env Setup
+import { setup, type ArrayString, type NumberString } from '@skyra/env-utilities';
+
+setup({ path: new URL('.env', rootDir) });
+
+declare module '@skyra/env-utilities' {
+	interface Env {
+		SUPPORT_SERVER_INVITE: string;
+		DEVELOPMENT_GUILD_IDS: ArrayString;
+		ERROR_WEBHOOK_URL: string;
+		GUILD_JOIN_LEAVE_WEBHOOK_URL: string;
+		POSTGRES_HOST: string;
+		POSTGRES_PORT: NumberString;
+		POSTGRES_DB: string;
+		POSTGRES_USERNAME: string;
+		POSTGRES_PASSWORD: string;
+		DISCORD_TOKEN: string;
+		POSTGRES_URL: string;
+	}
+}
+// #endregion
+
+// #region NodeJS inspect settings
 import { inspect } from 'node:util';
-inspect.defaultOptions.depth = 2;
+inspect.defaultOptions.depth = 4;
+// #endregion
 
-// Global color utility
-import { Colorette, createColors } from 'colorette';
+// #region Global color utility
+import { createColors, type Colorette } from 'colorette';
 container.colors = createColors({ useColor: true });
 
 declare module '@sapphire/pieces' {
@@ -17,8 +40,9 @@ declare module '@sapphire/pieces' {
 		colors: Colorette;
 	}
 }
+// #endregion
 
-// Prisma
+// #region Prisma
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import Prisma from '@prisma/client';
 
@@ -97,9 +121,11 @@ declare module '@sapphire/pieces' {
 		}>;
 	}
 }
+// #endregion
 
-// Highlight manager
+// #region Highlight manager
 import { HighlightManager } from '#structures/HighlightManager';
+import { rootDir } from '#utils/misc';
 
 container.highlightManager = new HighlightManager();
 
@@ -108,3 +134,4 @@ declare module '@sapphire/pieces' {
 		highlightManager: HighlightManager;
 	}
 }
+// #endregion

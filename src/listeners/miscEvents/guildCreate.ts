@@ -1,10 +1,9 @@
 import { useGuildJoinLeaveWebhook } from '#hooks/useGuildJoinLeaveWebhook';
 import { createInfoEmbed } from '#utils/embeds';
 import { pluralize } from '#utils/misc';
-import { time, TimestampStyles } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
-import type { Guild } from 'discord.js';
+import { TimestampStyles, time, type Guild } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	name: 'GuildCreateLogger',
@@ -25,12 +24,19 @@ export class GuildCreateListener extends Listener<typeof Events.GuildCreate> {
 		);
 
 		const embed = createInfoEmbed(`Application added to guild: ${guild.name} (${guild.id})`)
-			.addField('Member count', `**${guild.memberCount.toLocaleString()}** ${memberLabel}`, true)
-			.addField(
-				'Created at',
-				`${time(guild.createdTimestamp, TimestampStyles.ShortDateTime)} (${guild.createdAt.toISOString()})`,
-				true,
+			.setFields(
+				{
+					name: 'Member count',
+					value: `**${guild.memberCount.toLocaleString()}** ${memberLabel}`,
+					inline: true,
+				},
+				{
+					name: 'Created at',
+					value: `${time(guild.createdTimestamp, TimestampStyles.ShortDateTime)} (${guild.createdAt.toISOString()})`,
+					inline: true,
+				},
 			)
+
 			.setAuthor({
 				name: client.user!.tag,
 				iconURL: client.user!.displayAvatarURL(),

@@ -1,10 +1,10 @@
 import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
+import { InviteButton } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message, MessageActionRow, MessageButton, Permissions } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, Message, hyperlink } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Get a link with which you can invite the application to your server',
@@ -14,7 +14,7 @@ export class InviteCommand extends Command {
 		return this._sharedRun(message, true);
 	}
 
-	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
+	public override chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
 		return this._sharedRun(interaction, false);
 	}
 
@@ -29,24 +29,14 @@ export class InviteCommand extends Command {
 	}
 
 	protected async _sharedRun(
-		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
+		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
 		isMessage: boolean,
 	) {
-		const invite = this.container.client.generateInvite({
-			scopes: ['bot', 'applications.commands'],
-			permissions: new Permissions([
-				PermissionFlagsBits.ViewChannel,
-				PermissionFlagsBits.ReadMessageHistory,
-				PermissionFlagsBits.SendMessages,
-				PermissionFlagsBits.EmbedLinks,
-			]),
-		});
-
 		const embed = createInfoEmbed(
 			[
 				'Click the button below to add me to your server! 😄 🎉',
 				'',
-				`If that didn't work, try clicking [here](${invite}) instead.`,
+				`If that didn't work, try clicking ${hyperlink('here', this.container.clientInvite)} instead.`,
 			].join('\n'),
 		);
 
@@ -58,11 +48,7 @@ export class InviteCommand extends Command {
 				options: {
 					embeds: [embed],
 					ephemeral: true,
-					components: [
-						new MessageActionRow().addComponents(
-							new MessageButton().setStyle('LINK').setURL(invite).setLabel('Add me to your server!').setEmoji('🎉'),
-						),
-					],
+					components: [new ActionRowBuilder<ButtonBuilder>().setComponents(InviteButton)],
 				},
 			}),
 		);

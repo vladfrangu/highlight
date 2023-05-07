@@ -1,28 +1,32 @@
 import { useErrorWebhook } from '#hooks/useErrorWebhook';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createErrorEmbed } from '#utils/embeds';
-import { orList, pluralize } from '#utils/misc';
-import { bold, codeBlock, inlineCode } from '@discordjs/builders';
+import { SupportServerButton, orList, pluralize, supportServerInvite } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
-	Awaitable,
-	ChatInputCommandErrorPayload,
 	Command,
-	ContextMenuCommandErrorPayload,
 	Events,
 	Listener,
-	MessageCommandErrorPayload,
 	Piece,
 	UserError,
 	container,
+	type Awaitable,
+	type ChatInputCommandErrorPayload,
+	type ContextMenuCommandErrorPayload,
+	type MessageCommandErrorPayload,
 } from '@sapphire/framework';
-import { MessageSubcommandNoMatchContext, Subcommand, SubcommandPluginIdentifiers } from '@sapphire/plugin-subcommands';
+import {
+	Subcommand,
+	SubcommandPluginIdentifiers,
+	type MessageSubcommandNoMatchContext,
+} from '@sapphire/plugin-subcommands';
 import {
 	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	InteractionReplyOptions,
-	MessageCreateOptions,
+	bold,
+	codeBlock,
+	inlineCode,
+	type InteractionReplyOptions,
+	type MessageCreateOptions,
 } from 'discord.js';
 import { randomUUID } from 'node:crypto';
 
@@ -159,15 +163,7 @@ async function makeAndSendErrorEmbed<Options>(
 							)} properly for you. Please report this error ID to my developer: ${bold(inlineCode(errorUuid))}!`,
 						),
 					],
-					components: [
-						new ActionRowBuilder().setComponents([
-							new ButtonBuilder()
-								.setStyle(ButtonStyle.Link)
-								.setURL(process.env.SUPPORT_SERVER_INVITE!)
-								.setEmoji('🆘')
-								.setLabel('Support server'),
-						]),
-					],
+					components: [new ActionRowBuilder().setComponents(SupportServerButton)],
 				} as never);
 
 				return;
@@ -209,9 +205,10 @@ async function makeAndSendErrorEmbed<Options>(
 	await webhook.send({
 		content: `Encountered an unexpected error, take a look @here!\nUUID: ${bold(inlineCode(errorUuid))}`,
 		embeds: [
-			createErrorEmbed(codeBlock('ansi', error.stack ?? error.message))
-				.addField('Command', name)
-				.addField('Path', location.full),
+			createErrorEmbed(codeBlock('ansi', error.stack ?? error.message)).setFields(
+				{ name: 'Command', value: name },
+				{ name: 'Path', value: location.full },
+			),
 		],
 		allowedMentions: { parse: ['everyone'] },
 		avatarURL: container.client.user!.displayAvatarURL(),
@@ -219,21 +216,13 @@ async function makeAndSendErrorEmbed<Options>(
 	});
 
 	const errorEmbed = createErrorEmbed(
-		`Please send the following code to our [support server](${process.env.SUPPORT_SERVER_INVITE}): ${bold(
+		`Please send the following code to our [support server](${supportServerInvite}): ${bold(
 			inlineCode(errorUuid),
 		)}\n\nYou can also mention the following error message: ${codeBlock('ansi', error.message)}`,
 	).setTitle('An unexpected error occurred! 😱');
 
 	await callback({
-		components: [
-			new ActionRowBuilder().setComponents([
-				new ButtonBuilder()
-					.setStyle(ButtonStyle.Link)
-					.setURL(process.env.SUPPORT_SERVER_INVITE!)
-					.setEmoji('🆘')
-					.setLabel('Support server'),
-			]),
-		],
+		components: [new ActionRowBuilder().setComponents(SupportServerButton)],
 		embeds: [errorEmbed],
 		allowedMentions: { parse: [] },
 	} as never);

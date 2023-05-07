@@ -1,15 +1,13 @@
-import { pluralize } from '#utils/misc';
+import { InviteButton, inviteOptions, packageJsonFile, pluralize } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, LogLevel } from '@sapphire/framework';
-import { OAuth2Scopes, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
-import { readFile } from 'node:fs/promises';
 
 @ApplyOptions<Listener.Options>({
 	name: 'ReadyLogger',
 	event: Events.ClientReady,
 })
 export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
-	public override async run() {
+	public override run() {
 		const { client, colors, logger } = this.container;
 
 		const asciiArt = [
@@ -23,10 +21,14 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			'           |___/           |___/           ',
 		].map((item) => colors.yellow(item));
 
-		const packageJson = JSON.parse(await readFile(new URL('../../../package.json', import.meta.url), 'utf8'));
-		const versionString = `${colors.magenta('Version: ')}${colors.green(`v${packageJson.version}`)} ${colors.magenta(
-			'-',
-		)} ${colors.blueBright('Sapphire and Application Command Edition')}`;
+		this.container.clientInvite = client.generateInvite(inviteOptions);
+
+		// Set the invite button to include the generated invite link
+		InviteButton.setURL(this.container.clientInvite);
+
+		const versionString = `${colors.magenta('Version: ')}${colors.green(
+			`v${packageJsonFile.version}`,
+		)} ${colors.magenta('-')} ${colors.blueBright('Sapphire and Application Command Edition')}`;
 
 		const userTagInColor = `${colors.magenta('Logged in as: ')}${colors.cyanBright(client.user!.tag)} (${colors.green(
 			client.user!.id,
@@ -41,17 +43,7 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			`${colors.magenta('               Guild count: ')}${colors.cyanBright(
 				client.guilds.cache.size.toLocaleString(),
 			)}`,
-			`${colors.magenta('        Invite application: ')}${colors.cyanBright(
-				client.generateInvite({
-					scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
-					permissions: new PermissionsBitField([
-						PermissionFlagsBits.ViewChannel,
-						PermissionFlagsBits.ReadMessageHistory,
-						PermissionFlagsBits.SendMessages,
-						PermissionFlagsBits.EmbedLinks,
-					]),
-				}),
-			)}`,
+			`${colors.magenta('        Invite application: ')}${colors.cyanBright(this.container.clientInvite)}`,
 			`${colors.magenta('             Public prefix: ')}${colors.cyanBright('/')}`,
 			`${colors.magenta('  Developer command prefix: ')}${colors.cyanBright(`@${client.user!.username}`)}`,
 		];
@@ -71,5 +63,11 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 				);
 			}
 		}
+	}
+}
+
+declare module '@sapphire/pieces' {
+	interface Container {
+		clientInvite: string;
 	}
 }

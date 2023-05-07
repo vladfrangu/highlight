@@ -1,8 +1,7 @@
 import { createInfoEmbed } from '#utils/embeds';
-import { bold, inlineCode, italic } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
-import type { Message } from 'discord.js';
+import { bold, inlineCode, italic, type Message } from 'discord.js';
 
 const phrases = [
 	"It's dangerous to go alone, let me help you...",
