@@ -1,6 +1,6 @@
-import { WorkerCommands, WorkerCommandsUnion, WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
+import { WorkerCommands, WorkerResponseTypes, WorkerType, type WorkerCommandsUnion } from '#types/WorkerTypes';
 import { checkParentPort, sendToMainProcess } from '#workers/common';
-import { GuildId, UserId, WorkerCache } from '#workers/WorkerCache';
+import { WorkerCache, type GuildId, type UserId } from '#workers/WorkerCache';
 import type { Member } from '@prisma/client';
 import { parentPort, workerData } from 'worker_threads';
 

@@ -2,12 +2,11 @@ import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createErrorEmbed, createSuccessEmbed } from '#utils/embeds';
 import { Emojis, HelpDetailedDescriptionReplacers, orList } from '#utils/misc';
-import { bold, inlineCode, italic, quote } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { AutoCompleteLimits } from '@sapphire/discord-utilities';
-import { Args, ChatInputCommand, Command, MessageCommand, Result } from '@sapphire/framework';
+import { Args, Command, Result, type ChatInputCommand, type MessageCommand } from '@sapphire/framework';
 import { jaroWinkler } from '@skyra/jaro-winkler';
-import { Collection, Message } from 'discord.js';
+import { Collection, Message, bold, inlineCode, italic, quote } from 'discord.js';
 
 const randomMissingPermissionMessages = [
 	'🙈 This maze was not meant for you.',
@@ -39,7 +38,7 @@ const randomMissingPermissionMessages = [
 	].join('\n'),
 })
 export class HelpCommand extends Command {
-	public override async chatInputRun(interaction: Command.ChatInputInteraction) {
+	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction) {
 		const maybeCommand = interaction.options.getString('command');
 
 		if (maybeCommand) {
@@ -209,7 +208,7 @@ export class HelpCommand extends Command {
 	}
 
 	private async replyWithPossibleCommandNames(
-		messageOrInteraction: Message | Command.ChatInputInteraction,
+		messageOrInteraction: Message | Command.ChatInputCommandInteraction,
 		input: string,
 		matches: Command[],
 		isMessage: boolean,
@@ -264,7 +263,7 @@ export class HelpCommand extends Command {
 	}
 
 	private async canRunCommand(
-		messageOrInteraction: Message | Command.ChatInputInteraction,
+		messageOrInteraction: Message | Command.ChatInputCommandInteraction,
 		command: Command,
 		isMessage = false,
 	) {
@@ -279,7 +278,7 @@ export class HelpCommand extends Command {
 			});
 		} else {
 			globalResult = await preconditionStore.chatInputRun(
-				messageOrInteraction as Command.ChatInputInteraction,
+				messageOrInteraction as Command.ChatInputCommandInteraction,
 				command as ChatInputCommand,
 				{
 					external: true,
@@ -300,7 +299,7 @@ export class HelpCommand extends Command {
 			});
 		} else {
 			localResult = await command.preconditions.chatInputRun(
-				messageOrInteraction as Command.ChatInputInteraction,
+				messageOrInteraction as Command.ChatInputCommandInteraction,
 				command as ChatInputCommand,
 				{
 					external: true,
@@ -317,7 +316,7 @@ export class HelpCommand extends Command {
 	}
 
 	private async sendSingleCommandHelp(
-		messageOrInteraction: Message | Command.ChatInputInteraction,
+		messageOrInteraction: Message | Command.ChatInputCommandInteraction,
 		command: Command,
 		isMessage: boolean,
 	) {
@@ -359,33 +358,33 @@ export class HelpCommand extends Command {
 		);
 
 		if (['-', '_'].some((char) => command.name.includes(char))) {
-			responseEmbed.addField(
-				'A note about message based commands and dashes/underscores',
-				`Since the command name includes a ${bold(inlineCode('-'))} or ${bold(
+			responseEmbed.addFields({
+				name: 'A note about message based commands and dashes/underscores',
+				value: `Since the command name includes a ${bold(inlineCode('-'))} or ${bold(
 					inlineCode('_'),
 				)}, the dashes/underscores are optional in the command name when using message commands. (for example ${bold(
 					inlineCode(command.name),
 				)} can be used as ${bold(inlineCode(command.name.replace(/-_/g, '')))} too)`,
-			);
+			});
 		}
 
 		const supportsMessageCommands = command.supportsMessageCommands();
 		const supportsChatInputCommands = command.supportsChatInputCommands();
 
 		if (supportsMessageCommands && !supportsChatInputCommands) {
-			responseEmbed.addField(
-				'⚠️ Warning ⚠️',
-				`This command can only be ran via messages (invoke it by using ${bold(
+			responseEmbed.addFields({
+				name: '⚠️ Warning ⚠️',
+				value: `This command can only be ran via messages (invoke it by using ${bold(
 					inlineCode(`@${this.container.client.user!.username} ${command.name}`),
 				)})`,
-			);
+			});
 		} else if (!supportsMessageCommands && supportsChatInputCommands) {
-			responseEmbed.addField(
-				'⚠️ Warning ⚠️',
-				`This command can only be ran via ${Emojis.ChatInputCommands} chat input commands (invoke it by using ${bold(
-					inlineCode(`/${command.name}`),
-				)})`,
-			);
+			responseEmbed.addFields({
+				name: '⚠️ Warning ⚠️',
+				value: `This command can only be ran via ${
+					Emojis.ChatInputCommands
+				} chat input commands (invoke it by using ${bold(inlineCode(`/${command.name}`))})`,
+			});
 		}
 
 		await messageOrInteraction.reply(
@@ -402,7 +401,7 @@ export class HelpCommand extends Command {
 	}
 
 	private async replyWithAllCommandsTheUserCanRun(
-		messageOrInteraction: Message | Command.ChatInputInteraction,
+		messageOrInteraction: Message | Command.ChatInputCommandInteraction,
 		isMessage: boolean,
 	) {
 		// Step 1. Get all commands the user can run
@@ -437,13 +436,13 @@ export class HelpCommand extends Command {
 		);
 
 		for (const [category, commands] of sorted.entries()) {
-			embed.addField(
-				`${category} Commands`,
-				commands
+			embed.addFields({
+				name: `${category} Commands`,
+				value: commands
 					.sort((a, b) => a.name.localeCompare(b.name))
 					.map((command) => `${bold(inlineCode(`/${command.name}`))} - ${command.description}`)
 					.join('\n'),
-			);
+			});
 		}
 
 		await messageOrInteraction.reply(

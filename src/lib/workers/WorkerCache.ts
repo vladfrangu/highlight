@@ -1,4 +1,9 @@
-import { HighlightResult, RemoveTriggerForUserCommand, WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
+import {
+	WorkerResponseTypes,
+	WorkerType,
+	type HighlightResult,
+	type RemoveTriggerForUserCommand,
+} from '#types/WorkerTypes';
 import { tryRegex } from '#utils/misc';
 import { sendToMainProcess } from '#workers/common';
 import re2 from 're2';

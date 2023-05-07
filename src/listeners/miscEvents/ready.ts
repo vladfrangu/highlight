@@ -1,15 +1,14 @@
-import { pluralize } from '#utils/misc';
+import { packageJsonFile, pluralize } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, LogLevel } from '@sapphire/framework';
 import { OAuth2Scopes, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
-import { readFile } from 'node:fs/promises';
 
 @ApplyOptions<Listener.Options>({
 	name: 'ReadyLogger',
 	event: Events.ClientReady,
 })
 export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
-	public override async run() {
+	public override run() {
 		const { client, colors, logger } = this.container;
 
 		const asciiArt = [
@@ -23,10 +22,9 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			'           |___/           |___/           ',
 		].map((item) => colors.yellow(item));
 
-		const packageJson = JSON.parse(await readFile(new URL('../../../package.json', import.meta.url), 'utf8'));
-		const versionString = `${colors.magenta('Version: ')}${colors.green(`v${packageJson.version}`)} ${colors.magenta(
-			'-',
-		)} ${colors.blueBright('Sapphire and Application Command Edition')}`;
+		const versionString = `${colors.magenta('Version: ')}${colors.green(
+			`v${packageJsonFile.version}`,
+		)} ${colors.magenta('-')} ${colors.blueBright('Sapphire and Application Command Edition')}`;
 
 		const userTagInColor = `${colors.magenta('Logged in as: ')}${colors.cyanBright(client.user!.tag)} (${colors.green(
 			client.user!.id,

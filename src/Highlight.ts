@@ -3,8 +3,7 @@ import '#setup';
 import { HighlightClient } from '#structures/HighlightClient';
 import { container, LogLevel } from '@sapphire/framework';
 import { Time } from '@sapphire/time-utilities';
-import { ActivityType, GatewayIntentBits } from 'discord-api-types/v10';
-import { IntentsBitField, Options } from 'discord.js';
+import { ActivityType, GatewayIntentBits, IntentsBitField, Options } from 'discord.js';
 
 const client = new HighlightClient({
 	presence: {
@@ -15,6 +14,7 @@ const client = new HighlightClient({
 			},
 		],
 	},
+	defaultPrefix: 'h.',
 	intents: new IntentsBitField([
 		GatewayIntentBits.DirectMessages,
 		GatewayIntentBits.GuildMessages,

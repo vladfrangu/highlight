@@ -1,13 +1,13 @@
 import { createErrorEmbed } from '#utils/embeds';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
-	Awaitable,
-	ChatInputCommandDeniedPayload,
-	ContextMenuCommandDeniedPayload,
 	Events,
 	Listener,
-	MessageCommandDeniedPayload,
 	UserError,
+	type Awaitable,
+	type ChatInputCommandDeniedPayload,
+	type ContextMenuCommandDeniedPayload,
+	type MessageCommandDeniedPayload,
 } from '@sapphire/framework';
 import type { InteractionReplyOptions, MessageCreateOptions } from 'discord.js';
 

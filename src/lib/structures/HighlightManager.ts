@@ -1,11 +1,11 @@
 import {
-	DeleteInvalidRegularExpressionResponse,
-	HighlightResult,
 	WorkerCommands,
-	WorkerCommandsUnion,
-	WorkerResponse,
 	WorkerResponseTypes,
 	WorkerType,
+	type DeleteInvalidRegularExpressionResponse,
+	type HighlightResult,
+	type WorkerCommandsUnion,
+	type WorkerResponse,
 } from '#types/WorkerTypes';
 import { container } from '@sapphire/framework';
 import { remove } from 'confusables';
@@ -27,7 +27,6 @@ export class HighlightManager {
 	 */
 	private destroyed = false;
 
-	// eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
 	#promiseMap = new Map<
 		string,
 		{
@@ -71,7 +70,6 @@ export class HighlightManager {
 
 		return new Promise<boolean>((resolve, reject) => {
 			const listener = (payload: WorkerResponse) => {
-				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				timeout.refresh();
 
 				if (payload.command === WorkerResponseTypes.ValidateRegularExpressionResult) {

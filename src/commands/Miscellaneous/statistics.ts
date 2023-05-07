@@ -1,20 +1,24 @@
 import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
-import { bold, hyperlink, italic } from '@discordjs/builders';
+import { packageJsonFile } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, version as sapphireVersion } from '@sapphire/framework';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message, MessageActionRow, MessageButton, Permissions } from 'discord.js';
-import { readFile } from 'node:fs/promises';
-import typescript from 'typescript';
-
-const { version: typescriptVersion } = typescript;
-const discordJsVersion = JSON.parse(
-	await readFile(new URL('../../../node_modules/discord.js/package.json', import.meta.url), 'utf8'),
-).version;
-
-const highlightVersion = JSON.parse(await readFile(new URL('../../../package.json', import.meta.url), 'utf8')).version;
+import { envParseString } from '@skyra/env-utilities';
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	Message,
+	OAuth2Scopes,
+	PermissionFlagsBits,
+	PermissionsBitField,
+	bold,
+	version as discordJsVersion,
+	hyperlink,
+	italic,
+} from 'discord.js';
+import { version as typescriptVersion } from 'typescript';
 
 @ApplyOptions<Command.Options>({
 	aliases: ['stats'],
@@ -25,7 +29,7 @@ export class StatisticsCommand extends Command {
 		return this._sharedRun(message, true);
 	}
 
-	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
+	public override chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
 		return this._sharedRun(interaction, false);
 	}
 
@@ -40,12 +44,12 @@ export class StatisticsCommand extends Command {
 	}
 
 	protected async _sharedRun(
-		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
+		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
 		isMessage: boolean,
 	) {
 		const invite = this.container.client.generateInvite({
-			scopes: ['bot', 'applications.commands'],
-			permissions: new Permissions([
+			scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
+			permissions: new PermissionsBitField([
 				PermissionFlagsBits.ViewChannel,
 				PermissionFlagsBits.ReadMessageHistory,
 				PermissionFlagsBits.SendMessages,
@@ -58,13 +62,13 @@ export class StatisticsCommand extends Command {
 		const embed = createInfoEmbed(
 			[
 				`Here is some of that ${italic('juicy')} data about Highlight ${bold(
-					`v${highlightVersion}`,
+					`v${packageJsonFile.version}`,
 				)} - Sapphire Edition, built by ${hyperlink('Vladdy#0002', 'https://github.com/vladfrangu')}!`,
 			].join('\n'),
-		)
-			.addField(
-				'Built using these amazing tools',
-				[
+		).setFields(
+			{
+				name: 'Built using these amazing tools',
+				value: [
 					`• ${hyperlink('node.js', 'https://nodejs.org/')} ${bold(process.version)} & ${hyperlink(
 						'TypeScript',
 						'https://typescriptlang.org/',
@@ -72,17 +76,18 @@ export class StatisticsCommand extends Command {
 					`• ${hyperlink('discord.js', 'https://discord.js.org/#/')} ${bold(`v${discordJsVersion}`)}`,
 					`• ${hyperlink('Sapphire Framework', 'https://sapphirejs.dev/')} ${bold(`v${sapphireVersion}`)}`,
 				].join('\n'),
-			)
-			.addField(
-				'Handling highlights for the following',
-				[
+			},
+			{
+				name: 'Handling highlights for the following',
+				value: [
 					`• Shards: ${bold((this.container.client.options.shardCount ?? 1).toLocaleString())}`,
 					`• Servers: ${bold(this.container.client.guilds.cache.size.toLocaleString())}`,
 					`• Users: ${bold(
 						this.container.client.guilds.cache.reduce((acc, curr) => acc + curr.memberCount, 0).toLocaleString(),
 					)}`,
 				].join('\n'),
-			);
+			},
+		);
 
 		await messageOrInteraction.reply(
 			withDeprecationWarningForMessageCommands({
@@ -93,25 +98,38 @@ export class StatisticsCommand extends Command {
 					embeds: [embed],
 					ephemeral: true,
 					components: [
-						new MessageActionRow().addComponents(
-							new MessageButton().setStyle('LINK').setURL(invite).setLabel('Add me to your server!').setEmoji('🎉'),
-							new MessageButton()
-								.setStyle('LINK')
-								.setURL(process.env.SUPPORT_SERVER_INVITE ?? 'https://discord.gg/C6D9bge')
+						new ActionRowBuilder<ButtonBuilder>().addComponents(
+							new ButtonBuilder()
+								.setStyle(ButtonStyle.Link)
+								.setURL(invite)
+								.setLabel('Add me to your server!')
+								.setEmoji({
+									name: '🎉',
+								}),
+							new ButtonBuilder()
+								.setStyle(ButtonStyle.Link)
+								.setURL(envParseString('SUPPORT_SERVER_INVITE', 'https://discord.gg/C6D9bge'))
 								.setLabel('Support server')
-								.setEmoji('🆘'),
+								.setEmoji({
+									name: '🆘',
+								}),
 						),
-						new MessageActionRow().addComponents(
-							new MessageButton()
-								.setStyle('LINK')
+						new ActionRowBuilder<ButtonBuilder>().addComponents(
+							new ButtonBuilder()
+								.setStyle(ButtonStyle.Link)
 								.setURL('https://github.com/vladfrangu/highlight')
 								.setLabel('GitHub Repository')
-								.setEmoji('<:github:950169270896197633>'),
-							new MessageButton()
-								.setStyle('LINK')
+								.setEmoji({
+									name: 'github',
+									id: '950169270896197633',
+								}),
+							new ButtonBuilder()
+								.setStyle(ButtonStyle.Link)
 								.setURL('https://github.com/sponsors/vladfrangu')
 								.setLabel('Donate')
-								.setEmoji('💙'),
+								.setEmoji({
+									name: '💙',
+								}),
 						),
 					],
 				},

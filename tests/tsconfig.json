@@ -1,9 +1,8 @@
 {
 	"extends": "../tsconfig.json",
-	"include": ["."],
-	"references": [{ "path": "../" }],
+	"include": [".", "../"],
 	"compilerOptions": {
-		"rootDir": "./",
+		"rootDir": "../",
 		"paths": {
 			"#internals/*": ["../src/lib/internals/*.ts"],
 			"#hooks/*": ["../src/lib/utils/hooks/*.ts"],

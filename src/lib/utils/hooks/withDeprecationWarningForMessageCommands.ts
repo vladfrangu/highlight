@@ -1,15 +1,22 @@
 import { createInfoEmbed } from '#utils/embeds';
-import { ActionRowBuilder, MessageActionRowComponentBuilder, bold, hyperlink, inlineCode } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
 import { deepClone } from '@sapphire/utilities';
-import { ButtonStyle, ComponentType, OAuth2Scopes, PermissionFlagsBits } from 'discord-api-types/v10';
 import {
+	ActionRowBuilder,
 	ButtonBuilder,
+	ButtonStyle,
+	ComponentType,
 	EmbedBuilder,
-	InteractionReplyOptions,
-	MessageCreateOptions,
+	OAuth2Scopes,
+	PermissionFlagsBits,
 	PermissionsBitField,
-	WebhookMessageEditOptions,
+	bold,
+	hyperlink,
+	inlineCode,
+	type InteractionReplyOptions,
+	type MessageActionRowComponentBuilder,
+	type MessageCreateOptions,
+	type WebhookMessageEditOptions,
 } from 'discord.js';
 
 export function withDeprecationWarningOnEmbedForMessageCommands(

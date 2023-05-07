@@ -1,18 +1,10 @@
 {
-	"extends": "@sapphire/ts-config",
+	"extends": "@sapphire/ts-config/extra-strict",
 	"compilerOptions": {
 		"target": "ESNext",
-		"module": "Node16",
 		"moduleResolution": "Node16",
-		"noEmitHelpers": true,
-		"importHelpers": true,
-		"removeComments": true,
-		"skipLibCheck": true,
 		"declaration": false,
 		"declarationMap": false,
-		"sourceMap": true,
-		"importsNotUsedAsValues": "error",
-		"noImplicitOverride": true,
 		"rootDir": "./src",
 		"outDir": "./dist",
 		"tsBuildInfoFile": "./dist/.tsbuildinfo",
@@ -26,5 +18,5 @@
 			"#workers/*": ["./src/lib/workers/*.ts"]
 		}
 	},
-	"include": ["src", "src/**/*.d.ts"]
+	"include": ["src"]
 }

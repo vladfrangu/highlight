@@ -18,12 +18,12 @@ A simple to use highlight bot made using klasa and discord.js.
 Clone this repository, make sure you have git installed and run
 
 ```bash
-npm i # Or yarn
+yarn
 ```
 
-Copy `config.example.ts` to `config.ts`, fill in the values, then run:
+Copy `.env.example` to `.env`, fill in the values, then run:
 
 ```bash
-npm run build
+yarn build
 node .
 ```

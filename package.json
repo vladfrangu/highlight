@@ -2,28 +2,27 @@
 	"name": "highlight-bot",
 	"version": "3.0.0",
 	"description": "An utility bot written in Sapphire to get highlighted when a word, or regular expression is said",
+	"private": true,
 	"main": "dist/Highlight.js",
 	"type": "module",
+	"imports": {
+		"#internals/*": "./dist/lib/internals/*.js",
+		"#hooks/*": "./dist/lib/utils/hooks/*.js",
+		"#setup": "./dist/lib/setup.js",
+		"#structures/*": "./dist/lib/structures/*.js",
+		"#types/*": "./dist/lib/types/*.js",
+		"#utils/*": "./dist/lib/utils/*.js",
+		"#workers/*": "./dist/lib/workers/*.js"
+	},
 	"scripts": {
-		"build:ci": "tsc --noEmit",
 		"build": "tsc",
-		"clean": "npx rimraf dist",
-		"cleanbuild": "npm run clean && tsc",
+		"clean": "rimraf dist",
+		"cleanbuild": "yarn clean && tsc",
 		"coverage": "vitest run --coverage",
 		"lint": "eslint --fix src --ext ts",
-		"start": "npm run cleanbuild && node .",
+		"start": "yarn cleanbuild && node .",
 		"test": "vitest run",
-		"test:lint": "eslint src --ext mjs,js,ts",
-		"watch": "tsc -w",
-		"_postinstall": "node scripts/postinstall-packagejson-fix.mjs"
-	},
-	"private": true,
-	"author": {
-		"name": "Vlad Frangu",
-		"email": "kingdgrizzle@gmail.com"
-	},
-	"engines": {
-		"node": ">= 16.0.0"
+		"watch": "tsc -w"
 	},
 	"dependencies": {
 		"@discordjs/builders": "^1.6.3",
@@ -38,6 +37,7 @@
 		"@sapphire/time-utilities": "^1.7.9",
 		"@sapphire/type": "^2.4.0",
 		"@sapphire/utilities": "^3.11.2",
+		"@skyra/env-utilities": "^1.2.0",
 		"@skyra/jaro-winkler": "^1.1.0",
 		"bufferutil": "^4.0.7",
 		"colorette": "^2.0.20",
@@ -51,7 +51,8 @@
 	},
 	"devDependencies": {
 		"@sapphire/eslint-config": "^4.4.2",
-		"@sapphire/ts-config": "^3.3.4",
+		"@sapphire/prettier-config": "^1.4.5",
+		"@sapphire/ts-config": "^4.0.0",
 		"@types/node": "^20.1.0",
 		"@typescript-eslint/eslint-plugin": "^5.59.2",
 		"@typescript-eslint/parser": "^5.59.2",
@@ -61,16 +62,15 @@
 		"eslint-plugin-prettier": "^4.2.1",
 		"prettier": "^2.8.8",
 		"prisma": "^4.13.0",
-		"typescript": "^4.9.5",
+		"typescript": "^5.0.4",
 		"vitest": "^0.30.1"
 	},
-	"imports": {
-		"#internals/*": "./dist/lib/internals/*.js",
-		"#hooks/*": "./dist/lib/utils/hooks/*.js",
-		"#setup": "./dist/lib/setup.js",
-		"#structures/*": "./dist/lib/structures/*.js",
-		"#types/*": "./dist/lib/types/*.js",
-		"#utils/*": "./dist/lib/utils/*.js",
-		"#workers/*": "./dist/lib/workers/*.js"
-	}
+	"author": {
+		"name": "Vlad Frangu",
+		"email": "kingdgrizzle@gmail.com"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"packageManager": "yarn@3.5.1"
 }

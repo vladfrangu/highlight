@@ -1,15 +1,21 @@
 import { createInfoEmbed } from '#utils/embeds';
+import { MessageLimits } from '@sapphire/discord-utilities';
+import { deepClone } from '@sapphire/utilities';
 import {
-	MessageActionRowComponentBuilder,
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	EmbedBuilder,
+	OAuth2Routes,
+	OAuth2Scopes,
+	PermissionFlagsBits,
+	PermissionsBitField,
 	StringSelectMenuBuilder,
 	bold,
 	hyperlink,
 	inlineCode,
-} from '@discordjs/builders';
-import { MessageLimits } from '@sapphire/discord-utilities';
-import { deepClone } from '@sapphire/utilities';
-import { ButtonStyle, OAuth2Routes, OAuth2Scopes, PermissionFlagsBits } from 'discord-api-types/v10';
-import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, PermissionsBitField } from 'discord.js';
+	type MessageActionRowComponentBuilder,
+} from 'discord.js';
 
 vi.mock('@sapphire/framework', async () => {
 	const actual = (await vi.importActual('@sapphire/framework')) as typeof import('@sapphire/framework');

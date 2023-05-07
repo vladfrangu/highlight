@@ -1,4 +1,8 @@
+import { readFile } from 'node:fs/promises';
 import re2 from 're2';
+
+export const rootDir = new URL('../../../', import.meta.url);
+export const packageJsonFile = JSON.parse(await readFile(new URL('package.json', rootDir), 'utf8'));
 
 export function tryRegex(input: string): [boolean, re2 | null] {
 	try {

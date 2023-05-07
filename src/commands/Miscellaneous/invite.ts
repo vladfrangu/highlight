@@ -3,8 +3,15 @@ import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecation
 import { createInfoEmbed } from '#utils/embeds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message, MessageActionRow, MessageButton, Permissions } from 'discord.js';
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	Message,
+	OAuth2Scopes,
+	PermissionFlagsBits,
+	PermissionsBitField,
+} from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Get a link with which you can invite the application to your server',
@@ -14,7 +21,7 @@ export class InviteCommand extends Command {
 		return this._sharedRun(message, true);
 	}
 
-	public override chatInputRun(interaction: Command.ChatInputInteraction<'cached'>) {
+	public override chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
 		return this._sharedRun(interaction, false);
 	}
 
@@ -29,12 +36,12 @@ export class InviteCommand extends Command {
 	}
 
 	protected async _sharedRun(
-		messageOrInteraction: Message | Command.ChatInputInteraction<'cached'>,
+		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
 		isMessage: boolean,
 	) {
 		const invite = this.container.client.generateInvite({
-			scopes: ['bot', 'applications.commands'],
-			permissions: new Permissions([
+			scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
+			permissions: new PermissionsBitField([
 				PermissionFlagsBits.ViewChannel,
 				PermissionFlagsBits.ReadMessageHistory,
 				PermissionFlagsBits.SendMessages,
@@ -59,8 +66,14 @@ export class InviteCommand extends Command {
 					embeds: [embed],
 					ephemeral: true,
 					components: [
-						new MessageActionRow().addComponents(
-							new MessageButton().setStyle('LINK').setURL(invite).setLabel('Add me to your server!').setEmoji('🎉'),
+						new ActionRowBuilder<ButtonBuilder>().addComponents(
+							new ButtonBuilder()
+								.setStyle(ButtonStyle.Link)
+								.setURL(invite)
+								.setLabel('Add me to your server!')
+								.setEmoji({
+									name: '🎉',
+								}),
 						),
 					],
 				},
