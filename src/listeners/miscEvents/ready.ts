@@ -1,4 +1,4 @@
-import { inviteOptions, packageJsonFile, pluralize } from '#utils/misc';
+import { InviteButton, inviteOptions, packageJsonFile, pluralize } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, LogLevel } from '@sapphire/framework';
 
@@ -21,7 +21,10 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			'           |___/           |___/           ',
 		].map((item) => colors.yellow(item));
 
-		const invite = client.generateInvite(inviteOptions);
+		this.container.clientInvite = client.generateInvite(inviteOptions);
+
+		// Set the invite button to include the generated invite link
+		InviteButton.setURL(this.container.clientInvite);
 
 		const versionString = `${colors.magenta('Version: ')}${colors.green(
 			`v${packageJsonFile.version}`,
@@ -40,7 +43,7 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			`${colors.magenta('               Guild count: ')}${colors.cyanBright(
 				client.guilds.cache.size.toLocaleString(),
 			)}`,
-			`${colors.magenta('        Invite application: ')}${colors.cyanBright(invite)}`,
+			`${colors.magenta('        Invite application: ')}${colors.cyanBright(this.container.clientInvite)}`,
 			`${colors.magenta('             Public prefix: ')}${colors.cyanBright('/')}`,
 			`${colors.magenta('  Developer command prefix: ')}${colors.cyanBright(`@${client.user!.username}`)}`,
 		];
@@ -60,5 +63,11 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 				);
 			}
 		}
+	}
+}
+
+declare module '@sapphire/pieces' {
+	interface Container {
+		clientInvite: string;
 	}
 }

@@ -1,7 +1,7 @@
 import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
-import { InviteButton, SupportServerButton, inviteOptions, packageJsonFile } from '#utils/misc';
+import { InviteButton, SupportServerButton, packageJsonFile } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, version as sapphireVersion } from '@sapphire/framework';
 import {
@@ -43,8 +43,6 @@ export class StatisticsCommand extends Command {
 		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
 		isMessage: boolean,
 	) {
-		const invite = this.container.client.generateInvite(inviteOptions);
-
 		// guild, user count?
 
 		const embed = createInfoEmbed(
@@ -86,7 +84,7 @@ export class StatisticsCommand extends Command {
 					embeds: [embed],
 					ephemeral: true,
 					components: [
-						new ActionRowBuilder<ButtonBuilder>().setComponents(InviteButton.setURL(invite), SupportServerButton),
+						new ActionRowBuilder<ButtonBuilder>().setComponents(InviteButton, SupportServerButton),
 						new ActionRowBuilder<ButtonBuilder>().setComponents(
 							new ButtonBuilder()
 								.setStyle(ButtonStyle.Link)

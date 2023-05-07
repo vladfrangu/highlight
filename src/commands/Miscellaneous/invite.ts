@@ -1,7 +1,7 @@
 import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
-import { InviteButton, inviteOptions } from '#utils/misc';
+import { InviteButton } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
 import { ActionRowBuilder, ButtonBuilder, Message, hyperlink } from 'discord.js';
@@ -32,12 +32,11 @@ export class InviteCommand extends Command {
 		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
 		isMessage: boolean,
 	) {
-		const invite = this.container.client.generateInvite(inviteOptions);
 		const embed = createInfoEmbed(
 			[
 				'Click the button below to add me to your server! 😄 🎉',
 				'',
-				`If that didn't work, try clicking ${hyperlink('here', invite)} instead.`,
+				`If that didn't work, try clicking ${hyperlink('here', this.container.clientInvite)} instead.`,
 			].join('\n'),
 		);
 
@@ -49,7 +48,7 @@ export class InviteCommand extends Command {
 				options: {
 					embeds: [embed],
 					ephemeral: true,
-					components: [new ActionRowBuilder<ButtonBuilder>().setComponents(InviteButton.setURL(invite))],
+					components: [new ActionRowBuilder<ButtonBuilder>().setComponents(InviteButton)],
 				},
 			}),
 		);
