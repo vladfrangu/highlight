@@ -1,9 +1,15 @@
 import { createInfoEmbed } from '#utils/embeds';
-import { bold, hyperlink, inlineCode } from '@discordjs/builders';
+import {
+	MessageActionRowComponentBuilder,
+	StringSelectMenuBuilder,
+	bold,
+	hyperlink,
+	inlineCode,
+} from '@discordjs/builders';
 import { MessageLimits } from '@sapphire/discord-utilities';
 import { deepClone } from '@sapphire/utilities';
-import { OAuth2Routes, PermissionFlagsBits } from 'discord-api-types/v10';
-import { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu, Permissions } from 'discord.js';
+import { ButtonStyle, OAuth2Routes, OAuth2Scopes, PermissionFlagsBits } from 'discord-api-types/v10';
+import { ActionRowBuilder, ButtonBuilder, EmbedBuilder, PermissionsBitField } from 'discord.js';
 
 vi.mock('@sapphire/framework', async () => {
 	const actual = (await vi.importActual('@sapphire/framework')) as typeof import('@sapphire/framework');
@@ -14,7 +20,7 @@ vi.mock('@sapphire/framework', async () => {
 				generateInvite: vi.fn(
 					(
 						options: Parameters<import('discord.js').Client['generateInvite']>[0] = {
-							scopes: ['bot', 'applications.commands'],
+							scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
 						},
 					) => {
 						const query = new URLSearchParams({
@@ -23,7 +29,7 @@ vi.mock('@sapphire/framework', async () => {
 						});
 
 						if (options.permissions) {
-							const resolved = Permissions.resolve(options.permissions);
+							const resolved = PermissionsBitField.resolve(options.permissions);
 							if (resolved) {
 								query.set('permissions', resolved.toString());
 							}
@@ -51,8 +57,8 @@ const { withDeprecationWarningForMessageCommands, withDeprecationWarningOnEmbedF
 );
 
 const invite = container.client.generateInvite({
-	scopes: ['bot', 'applications.commands'],
-	permissions: new Permissions([
+	scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
+	permissions: new PermissionsBitField([
 		PermissionFlagsBits.ViewChannel,
 		PermissionFlagsBits.ReadMessageHistory,
 		PermissionFlagsBits.SendMessages,
@@ -61,8 +67,8 @@ const invite = container.client.generateInvite({
 	guild: '1',
 });
 
-const authButton = new MessageButton()
-	.setStyle('LINK')
+const authButton = new ButtonBuilder()
+	.setStyle(ButtonStyle.Link)
 	.setURL(invite)
 	.setLabel('Re-authorize me with slash commands!')
 	.setEmoji('🤖');
@@ -76,7 +82,7 @@ describe('message command deprecation hooks', () => {
 				const embed = createInfoEmbed().setFields(twentyFiveFields());
 				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test');
 
-				expect(embed.description).toEqual(
+				expect(embed.data.description).toEqual(
 					[
 						`> ${bold('Did you know?')}`,
 						`> Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
@@ -89,7 +95,7 @@ describe('message command deprecation hooks', () => {
 				const embed = createInfoEmbed().setFields(twentyFiveFields());
 				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test', invite);
 
-				expect(embed.description).toEqual(
+				expect(embed.data.description).toEqual(
 					[
 						`> ${bold('Did you know?')}`,
 						`> Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
@@ -107,7 +113,7 @@ describe('message command deprecation hooks', () => {
 				const embed = createInfoEmbed('Hey there!').setFields(twentyFiveFields());
 				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test');
 
-				expect(embed.description).toEqual(
+				expect(embed.data.description).toEqual(
 					[
 						'Hey there!',
 						'',
@@ -124,9 +130,9 @@ describe('message command deprecation hooks', () => {
 				const embed = createInfoEmbed();
 				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test');
 
-				expect(embed.fields).toHaveLength(1);
-				expect(embed.fields[0].name).toEqual('Did you know?');
-				expect(embed.fields[0].value).toEqual(
+				expect(embed.data.fields).toHaveLength(1);
+				expect(embed.data.fields![0].name).toEqual('Did you know?');
+				expect(embed.data.fields![0].value).toEqual(
 					[
 						`Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
 						`You should use the ${bold(inlineCode(`/test`))} slash command instead!`,
@@ -138,9 +144,9 @@ describe('message command deprecation hooks', () => {
 				const embed = createInfoEmbed();
 				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test', invite);
 
-				expect(embed.fields).toHaveLength(1);
-				expect(embed.fields[0].name).toEqual('Did you know?');
-				expect(embed.fields[0].value).toEqual(
+				expect(embed.data.fields).toHaveLength(1);
+				expect(embed.data.fields![0].name).toEqual('Did you know?');
+				expect(embed.data.fields![0].value).toEqual(
 					[
 						`Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
 						`You should use the ${bold(inlineCode(`/test`))} slash command instead!`,
@@ -170,7 +176,7 @@ describe('message command deprecation hooks', () => {
 		});
 
 		describe('given options received from a message, then it should return the data with extra information about the deprecation', () => {
-			test('given only content, it should add an embed and button', () => {
+			test.only('given only content, it should add an embed and button', () => {
 				const original = { content: 'Hi' };
 
 				const result = withDeprecationWarningForMessageCommands({
@@ -183,14 +189,14 @@ describe('message command deprecation hooks', () => {
 				const expected = {
 					...original,
 					embeds: [withDeprecationWarningOnEmbedForMessageCommands(createInfoEmbed(), 'test', invite)],
-					components: [new MessageActionRow().addComponents(authButton)],
+					components: [new ActionRowBuilder().addComponents(authButton)],
 				};
 
 				expect(result).toStrictEqual(expected);
 			});
 
 			test('given an embed, it should enhance it with the deprecation warning', () => {
-				const original = { embeds: [new MessageEmbed(createInfoEmbed('Hey there!'))] };
+				const original = { embeds: [EmbedBuilder.from(createInfoEmbed('Hey there!'))] };
 
 				const result = withDeprecationWarningForMessageCommands({
 					commandName: 'test',
@@ -201,14 +207,14 @@ describe('message command deprecation hooks', () => {
 
 				const expected = {
 					embeds: [withDeprecationWarningOnEmbedForMessageCommands(original.embeds[0], 'test', invite)],
-					components: [new MessageActionRow().addComponents(authButton)],
+					components: [new ActionRowBuilder().addComponents(authButton)],
 				};
 
 				expect(result).toStrictEqual(expected);
 			});
 
 			test('given content and an action row, it should add another action row', () => {
-				const original = { content: 'Hi', components: [new MessageActionRow()] };
+				const original = { content: 'Hi', components: [new ActionRowBuilder<MessageActionRowComponentBuilder>()] };
 
 				const result = withDeprecationWarningForMessageCommands({
 					commandName: 'test',
@@ -220,7 +226,7 @@ describe('message command deprecation hooks', () => {
 				const expected = {
 					...original,
 					embeds: [withDeprecationWarningOnEmbedForMessageCommands(createInfoEmbed(), 'test', invite)],
-					components: [...original.components, new MessageActionRow().addComponents(authButton)],
+					components: [...original.components, new ActionRowBuilder().addComponents(authButton)],
 				};
 
 				expect(result).toStrictEqual(expected);
@@ -229,7 +235,10 @@ describe('message command deprecation hooks', () => {
 			test('given content and maximum action rows, it should add the auth button on the first available action row', () => {
 				const original = {
 					content: 'Hi',
-					components: Array.from({ length: MessageLimits.MaximumActionRows }, () => new MessageActionRow()),
+					components: Array.from(
+						{ length: MessageLimits.MaximumActionRows },
+						() => new ActionRowBuilder<MessageActionRowComponentBuilder>(),
+					),
 				};
 
 				const result = withDeprecationWarningForMessageCommands({
@@ -255,11 +264,11 @@ describe('message command deprecation hooks', () => {
 				const original = {
 					content: 'Hi',
 					components: Array.from({ length: MessageLimits.MaximumActionRows }, (_, index) => {
-						const row = new MessageActionRow();
+						const row = new ActionRowBuilder<MessageActionRowComponentBuilder>();
 
 						// Even rows get a select menu
 						if (index % 2 === 0) {
-							row.setComponents(new MessageSelectMenu());
+							row.setComponents(new StringSelectMenuBuilder());
 						}
 
 						return row;

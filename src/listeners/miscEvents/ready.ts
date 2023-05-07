@@ -1,8 +1,7 @@
 import { pluralize } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, LogLevel } from '@sapphire/framework';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Permissions } from 'discord.js';
+import { OAuth2Scopes, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 
 @ApplyOptions<Listener.Options>({
@@ -44,8 +43,8 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			)}`,
 			`${colors.magenta('        Invite application: ')}${colors.cyanBright(
 				client.generateInvite({
-					scopes: ['bot', 'applications.commands'],
-					permissions: new Permissions([
+					scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
+					permissions: new PermissionsBitField([
 						PermissionFlagsBits.ViewChannel,
 						PermissionFlagsBits.ReadMessageHistory,
 						PermissionFlagsBits.SendMessages,

@@ -1,9 +1,9 @@
 import { time, TimestampStyles } from '@discordjs/builders';
 import { AllFlowsPrecondition } from '@sapphire/framework';
-import type { CommandInteraction, ContextMenuInteraction, Message } from 'discord.js';
+import type { ChatInputCommandInteraction, ContextMenuCommandInteraction, Message } from 'discord.js';
 
 export class AllowedRole extends AllFlowsPrecondition {
-	public async chatInputRun(interaction: CommandInteraction) {
+	public async chatInputRun(interaction: ChatInputCommandInteraction) {
 		return this._sharedRun(interaction.user.id);
 	}
 
@@ -11,7 +11,7 @@ export class AllowedRole extends AllFlowsPrecondition {
 		return this._sharedRun(message.author.id);
 	}
 
-	public async contextMenuRun(interaction: ContextMenuInteraction) {
+	public async contextMenuRun(interaction: ContextMenuCommandInteraction) {
 		return this._sharedRun(interaction.user.id);
 	}
 

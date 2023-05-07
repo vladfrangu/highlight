@@ -9,7 +9,7 @@ import {
 	MessageCommandDeniedPayload,
 	UserError,
 } from '@sapphire/framework';
-import type { InteractionReplyOptions, MessageOptions } from 'discord.js';
+import type { InteractionReplyOptions, MessageCreateOptions } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	name: 'MessageCommandDenied',
@@ -17,7 +17,7 @@ import type { InteractionReplyOptions, MessageOptions } from 'discord.js';
 })
 export class MessageCommandDenied extends Listener<typeof Events.MessageCommandDenied> {
 	public override async run(error: UserError, { message }: MessageCommandDeniedPayload) {
-		await makeAndSendDeniedEmbed<MessageOptions>(error, (options) => message.channel.send(options));
+		await makeAndSendDeniedEmbed<MessageCreateOptions>(error, (options) => message.channel.send(options));
 	}
 }
 

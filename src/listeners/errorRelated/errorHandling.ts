@@ -8,16 +8,22 @@ import {
 	Awaitable,
 	ChatInputCommandErrorPayload,
 	Command,
-	container,
 	ContextMenuCommandErrorPayload,
 	Events,
 	Listener,
 	MessageCommandErrorPayload,
 	Piece,
 	UserError,
+	container,
 } from '@sapphire/framework';
 import { MessageSubcommandNoMatchContext, Subcommand, SubcommandPluginIdentifiers } from '@sapphire/plugin-subcommands';
-import { InteractionReplyOptions, MessageActionRow, MessageButton, MessageOptions } from 'discord.js';
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	InteractionReplyOptions,
+	MessageCreateOptions,
+} from 'discord.js';
 import { randomUUID } from 'node:crypto';
 
 @ApplyOptions<Listener.Options>({
@@ -28,7 +34,7 @@ export class MessageCommandError extends Listener<typeof Events.MessageCommandEr
 	public override async run(error: unknown, { message, command }: MessageCommandErrorPayload) {
 		const maybeError = error as Error;
 
-		await makeAndSendErrorEmbed<MessageOptions>(
+		await makeAndSendErrorEmbed<MessageCreateOptions>(
 			maybeError,
 			command,
 			(options) =>
@@ -154,9 +160,9 @@ async function makeAndSendErrorEmbed<Options>(
 						),
 					],
 					components: [
-						new MessageActionRow().setComponents([
-							new MessageButton()
-								.setStyle('LINK')
+						new ActionRowBuilder().setComponents([
+							new ButtonBuilder()
+								.setStyle(ButtonStyle.Link)
 								.setURL(process.env.SUPPORT_SERVER_INVITE!)
 								.setEmoji('🆘')
 								.setLabel('Support server'),
@@ -220,9 +226,9 @@ async function makeAndSendErrorEmbed<Options>(
 
 	await callback({
 		components: [
-			new MessageActionRow().setComponents([
-				new MessageButton()
-					.setStyle('LINK')
+			new ActionRowBuilder().setComponents([
+				new ButtonBuilder()
+					.setStyle(ButtonStyle.Link)
 					.setURL(process.env.SUPPORT_SERVER_INVITE!)
 					.setEmoji('🆘')
 					.setLabel('Support server'),

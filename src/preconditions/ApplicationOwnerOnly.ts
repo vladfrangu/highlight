@@ -1,8 +1,8 @@
 import { AllFlowsPrecondition } from '@sapphire/framework';
-import { CommandInteraction, ContextMenuInteraction, Message, User } from 'discord.js';
+import { ChatInputCommandInteraction, ContextMenuCommandInteraction, Message, User } from 'discord.js';
 
 export class AllowedRole extends AllFlowsPrecondition {
-	public async chatInputRun(interaction: CommandInteraction) {
+	public async chatInputRun(interaction: ChatInputCommandInteraction) {
 		return this._sharedRun(interaction.user.id);
 	}
 
@@ -10,7 +10,7 @@ export class AllowedRole extends AllFlowsPrecondition {
 		return this._sharedRun(message.author.id);
 	}
 
-	public async contextMenuRun(interaction: ContextMenuInteraction) {
+	public async contextMenuRun(interaction: ContextMenuCommandInteraction) {
 		return this._sharedRun(interaction.user.id);
 	}
 

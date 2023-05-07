@@ -2,7 +2,7 @@ import { orList } from '#utils/misc';
 import { bold } from '@discordjs/builders';
 import { Precondition } from '@sapphire/framework';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { CommandInteraction, Message, Permissions } from 'discord.js';
+import type { CommandInteraction, Message, PermissionsBitField } from 'discord.js';
 
 export class GuildStaff extends Precondition {
 	public override async chatInputRun(interaction: CommandInteraction) {
@@ -25,7 +25,7 @@ export class GuildStaff extends Precondition {
 		return this._sharedRun(member.permissions);
 	}
 
-	private async _sharedRun(permissions: Permissions) {
+	private async _sharedRun(permissions: PermissionsBitField) {
 		if (
 			permissions.any(
 				[

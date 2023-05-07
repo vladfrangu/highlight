@@ -1,29 +1,28 @@
 import { createInfoEmbed } from '#utils/embeds';
-import { bold, hyperlink, inlineCode } from '@discordjs/builders';
+import { ActionRowBuilder, MessageActionRowComponentBuilder, bold, hyperlink, inlineCode } from '@discordjs/builders';
 import { container } from '@sapphire/framework';
 import { deepClone } from '@sapphire/utilities';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { ButtonStyle, ComponentType, OAuth2Scopes, PermissionFlagsBits } from 'discord-api-types/v10';
 import {
+	ButtonBuilder,
+	EmbedBuilder,
 	InteractionReplyOptions,
-	MessageActionRow,
-	MessageButton,
-	MessageEmbed,
-	MessageOptions,
-	Permissions,
-	WebhookEditMessageOptions,
+	MessageCreateOptions,
+	PermissionsBitField,
+	WebhookMessageEditOptions,
 } from 'discord.js';
 
 export function withDeprecationWarningOnEmbedForMessageCommands(
-	embed: MessageEmbed,
+	embed: EmbedBuilder,
 	commandName: string,
 	buttonNotice: string | null = null,
 ) {
 	// Add it to the description
-	if (embed.fields.length === 25) {
+	if (embed.data.fields?.length === 25) {
 		embed.setDescription(
 			[
-				embed.description ? embed.description : undefined,
-				embed.description ? '' : undefined,
+				embed.data.description ? embed.data.description : undefined,
+				embed.data.description ? '' : undefined,
 				`> ${bold('Did you know?')}`,
 				`> Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
 				`> You should use the ${bold(inlineCode(`/${commandName}`))} slash command instead!`,
@@ -41,9 +40,9 @@ export function withDeprecationWarningOnEmbedForMessageCommands(
 	}
 	// Add a field if we can
 	else {
-		embed.addField(
-			'Did you know?',
-			[
+		embed.addFields({
+			name: 'Did you know?',
+			value: [
 				`Message based commands are ${bold(
 					'deprecated',
 				)}, and will be removed in the future.\nYou should use the ${bold(
@@ -59,14 +58,14 @@ export function withDeprecationWarningOnEmbedForMessageCommands(
 			]
 				.filter((item) => typeof item === 'string')
 				.join('\n'),
-		);
+		});
 	}
 
 	return embed;
 }
 
 export function withDeprecationWarningForMessageCommands<
-	T extends InteractionReplyOptions | MessageOptions | WebhookEditMessageOptions,
+	T extends InteractionReplyOptions | MessageCreateOptions | WebhookMessageEditOptions,
 >({
 	options,
 	commandName,
@@ -86,8 +85,8 @@ export function withDeprecationWarningForMessageCommands<
 	const cloned = deepClone(options);
 
 	const invite = container.client.generateInvite({
-		scopes: ['bot', 'applications.commands'],
-		permissions: new Permissions([
+		scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
+		permissions: new PermissionsBitField([
 			PermissionFlagsBits.ViewChannel,
 			PermissionFlagsBits.ReadMessageHistory,
 			PermissionFlagsBits.SendMessages,
@@ -101,7 +100,7 @@ export function withDeprecationWarningForMessageCommands<
 		const [first, ...rest] = cloned.embeds;
 
 		cloned.embeds = [
-			withDeprecationWarningOnEmbedForMessageCommands(new MessageEmbed(first), commandName, invite),
+			withDeprecationWarningOnEmbedForMessageCommands(EmbedBuilder.from(first), commandName, invite),
 			...rest,
 		];
 	}
@@ -110,30 +109,40 @@ export function withDeprecationWarningForMessageCommands<
 		cloned.embeds = [withDeprecationWarningOnEmbedForMessageCommands(createInfoEmbed(), commandName, invite)];
 	}
 
-	const authButton = new MessageButton()
-		.setStyle('LINK')
+	const authButton = new ButtonBuilder()
+		.setStyle(ButtonStyle.Link)
 		.setURL(invite)
 		.setLabel('Re-authorize me with slash commands!')
 		.setEmoji('🤖');
 
 	if (cloned.components?.length) {
+		const casted = cloned.components as ActionRowBuilder<MessageActionRowComponentBuilder>[];
 		// We have components. If we have 5 rows (unlikely), we cannot do anything but piggyback off of the first free row
 		// Otherwise, we just push a new row
-		if (cloned.components.length === 5) {
-			const freeRow = cloned.components.find(
-				(row) => row.components.length !== 5 && row.components[0]?.type !== 'SELECT_MENU',
-			);
+		if (casted.length === 5) {
+			const freeRow = casted.find((row) => {
+				return (
+					row.components.length !== 5 &&
+					![
+						ComponentType.StringSelect,
+						ComponentType.UserSelect,
+						ComponentType.RoleSelect,
+						ComponentType.MentionableSelect,
+						ComponentType.ChannelSelect,
+					].some((type) => row.components[0].data.type !== type)
+				);
+			});
 
 			if (freeRow) {
 				freeRow.components.push(authButton);
 			}
 		} else {
-			cloned.components.push(new MessageActionRow().addComponents(authButton));
+			cloned.components.push(new ActionRowBuilder<ButtonBuilder>().addComponents(authButton));
 		}
 	}
 	// We don't have any components, so we can just add a new one
 	else {
-		cloned.components = [new MessageActionRow().addComponents(authButton)];
+		cloned.components = [new ActionRowBuilder<ButtonBuilder>().addComponents(authButton)];
 	}
 
 	return cloned;

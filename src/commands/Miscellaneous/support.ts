@@ -4,7 +4,7 @@ import { createInfoEmbed } from '#utils/embeds';
 import { italic } from '@discordjs/builders';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { Message, MessageActionRow, MessageButton } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Message } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Get a link to the support server for this application',
@@ -14,7 +14,7 @@ export class SupportCommand extends Command {
 		return this._sharedRun(message, true);
 	}
 
-	public override chatInputRun(interaction: Command.ChatInputInteraction) {
+	public override chatInputRun(interaction: Command.ChatInputCommandInteraction) {
 		return this._sharedRun(interaction, false);
 	}
 
@@ -28,7 +28,7 @@ export class SupportCommand extends Command {
 		});
 	}
 
-	protected async _sharedRun(messageOrInteraction: Message | Command.ChatInputInteraction, isMessage: boolean) {
+	protected async _sharedRun(messageOrInteraction: Message | Command.ChatInputCommandInteraction, isMessage: boolean) {
 		const embed = createInfoEmbed(
 			[
 				italic("It's dangerous to go alone if you are lost..."),
@@ -45,9 +45,9 @@ export class SupportCommand extends Command {
 					embeds: [embed],
 					ephemeral: true,
 					components: [
-						new MessageActionRow().addComponents(
-							new MessageButton()
-								.setStyle('LINK')
+						new ActionRowBuilder<ButtonBuilder>().addComponents(
+							new ButtonBuilder()
+								.setStyle(ButtonStyle.Link)
 								.setURL(process.env.SUPPORT_SERVER_INVITE ?? 'https://discord.gg/C6D9bge')
 								.setLabel('Support server')
 								.setEmoji('🆘'),
