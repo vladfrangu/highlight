@@ -3,6 +3,7 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"moduleResolution": "Node16",
+		"removeComments": true,
 		"declaration": false,
 		"declarationMap": false,
 		"rootDir": "./src",
