@@ -1,4 +1,3 @@
-import { container } from '@sapphire/framework';
 import { envParseString } from '@skyra/env-utilities';
 import {
 	ButtonBuilder,
@@ -32,9 +31,8 @@ export const inviteOptions: InviteGenerationOptions = {
 		PermissionFlagsBits.EmbedLinks,
 	]),
 };
-export const InviteButton = new ButtonBuilder()
+export const InviteButton = new ButtonBuilder() //
 	.setStyle(ButtonStyle.Link)
-	.setURL(container.clientInvite)
 	.setLabel('Add me to your server!')
 	.setEmoji({
 		name: '🎉',
