@@ -1,4 +1,4 @@
-import { invite, packageJsonFile, pluralize } from '#utils/misc';
+import { packageJsonFile, pluralize } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, LogLevel } from '@sapphire/framework';
 
@@ -8,7 +8,7 @@ import { Events, Listener, LogLevel } from '@sapphire/framework';
 })
 export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 	public override run() {
-		const { client, colors, logger } = this.container;
+		const { client, colors, logger, clientInvite } = this.container;
 
 		const asciiArt = [
 			'  _    _ _       _     _ _       _     _   ',
@@ -38,7 +38,7 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			`${colors.magenta('               Guild count: ')}${colors.cyanBright(
 				client.guilds.cache.size.toLocaleString(),
 			)}`,
-			`${colors.magenta('        Invite application: ')}${colors.cyanBright(invite)}`,
+			`${colors.magenta('        Invite application: ')}${colors.cyanBright(clientInvite)}`,
 			`${colors.magenta('             Public prefix: ')}${colors.cyanBright('/')}`,
 			`${colors.magenta('  Developer command prefix: ')}${colors.cyanBright(`@${client.user!.username}`)}`,
 		];

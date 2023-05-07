@@ -32,10 +32,9 @@ export const inviteOptions: InviteGenerationOptions = {
 		PermissionFlagsBits.EmbedLinks,
 	]),
 };
-export const invite = container.client.generateInvite(inviteOptions);
 export const InviteButton = new ButtonBuilder()
 	.setStyle(ButtonStyle.Link)
-	.setURL(invite)
+	.setURL(container.clientInvite)
 	.setLabel('Add me to your server!')
 	.setEmoji({
 		name: '🎉',

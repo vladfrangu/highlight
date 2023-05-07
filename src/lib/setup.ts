@@ -1,6 +1,8 @@
-// Sapphire config
+// #region Sapphire config
 import { ApplicationCommandRegistries, container, RegisterBehavior } from '@sapphire/framework';
 import '@sapphire/plugin-logger/register';
+ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.Overwrite);
+// #endregion
 
 // #region Env Setup
 import { setup, type ArrayString, type NumberString } from '@skyra/env-utilities';
@@ -24,14 +26,9 @@ declare module '@skyra/env-utilities' {
 }
 // #endregion
 
-// #region Application Commands
-
-ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.Overwrite);
-// #endregion
-
 // #region NodeJS inspect settings
 import { inspect } from 'node:util';
-inspect.defaultOptions.depth = 2;
+inspect.defaultOptions.depth = 4;
 // #endregion
 
 // #region Global color utility

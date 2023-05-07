@@ -1,3 +1,4 @@
+import { inviteOptions } from '#utils/misc';
 import { container, SapphireClient } from '@sapphire/framework';
 
 export class HighlightClient extends SapphireClient {
@@ -9,7 +10,11 @@ export class HighlightClient extends SapphireClient {
 		await container.highlightManager.start();
 
 		this.logger.info('Logging in to Discord...');
-		return super.login(token);
+		const loginResult = await super.login(token);
+
+		container.clientInvite = container.client.generateInvite(inviteOptions);
+
+		return loginResult;
 	}
 
 	public override async destroy() {
@@ -18,5 +23,11 @@ export class HighlightClient extends SapphireClient {
 		} catch {}
 		await container.highlightManager.destroy();
 		return super.destroy();
+	}
+}
+
+declare module '@sapphire/pieces' {
+	interface Container {
+		clientInvite: string;
 	}
 }

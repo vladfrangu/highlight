@@ -163,7 +163,7 @@ async function makeAndSendErrorEmbed<Options>(
 							)} properly for you. Please report this error ID to my developer: ${bold(inlineCode(errorUuid))}!`,
 						),
 					],
-					components: [new ActionRowBuilder().setComponents([SupportServerButton])],
+					components: [new ActionRowBuilder().setComponents(SupportServerButton)],
 				} as never);
 
 				return;
@@ -222,7 +222,7 @@ async function makeAndSendErrorEmbed<Options>(
 	).setTitle('An unexpected error occurred! 😱');
 
 	await callback({
-		components: [new ActionRowBuilder().setComponents([SupportServerButton])],
+		components: [new ActionRowBuilder().setComponents(SupportServerButton)],
 		embeds: [errorEmbed],
 		allowedMentions: { parse: [] },
 	} as never);

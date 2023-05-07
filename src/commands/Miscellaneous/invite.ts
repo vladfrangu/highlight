@@ -1,10 +1,10 @@
 import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
-import { InviteButton, invite } from '#utils/misc';
+import { InviteButton } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonBuilder, Message, hideLinkEmbed, hyperlink } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, Message, hyperlink } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Get a link with which you can invite the application to your server',
@@ -36,7 +36,7 @@ export class InviteCommand extends Command {
 			[
 				'Click the button below to add me to your server! 😄 🎉',
 				'',
-				`If that didn't work, try clicking ${hyperlink('here', hideLinkEmbed(invite))} instead.`,
+				`If that didn't work, try clicking ${hyperlink('here', this.container.clientInvite)} instead.`,
 			].join('\n'),
 		);
 
