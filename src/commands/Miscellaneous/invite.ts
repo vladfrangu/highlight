@@ -1,17 +1,10 @@
 import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
+import { InviteButton, invite } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import {
-	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
-	Message,
-	OAuth2Scopes,
-	PermissionFlagsBits,
-	PermissionsBitField,
-} from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, Message, hideLinkEmbed, hyperlink } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Get a link with which you can invite the application to your server',
@@ -39,21 +32,11 @@ export class InviteCommand extends Command {
 		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
 		isMessage: boolean,
 	) {
-		const invite = this.container.client.generateInvite({
-			scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
-			permissions: new PermissionsBitField([
-				PermissionFlagsBits.ViewChannel,
-				PermissionFlagsBits.ReadMessageHistory,
-				PermissionFlagsBits.SendMessages,
-				PermissionFlagsBits.EmbedLinks,
-			]),
-		});
-
 		const embed = createInfoEmbed(
 			[
 				'Click the button below to add me to your server! 😄 🎉',
 				'',
-				`If that didn't work, try clicking [here](${invite}) instead.`,
+				`If that didn't work, try clicking ${hyperlink('here', hideLinkEmbed(invite))} instead.`,
 			].join('\n'),
 		);
 
@@ -65,17 +48,7 @@ export class InviteCommand extends Command {
 				options: {
 					embeds: [embed],
 					ephemeral: true,
-					components: [
-						new ActionRowBuilder<ButtonBuilder>().addComponents(
-							new ButtonBuilder()
-								.setStyle(ButtonStyle.Link)
-								.setURL(invite)
-								.setLabel('Add me to your server!')
-								.setEmoji({
-									name: '🎉',
-								}),
-						),
-					],
+					components: [new ActionRowBuilder<ButtonBuilder>().setComponents(InviteButton)],
 				},
 			}),
 		);

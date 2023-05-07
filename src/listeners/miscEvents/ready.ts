@@ -1,7 +1,6 @@
-import { packageJsonFile, pluralize } from '#utils/misc';
+import { invite, packageJsonFile, pluralize } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, LogLevel } from '@sapphire/framework';
-import { OAuth2Scopes, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	name: 'ReadyLogger',
@@ -39,17 +38,7 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			`${colors.magenta('               Guild count: ')}${colors.cyanBright(
 				client.guilds.cache.size.toLocaleString(),
 			)}`,
-			`${colors.magenta('        Invite application: ')}${colors.cyanBright(
-				client.generateInvite({
-					scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
-					permissions: new PermissionsBitField([
-						PermissionFlagsBits.ViewChannel,
-						PermissionFlagsBits.ReadMessageHistory,
-						PermissionFlagsBits.SendMessages,
-						PermissionFlagsBits.EmbedLinks,
-					]),
-				}),
-			)}`,
+			`${colors.magenta('        Invite application: ')}${colors.cyanBright(invite)}`,
 			`${colors.magenta('             Public prefix: ')}${colors.cyanBright('/')}`,
 			`${colors.magenta('  Developer command prefix: ')}${colors.cyanBright(`@${client.user!.username}`)}`,
 		];

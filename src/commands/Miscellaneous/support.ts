@@ -1,10 +1,10 @@
 import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
+import { SupportServerButton } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command } from '@sapphire/framework';
-import { envParseString } from '@skyra/env-utilities';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Message, italic } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, Message, italic } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Get a link to the support server for this application',
@@ -44,15 +44,7 @@ export class SupportCommand extends Command {
 				options: {
 					embeds: [embed],
 					ephemeral: true,
-					components: [
-						new ActionRowBuilder<ButtonBuilder>().addComponents(
-							new ButtonBuilder()
-								.setStyle(ButtonStyle.Link)
-								.setURL(envParseString('SUPPORT_SERVER_INVITE', 'https://discord.gg/C6D9bge'))
-								.setLabel('Support server')
-								.setEmoji('🆘'),
-						),
-					],
+					components: [new ActionRowBuilder<ButtonBuilder>().setComponents(SupportServerButton)],
 				},
 			}),
 		);

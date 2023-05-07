@@ -1,7 +1,7 @@
 import { useErrorWebhook } from '#hooks/useErrorWebhook';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createErrorEmbed } from '#utils/embeds';
-import { orList, pluralize } from '#utils/misc';
+import { SupportServerButton, orList, pluralize, supportServerInvite } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
 	Command,
@@ -20,11 +20,8 @@ import {
 	SubcommandPluginIdentifiers,
 	type MessageSubcommandNoMatchContext,
 } from '@sapphire/plugin-subcommands';
-import { envParseString } from '@skyra/env-utilities';
 import {
 	ActionRowBuilder,
-	ButtonBuilder,
-	ButtonStyle,
 	bold,
 	codeBlock,
 	inlineCode,
@@ -32,8 +29,6 @@ import {
 	type MessageCreateOptions,
 } from 'discord.js';
 import { randomUUID } from 'node:crypto';
-
-const supportServerInvite = envParseString('SUPPORT_SERVER_INVITE', 'https://discord.gg/C6D9bge');
 
 @ApplyOptions<Listener.Options>({
 	name: 'MessageCommandError',
@@ -168,15 +163,7 @@ async function makeAndSendErrorEmbed<Options>(
 							)} properly for you. Please report this error ID to my developer: ${bold(inlineCode(errorUuid))}!`,
 						),
 					],
-					components: [
-						new ActionRowBuilder().setComponents([
-							new ButtonBuilder()
-								.setStyle(ButtonStyle.Link)
-								.setURL(supportServerInvite)
-								.setEmoji('🆘')
-								.setLabel('Support server'),
-						]),
-					],
+					components: [new ActionRowBuilder().setComponents([SupportServerButton])],
 				} as never);
 
 				return;
@@ -235,15 +222,7 @@ async function makeAndSendErrorEmbed<Options>(
 	).setTitle('An unexpected error occurred! 😱');
 
 	await callback({
-		components: [
-			new ActionRowBuilder().setComponents([
-				new ButtonBuilder()
-					.setStyle(ButtonStyle.Link)
-					.setURL(supportServerInvite)
-					.setEmoji('🆘')
-					.setLabel('Support server'),
-			]),
-		],
+		components: [new ActionRowBuilder().setComponents([SupportServerButton])],
 		embeds: [errorEmbed],
 		allowedMentions: { parse: [] },
 	} as never);

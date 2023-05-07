@@ -1,18 +1,14 @@
 import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
-import { packageJsonFile } from '#utils/misc';
+import { InviteButton, SupportServerButton, packageJsonFile } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, version as sapphireVersion } from '@sapphire/framework';
-import { envParseString } from '@skyra/env-utilities';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
 	Message,
-	OAuth2Scopes,
-	PermissionFlagsBits,
-	PermissionsBitField,
 	bold,
 	version as discordJsVersion,
 	hyperlink,
@@ -47,16 +43,6 @@ export class StatisticsCommand extends Command {
 		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
 		isMessage: boolean,
 	) {
-		const invite = this.container.client.generateInvite({
-			scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
-			permissions: new PermissionsBitField([
-				PermissionFlagsBits.ViewChannel,
-				PermissionFlagsBits.ReadMessageHistory,
-				PermissionFlagsBits.SendMessages,
-				PermissionFlagsBits.EmbedLinks,
-			]),
-		});
-
 		// guild, user count?
 
 		const embed = createInfoEmbed(
@@ -98,23 +84,8 @@ export class StatisticsCommand extends Command {
 					embeds: [embed],
 					ephemeral: true,
 					components: [
-						new ActionRowBuilder<ButtonBuilder>().addComponents(
-							new ButtonBuilder()
-								.setStyle(ButtonStyle.Link)
-								.setURL(invite)
-								.setLabel('Add me to your server!')
-								.setEmoji({
-									name: '🎉',
-								}),
-							new ButtonBuilder()
-								.setStyle(ButtonStyle.Link)
-								.setURL(envParseString('SUPPORT_SERVER_INVITE', 'https://discord.gg/C6D9bge'))
-								.setLabel('Support server')
-								.setEmoji({
-									name: '🆘',
-								}),
-						),
-						new ActionRowBuilder<ButtonBuilder>().addComponents(
+						new ActionRowBuilder<ButtonBuilder>().setComponents(InviteButton, SupportServerButton),
+						new ActionRowBuilder<ButtonBuilder>().setComponents(
 							new ButtonBuilder()
 								.setStyle(ButtonStyle.Link)
 								.setURL('https://github.com/vladfrangu/highlight')

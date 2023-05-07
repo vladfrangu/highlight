@@ -1,4 +1,5 @@
 import { createInfoEmbed } from '#utils/embeds';
+import { inviteOptions } from '#utils/misc';
 import { container } from '@sapphire/framework';
 import { deepClone } from '@sapphire/utilities';
 import {
@@ -7,9 +8,6 @@ import {
 	ButtonStyle,
 	ComponentType,
 	EmbedBuilder,
-	OAuth2Scopes,
-	PermissionFlagsBits,
-	PermissionsBitField,
 	bold,
 	hyperlink,
 	inlineCode,
@@ -92,13 +90,7 @@ export function withDeprecationWarningForMessageCommands<
 	const cloned = deepClone(options);
 
 	const invite = container.client.generateInvite({
-		scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
-		permissions: new PermissionsBitField([
-			PermissionFlagsBits.ViewChannel,
-			PermissionFlagsBits.ReadMessageHistory,
-			PermissionFlagsBits.SendMessages,
-			PermissionFlagsBits.EmbedLinks,
-		]),
+		...inviteOptions,
 		guild: guildId ?? undefined,
 	});
 
