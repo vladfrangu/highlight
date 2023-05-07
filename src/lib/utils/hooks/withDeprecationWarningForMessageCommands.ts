@@ -121,16 +121,21 @@ export function withDeprecationWarningForMessageCommands<
 		// Otherwise, we just push a new row
 		if (casted.length === 5) {
 			const freeRow = casted.find((row) => {
-				return (
-					row.components.length !== 5 &&
-					![
+				if (row.components.length === 5) {
+					return false;
+				}
+
+				if (row.components.length) {
+					return ![
 						ComponentType.StringSelect,
 						ComponentType.UserSelect,
 						ComponentType.RoleSelect,
 						ComponentType.MentionableSelect,
 						ComponentType.ChannelSelect,
-					].some((type) => row.components[0].data.type !== type)
-				);
+					].some((type) => row.components[0].data.type !== type);
+				}
+
+				return true;
 			});
 
 			if (freeRow) {

@@ -17,16 +17,6 @@ const WORKER_PATH = new URL('../workers/Worker.js', import.meta.url);
 type ResultsTuple = [words: HighlightResult, regularExpressions: HighlightResult];
 
 export class HighlightManager {
-	// eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-	#promiseMap = new Map<
-		string,
-		{
-			promise: Promise<ResultsTuple>;
-			resolve: (data: ResultsTuple) => void;
-			results: ResultsTuple;
-		}
-	>();
-
 	/**
 	 * A tuple of the two workers that must be kept alive
 	 */
@@ -36,6 +26,16 @@ export class HighlightManager {
 	 * If the client was destroyed
 	 */
 	private destroyed = false;
+
+	// eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
+	#promiseMap = new Map<
+		string,
+		{
+			promise: Promise<ResultsTuple>;
+			resolve: (data: ResultsTuple) => void;
+			results: ResultsTuple;
+		}
+	>();
 
 	public async start() {
 		this.initializeWorkers();

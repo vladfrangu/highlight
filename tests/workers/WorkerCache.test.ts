@@ -5,7 +5,7 @@ import type { MockedFunction, SpyInstance } from 'vitest';
 vi.mock('#workers/common', () => {
 	return {
 		checkParentPort: vi.fn(() => true),
-		sendToMainProcess: vi.fn(),
+		sendToMainProcess: vi.fn(() => void 0),
 	};
 });
 
@@ -187,7 +187,7 @@ describe('WorkerCache', () => {
 					value: '[a-z',
 				},
 			});
-			expect(removeTriggerForUserSpy).toHaveBeenCalledWith<Parameters<typeof cache['removeTriggerForUser']>>({
+			expect(removeTriggerForUserSpy).toHaveBeenCalledWith<Parameters<(typeof cache)['removeTriggerForUser']>>({
 				guildId: String(GuildIds.InvalidRegExpGuild),
 				memberId: testSubjectUserId,
 				trigger: '[a-z',

@@ -105,7 +105,7 @@ export class HelpCommand extends Command {
 			.sort((a, b) => a.name.localeCompare(b.name));
 
 		const alreadyProcessed: string[] = [];
-		const options: Parameters<typeof interaction['respond']>[0] = [];
+		const options: Parameters<(typeof interaction)['respond']>[0] = [];
 
 		for (const command of startsWithChunk) {
 			// If we already got all possible commands, exit early

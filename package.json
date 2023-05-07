@@ -62,7 +62,7 @@
 		"prettier": "^2.8.8",
 		"prisma": "^4.13.0",
 		"typescript": "^4.9.5",
-		"vitest": "^0.31.0"
+		"vitest": "^0.30.1"
 	},
 	"imports": {
 		"#internals/*": "./dist/lib/internals/*.js",

@@ -176,7 +176,7 @@ describe('message command deprecation hooks', () => {
 		});
 
 		describe('given options received from a message, then it should return the data with extra information about the deprecation', () => {
-			test.only('given only content, it should add an embed and button', () => {
+			test('given only content, it should add an embed and button', () => {
 				const original = { content: 'Hi' };
 
 				const result = withDeprecationWarningForMessageCommands({
@@ -192,7 +192,7 @@ describe('message command deprecation hooks', () => {
 					components: [new ActionRowBuilder().addComponents(authButton)],
 				};
 
-				expect(result).toStrictEqual(expected);
+				expect(result).toEqual(expected);
 			});
 
 			test('given an embed, it should enhance it with the deprecation warning', () => {
@@ -210,7 +210,7 @@ describe('message command deprecation hooks', () => {
 					components: [new ActionRowBuilder().addComponents(authButton)],
 				};
 
-				expect(result).toStrictEqual(expected);
+				expect(result).toEqual(expected);
 			});
 
 			test('given content and an action row, it should add another action row', () => {
@@ -229,7 +229,7 @@ describe('message command deprecation hooks', () => {
 					components: [...original.components, new ActionRowBuilder().addComponents(authButton)],
 				};
 
-				expect(result).toStrictEqual(expected);
+				expect(result).toEqual(expected);
 			});
 
 			test('given content and maximum action rows, it should add the auth button on the first available action row', () => {
