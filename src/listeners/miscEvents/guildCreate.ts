@@ -36,14 +36,13 @@ export class GuildCreateListener extends Listener<typeof Events.GuildCreate> {
 					inline: true,
 				},
 			)
-
 			.setAuthor({
 				name: client.user!.tag,
 				iconURL: client.user!.displayAvatarURL(),
 			});
 
 		if (guild.icon) {
-			embed.setThumbnail(guild.iconURL()!);
+			embed.setThumbnail(guild.iconURL());
 		}
 
 		await webhook.send({ embeds: [embed], avatarURL: client.user!.displayAvatarURL(), username: 'Guild joined' });

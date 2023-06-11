@@ -9,7 +9,7 @@ import {
 	type ContextMenuCommandDeniedPayload,
 	type MessageCommandDeniedPayload,
 } from '@sapphire/framework';
-import type { InteractionReplyOptions, MessageCreateOptions } from 'discord.js';
+import type { BaseMessageOptions, InteractionReplyOptions, MessageCreateOptions } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({
 	name: 'MessageCommandDenied',
@@ -69,7 +69,10 @@ export class ContextMenuCommandDenied extends Listener<typeof Events.ContextMenu
 	}
 }
 
-async function makeAndSendDeniedEmbed<Options>(error: UserError, callback: (options: Options) => Awaitable<unknown>) {
+async function makeAndSendDeniedEmbed<Options extends BaseMessageOptions>(
+	error: UserError,
+	callback: (options: Options) => Awaitable<unknown>,
+) {
 	const errorEmbed = createErrorEmbed(`🙈 You cannot run this command! ${error.message}`);
 
 	await callback({ embeds: [errorEmbed] } as never);

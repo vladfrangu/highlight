@@ -5,9 +5,10 @@ import { Events, Listener, LogLevel } from '@sapphire/framework';
 @ApplyOptions<Listener.Options>({
 	name: 'ReadyLogger',
 	event: Events.ClientReady,
+	once: true,
 })
 export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
-	public override run() {
+	public override async run() {
 		const { client, colors, logger } = this.container;
 
 		const asciiArt = [
@@ -63,6 +64,8 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 				);
 			}
 		}
+
+		await this.container.highlightManager.updateAllCaches();
 	}
 }
 

@@ -194,7 +194,8 @@ export class HelpCommand extends Command {
 
 	private findCommandByName(commandName: string) {
 		const storeEntry =
-			this.store.get(commandName) ?? this.store.find((cmd) => cmd.name.toLowerCase() === commandName.toLowerCase());
+			this.store.get(commandName.toLowerCase()) ??
+			this.store.find((cmd) => cmd.name.toLowerCase() === commandName.toLowerCase());
 
 		if (storeEntry) {
 			return { exact: true as const, match: storeEntry as Command } as const;

@@ -31,6 +31,7 @@ model User {
 
 model GuildSetting {
   guildId           String                 @id @map("guild_id") @db.Text
+  // Keep default in sync with src/listeners/highlightRelated/parseMessage.ts
   notificationStyle GuildNotificationStyle @default(WithContextAndAuthor) @map("notification_style")
 
   @@map("guild_settings")
@@ -49,11 +50,11 @@ model ChannelWithBotParsing {
 // Privacy levels in DMs. All will still get a message link to the original message, but this will
 // hopefully prevent certain abuse vectors by leaving it at the guild's choice how the embed should look
 enum GuildNotificationStyle {
-  // User#0000 highlighted you in #channel (+ optional message history is possible with who wrote the messages)
+  // User#0000/@User highlighted you in #channel (+ optional message history is possible with who wrote the messages)
   WithContextAndAuthor        @map("WITH_CONTEXT_AND_AUTHOR")
   // A user highlighted you in #channel (+ optional message history but no author data)
   WithContextButNoAuthor      @map("WITH_CONTEXT_BUT_NO_AUTHOR")
-  // User#0000 highlighted you in #channel (without message history)
+  // User#0000/@User highlighted you in #channel (without message history)
   WithoutContextButWithAuthor @map("WITHOUT_CONTEXT_BUT_WITH_AUTHOR")
   // A user highlighted you in #channel (without message history and author data)
   WithoutContextOrAuthor      @map("WITHOUT_CONTEXT_OR_AUTHOR")
@@ -76,7 +77,7 @@ model Member {
   @@map("members")
 }
 
-// Used to power the grace period
+// Used to power the grace period (but only for users who opted into having a grace period)
 model UserActivity {
   userId       String   @map("user_id") @db.Text
   channelId    String   @map("channel_id") @db.Text

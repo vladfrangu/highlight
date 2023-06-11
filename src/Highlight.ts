@@ -14,7 +14,19 @@ const client = new HighlightClient({
 			},
 		],
 	},
-	defaultPrefix: 'h.',
+	defaultPrefix: [
+		// Common prefixes from DB dump. I cannot wait to drop these in v4
+		',',
+		'!',
+		'?.',
+		'?',
+		'.',
+		'^',
+		'=',
+		'>',
+		'h!',
+		'h.',
+	],
 	intents: new IntentsBitField([
 		GatewayIntentBits.DirectMessages,
 		GatewayIntentBits.GuildMessages,

@@ -22,7 +22,7 @@ export class AllowedRole extends AllFlowsPrecondition {
 		}
 
 		if (application.owner?.ownerId === userId) return this.ok();
-		if (application.owner?.members.has(userId)) return this.ok();
+		if (application.owner?.members?.has(userId)) return this.ok();
 
 		return this.error({ message: `This maze was not meant for you.` });
 	}

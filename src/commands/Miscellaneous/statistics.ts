@@ -43,13 +43,11 @@ export class StatisticsCommand extends Command {
 		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
 		isMessage: boolean,
 	) {
-		// guild, user count?
-
 		const embed = createInfoEmbed(
 			[
 				`Here is some of that ${italic('juicy')} data about Highlight ${bold(
 					`v${packageJsonFile.version}`,
-				)} - Sapphire Edition, built by ${hyperlink('Vladdy#0002', 'https://github.com/vladfrangu')}!`,
+				)} - Sapphire Edition, built by ${hyperlink('@vladdy', 'https://github.com/vladfrangu')}!`,
 			].join('\n'),
 		).setFields(
 			{
@@ -59,7 +57,7 @@ export class StatisticsCommand extends Command {
 						'TypeScript',
 						'https://typescriptlang.org/',
 					)} ${bold(`v${typescriptVersion}`)}`,
-					`• ${hyperlink('discord.js', 'https://discord.js.org/#/')} ${bold(`v${discordJsVersion}`)}`,
+					`• ${hyperlink('discord.js', 'https://discord.js.org/')} ${bold(`v${discordJsVersion}`)}`,
 					`• ${hyperlink('Sapphire Framework', 'https://sapphirejs.dev/')} ${bold(`v${sapphireVersion}`)}`,
 				].join('\n'),
 			},

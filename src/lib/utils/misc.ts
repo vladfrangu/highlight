@@ -38,9 +38,15 @@ export const InviteButton = new ButtonBuilder() //
 		name: '🎉',
 	});
 
+export const RegularExpressionCaseSensitiveMatch = '$$HIGHLIGHT_CASE_SENSITIVE$$';
+
 export function tryRegex(input: string): [boolean, re2 | null] {
+	const caseSensitiveMatch = input.endsWith(RegularExpressionCaseSensitiveMatch);
+	const flags = caseSensitiveMatch ? 'g' : 'gi';
+	const finalInput = caseSensitiveMatch ? input.slice(0, -RegularExpressionCaseSensitiveMatch.length) : input;
+
 	try {
-		return [true, new re2(input, 'ig')];
+		return [true, new re2(finalInput, flags)];
 	} catch {
 		return [false, null];
 	}
