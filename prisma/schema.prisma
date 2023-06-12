@@ -9,36 +9,41 @@ datasource db {
 
 model User {
   id                     String    @id @db.Text
-  // /highlight opt-in/opt-out
+  /// /highlight opt-in/opt-out
   optedOut               Boolean   @default(false) @map("opted_out")
   optedOutAt             DateTime? @map("opted_out_at")
-  // Used to say "only send me highlights after I've been away from the channel for x seconds"
-  // null means always send messages
-  // /highlight grace-period set/clear/show
+  /// Used to say "only send me highlights after I've been away from the channel for x seconds"
+  ///
+  /// `null` means always send messages
+  ///
+  /// /highlight grace-period set/clear/show
   gracePeriod            Int?      @map("grace_period")
-  // /highlight adult-channel-highlights enable/disable
+  /// /highlight adult-channel-highlights enable/disable
   adultChannelHighlights Boolean   @default(false) @map("adult_channel_highlights")
 
-  // Support globally ignoring users
-  // /highlight ignored-users add/remove/list/clear [user_id]
+  /// Support globally ignoring users
+  ///
+  /// /highlight ignored-users add/remove/list/clear [user_id]
   globallyIgnoredUsers String[] @map("globally_ignored_users") @db.Text
 
-  // All members that point to this user
-  members Member[]
+  /// All members that point to this user
+  members      Member[]
+  /// All user activities for this user
+  userActivity UserActivity[]
 
   @@map("users")
 }
 
 model GuildSetting {
   guildId           String                 @id @map("guild_id") @db.Text
-  // Keep default in sync with src/listeners/highlightRelated/parseMessage.ts
+  /// Keep default in sync with src/listeners/highlightRelated/parseMessage.ts
   notificationStyle GuildNotificationStyle @default(WithContextAndAuthor) @map("notification_style")
 
   @@map("guild_settings")
 }
 
-// Some people have requested that highlight parses bot messages too :shrug:
-// There can be legit use cases I suppose, so for now this is added as an option
+/// Some people have requested that highlight parses bot messages too :shrug:
+/// There can be legit use cases I suppose, so for now this is added as an option
 model ChannelWithBotParsing {
   channelId String   @id @map("channel_id") @db.Text
   userId    String   @map("user_id") @db.Text
@@ -47,16 +52,16 @@ model ChannelWithBotParsing {
   @@map("channels_with_bot_parsing")
 }
 
-// Privacy levels in DMs. All will still get a message link to the original message, but this will
-// hopefully prevent certain abuse vectors by leaving it at the guild's choice how the embed should look
+/// Privacy levels in DMs. All will still get a message link to the original message, but this will
+/// hopefully prevent certain abuse vectors by leaving it at the guild's choice how the embed should look
 enum GuildNotificationStyle {
-  // User#0000/@User highlighted you in #channel (+ optional message history is possible with who wrote the messages)
+  /// User#0000/@User highlighted you in #channel (+ optional message history is possible with who wrote the messages)
   WithContextAndAuthor        @map("WITH_CONTEXT_AND_AUTHOR")
-  // A user highlighted you in #channel (+ optional message history but no author data)
+  /// A user highlighted you in #channel (+ optional message history but no author data)
   WithContextButNoAuthor      @map("WITH_CONTEXT_BUT_NO_AUTHOR")
-  // User#0000/@User highlighted you in #channel (without message history)
+  /// User#0000/@User highlighted you in #channel (without message history)
   WithoutContextButWithAuthor @map("WITHOUT_CONTEXT_BUT_WITH_AUTHOR")
-  // A user highlighted you in #channel (without message history and author data)
+  /// A user highlighted you in #channel (without message history and author data)
   WithoutContextOrAuthor      @map("WITHOUT_CONTEXT_OR_AUTHOR")
 }
 
@@ -65,12 +70,13 @@ model Member {
   userId  String @map("user_id") @db.Text
   user    User   @relation(fields: [userId], references: [id])
 
-  // Words that will trigger a highlight
+  /// Words that will trigger a highlight
   words              String[] @db.Text
-  // Patterns that will trigger a highlight
+  /// Patterns that will trigger a highlight
   regularExpressions String[] @map("regular_expressions") @db.Text
-  // Ignored users and channels that will not trigger a highlight
+  /// Ignored users that will not trigger a highlight
   ignoredUsers       String[] @map("ignored_users") @db.Text
+  /// Ignored channels that will not trigger a highlight
   ignoredChannels    String[] @map("ignored_channels") @db.Text
 
   @@id([guildId, userId])
@@ -80,8 +86,9 @@ model Member {
 // Used to power the grace period (but only for users who opted into having a grace period)
 model UserActivity {
   userId       String   @map("user_id") @db.Text
+  user         User     @relation(fields: [userId], references: [id])
   channelId    String   @map("channel_id") @db.Text
-  // The last time the user was active
+  /// The last time the user was active
   lastActiveAt DateTime @map("last_active_at") @db.Timestamp()
 
   @@id([userId, channelId])

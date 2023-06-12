@@ -15,3 +15,5 @@ export function getUserTag(userOrMember: User | GuildMember) {
 
 	return `${escapedDisplayName} (${escapedUsername}#${userOrMember.discriminator})`;
 }
+
+export const UnknownUserTag = 'A Discord User';

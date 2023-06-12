@@ -29,6 +29,7 @@ const client = new HighlightClient({
 	],
 	intents: new IntentsBitField([
 		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.GuildMessageReactions,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.GuildMessageTyping,
 		GatewayIntentBits.Guilds,

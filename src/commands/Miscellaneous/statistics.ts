@@ -14,7 +14,9 @@ import {
 	hyperlink,
 	italic,
 } from 'discord.js';
-import { version as typescriptVersion } from 'typescript';
+import ts from 'typescript';
+
+const { version: typescriptVersion } = ts;
 
 @ApplyOptions<Command.Options>({
 	aliases: ['stats'],
