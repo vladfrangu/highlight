@@ -304,8 +304,8 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 				// If the difference is less than the grace period, then the user is still in grace period
 				if (timeDifference < databaseMember.user.gracePeriod) {
 					this.container.logger.debug(
-						`Member ${highlightResult.memberId} is still in grace period, will not highlight`,
-						`time difference: ${timeDifference}`,
+						`Member ${highlightResult.memberId} is still in grace period in channel ${userActivity.channelId}, will not highlight.`,
+						`time difference: ${timeDifference};`,
 						`grace period: ${databaseMember.user.gracePeriod}`,
 					);
 					return;
