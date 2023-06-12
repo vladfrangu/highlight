@@ -336,13 +336,8 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		}
 
 		// Step 6.2: Add the message content
-		const tag =
-			guildSettings.notificationStyle === GuildNotificationStyle.WithContextButNoAuthor
-				? UnknownUserTag
-				: getUserTag(messageThatTriggered.author);
-
 		embed.addFields({
-			name: `${time(messageThatTriggered.createdAt, TimestampStyles.ShortDateTime)} ${tag}`,
+			name: `${time(messageThatTriggered.createdAt, TimestampStyles.ShortDateTime)} ${messageAuthorTag}`,
 			value: highlightResult.parsedContent,
 		});
 
@@ -352,7 +347,7 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			workerType === WorkerType.Word ? 'word' : 'regular expression',
 			bold(inlineCode(escapeMarkdown(highlightResult.trigger))),
 			'was mentioned by',
-			bold(tag),
+			bold(messageAuthorTag),
 			// eslint-disable-next-line @typescript-eslint/no-base-to-string
 			`in ${messageThatTriggered.channel.toString()}`,
 		].join(' ');
