@@ -1,7 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, container } from '@sapphire/framework';
-import type { Typing } from 'discord.js';
-import type { Message, MessageReaction, User } from 'discord.js';
+import type { Message, MessageReaction, Typing, User } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageCreate, name: 'ActivityUpdater.MessageCreate' })
 export class MessageCreate extends Listener<typeof Events.MessageCreate> {
