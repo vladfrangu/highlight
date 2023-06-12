@@ -28,11 +28,11 @@ const client = new HighlightClient({
 		'h.',
 	],
 	intents: new IntentsBitField([
-		GatewayIntentBits.DirectMessages,
-		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.GuildMessageTyping,
 		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.GuildMessageTyping,
+		GatewayIntentBits.DirectMessages,
 		GatewayIntentBits.MessageContent,
 	]),
 	makeCache: Options.cacheWithLimits({
