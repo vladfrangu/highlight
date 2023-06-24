@@ -16,13 +16,6 @@ export class MessageUpdate extends Listener<typeof Events.MessageUpdate> {
 	}
 }
 
-@ApplyOptions<Listener.Options>({ event: Events.MessageDelete, name: 'ActivityUpdater.MessageDelete' })
-export class MessageDelete extends Listener<typeof Events.MessageDelete> {
-	public async run(message: Message) {
-		await updateStateForUserInChannel(message.author.id, message.channelId);
-	}
-}
-
 @ApplyOptions<Listener.Options>({ event: Events.MessageReactionAdd, name: 'ActivityUpdater.MessageReactionAdd' })
 export class MessageReactionAdd extends Listener<typeof Events.MessageReactionAdd> {
 	public async run(reaction: MessageReaction, user: User) {
