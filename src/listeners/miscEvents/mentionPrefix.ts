@@ -30,8 +30,12 @@ export class MentionPrefixOnly extends Listener<typeof Events.MentionPrefixOnly>
 					[
 						italic(randomEntry),
 						'',
-						`If you don't remember what commands I have, run my ${bold(inlineCode('/help'))} slash command!`,
-						`If that doesn't work, try ${bold(inlineCode(`@${this.container.client.user!.username} help`))}!`,
+						`If you don't remember what commands I have, run my ${bold(
+							inlineCode('/help'),
+						)} slash command!`,
+						`If that doesn't work, try ${bold(
+							inlineCode(`@${this.container.client.user!.username} help`),
+						)}!`,
 					].join('\n'),
 				),
 			],

@@ -2,6 +2,9 @@ import { envParseString } from '@skyra/env-utilities';
 import {
 	ButtonBuilder,
 	ButtonStyle,
+	ChatInputCommandInteraction,
+	Message,
+	MessageComponentInteraction,
 	OAuth2Scopes,
 	PermissionFlagsBits,
 	PermissionsBitField,
@@ -68,4 +71,10 @@ export const enum Emojis {
 
 export const enum HelpDetailedDescriptionReplacers {
 	UserMention = '{user_mention}',
+}
+
+export function resolveUserIdFromMessageOrInteraction(
+	messageOrInteraction: Message | ChatInputCommandInteraction | MessageComponentInteraction,
+): string {
+	return messageOrInteraction instanceof Message ? messageOrInteraction.author.id : messageOrInteraction.user.id;
 }

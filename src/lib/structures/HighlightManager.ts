@@ -135,7 +135,9 @@ export class HighlightManager {
 
 	private createWorkerType(type: WorkerType) {
 		// If the client was destroyed, stop early
-		if (this.destroyed) return;
+		if (this.destroyed) {
+			return;
+		}
 
 		// eslint-disable-next-line no-multi-assign
 		const worker = (this.workers[type] = new Worker(WORKER_PATH, { workerData: { type } }));
@@ -201,7 +203,10 @@ export class HighlightManager {
 		});
 
 		if (!memberData) {
-			container.logger.warn(`Received invalid regular expression for member but no member data could be found`, data);
+			container.logger.warn(
+				`Received invalid regular expression for member but no member data could be found`,
+				data,
+			);
 			return;
 		}
 

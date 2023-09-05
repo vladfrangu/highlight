@@ -31,7 +31,8 @@ const client = new HighlightClient({
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.GuildMessageTyping,
+		// TODO: lets see how many people will notice the lack of this
+		// GatewayIntentBits.GuildMessageTyping,
 		GatewayIntentBits.DirectMessages,
 		GatewayIntentBits.MessageContent,
 	]),

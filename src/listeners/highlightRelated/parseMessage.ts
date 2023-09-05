@@ -1,6 +1,6 @@
 import { WorkerType, type ParsedHighlightData } from '#types/WorkerTypes';
 import { UnknownUserTag, getUserTag } from '#utils/tags';
-import { GuildNotificationStyle, type GuildSetting, type Member, type User, type UserActivity } from '@prisma/client';
+import { GuildNotificationStyle, Prisma, type Guild as GuildSetting } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
 import {
@@ -19,6 +19,28 @@ import {
 	italic,
 	time,
 } from 'discord.js';
+
+type DBReturn = {
+	adult_channel_highlights: boolean;
+	globally_ignored_users: string[] | null;
+	grace_period: number | null;
+	last_active_at: Date | null;
+	opted_out: boolean;
+	server_ignored_channels: string[] | null;
+	server_ignored_users: string[] | null;
+	user_id: string;
+}[];
+
+interface MemberInfo {
+	adult_channel_highlights: boolean;
+	globally_ignored_users: string[];
+	grace_period: number | null;
+	last_active_at: Date | null;
+	opted_out: boolean;
+	server_ignored_channels: string[];
+	server_ignored_users: string[];
+	user_id: string;
+}
 
 function highlightShouldGetUserInfo(guildSettings: GuildSetting) {
 	return (
@@ -54,10 +76,10 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 
 		// Step 2.3: check if author opted out
 		const data = await this.container.prisma.user.findFirst({
-			where: { id: message.author.id },
+			where: { id: message.author.id, optedOut: true },
 		});
 
-		if (data?.optedOut) {
+		if (data) {
 			return;
 		}
 
@@ -70,15 +92,9 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		}
 
 		// Step 3.1.3: Fetch the guild settings, as we will need them for the next steps
-		const guildSettings =
-			(await this.container.prisma.guildSetting.findFirst({
-				where: { guildId: message.guildId },
-			})) ??
-			({
-				guildId: message.guildId,
-				// KEEP IN SYNC WITH THE DEFAULTS IN schema.prisma
-				notificationStyle: GuildNotificationStyle.WithContextAndAuthor,
-			} satisfies GuildSetting);
+		const guildSettings = await this.container.prisma.guild.findFirstOrThrow({
+			where: { guildId: message.guildId },
+		});
 
 		// Step 3.2.1: Get channel history if possible, for future processing
 		const history = await this.fetchHistory(message, guildSettings);
@@ -124,7 +140,14 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			handledMemberIds.add(result.memberId);
 
 			promises.push(
-				this.handleHighlight(message, guildSettings, history, result, highlightedMembersFromDatabase, WorkerType.Word),
+				this.handleHighlight(
+					message,
+					guildSettings,
+					history,
+					result,
+					highlightedMembersFromDatabase,
+					WorkerType.Word,
+				),
 			);
 		}
 
@@ -194,23 +217,42 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 	}
 
 	private async fetchAllMembersFromDatabase(guildId: string, channelId: string, members: Set<string>) {
-		const data = await this.container.prisma.member.findMany({
-			where: { userId: { in: [...members] }, guildId },
-			include: {
-				user: {
-					include: {
-						userActivity: {
-							where: { channelId },
-						},
-					},
-				},
-			},
-		});
+		const query = Prisma.sql`
+	SELECT
+		users.id as user_id,
+		users.opted_out,
+		users.grace_period,
+		users.globally_ignored_users,
+		users.adult_channel_highlights,
+		m.ignored_users as server_ignored_users,
+		m.ignored_channels as server_ignored_channels,
+		user_activities.last_active_at
+	FROM users
+	LEFT JOIN members m ON
+		users.id = m.user_id
+	LEFT JOIN user_activities ON
+		channel_id = ${channelId}
+		AND users.id = user_activities.user_id
+	WHERE
+		m.user_id IN (${Prisma.join([...members], ',')})
+		AND m.guild_id = ${guildId}
+`;
 
-		const result = new Map<string, Member & { user: User & { userActivity: UserActivity[] } }>();
+		const data = await this.container.prisma.$queryRaw<DBReturn>(query);
+
+		const result = new Map<string, MemberInfo>();
 
 		for (const member of data) {
-			result.set(member.userId, member);
+			result.set(member.user_id, {
+				adult_channel_highlights: member.adult_channel_highlights,
+				globally_ignored_users: member.globally_ignored_users ?? [],
+				grace_period: member.grace_period,
+				last_active_at: member.last_active_at,
+				opted_out: member.opted_out,
+				server_ignored_channels: member.server_ignored_channels ?? [],
+				server_ignored_users: member.server_ignored_users ?? [],
+				user_id: member.user_id,
+			});
 		}
 
 		return result;
@@ -221,10 +263,12 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		guildSettings: GuildSetting,
 		channelHistory: [fieldTitle: string, fieldValue: string][],
 		highlightResult: ParsedHighlightData,
-		allHighlightedMembers: Map<string, Member & { user: User & { userActivity: UserActivity[] } }>,
+		allHighlightedMembers: Map<string, MemberInfo>,
 		workerType: WorkerType,
 	) {
-		const member = await messageThatTriggered.guild.members.fetch({ user: highlightResult.memberId }).catch(() => null);
+		const member = await messageThatTriggered.guild.members
+			.fetch({ user: highlightResult.memberId })
+			.catch(() => null);
 
 		if (!member) {
 			this.container.logger.debug(
@@ -253,25 +297,29 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			return;
 		}
 
-		const databaseMember = this.getMemberWithUserFromDatabase(
-			allHighlightedMembers,
-			member.id,
-			messageThatTriggered.guildId,
-		);
+		const databaseMember = this.getMemberWithUserFromDatabase(allHighlightedMembers, member.id);
 
 		// Step 3. Ensure the member that should be highlighted hasn't also opted out
-		if (databaseMember.user.optedOut) {
-			this.container.logger.debug(`Member ${highlightResult.memberId} has opted out, will not highlight`);
+		if (databaseMember.opted_out) {
+			this.container.logger.debug(
+				`Member ${highlightResult.memberId} who would've gotten highlighted has opted out, will not highlight`,
+			);
 			return;
 		}
 
+		let channelIsNsfw: boolean | null = null;
+
+		if (messageThatTriggered.channel.isTextBased()) {
+			// For threads, we need to check the parent channel instead
+			if (messageThatTriggered.channel.isThread()) {
+				channelIsNsfw = messageThatTriggered.channel.parent?.nsfw ?? false;
+			} else {
+				channelIsNsfw = messageThatTriggered.channel.nsfw;
+			}
+		}
+
 		// Step 3.1. If channel is NSFW, ensure the user opted into getting highlights from NSFW channels
-		if (
-			messageThatTriggered.channel.isTextBased() &&
-			!messageThatTriggered.channel.isThread() &&
-			messageThatTriggered.channel.nsfw &&
-			!databaseMember.user.adultChannelHighlights
-		) {
+		if (channelIsNsfw && !databaseMember.adult_channel_highlights) {
 			this.container.logger.debug(
 				`Member ${highlightResult.memberId} has not opted into getting highlights from NSFW channels, will not highlight`,
 				`channel: ${messageThatTriggered.channelId}`,
@@ -279,34 +327,42 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			return;
 		}
 
+		// Allow users to ignore just threads, and also their parent, if the message is in a thread
+		const channelIdsToCheck: string[] = [messageThatTriggered.channelId];
+
+		if (messageThatTriggered.channel.isThread()) {
+			channelIdsToCheck.push(messageThatTriggered.channel.parentId ?? '');
+		}
+
 		// Step 4. Ensure the author of the message that should be highlighted for the member or the channel is not ignored
 		if (
-			databaseMember.ignoredUsers.includes(messageThatTriggered.author.id) ||
-			databaseMember.ignoredChannels.includes(messageThatTriggered.channel.id) ||
-			databaseMember.user.globallyIgnoredUsers.includes(messageThatTriggered.author.id)
+			databaseMember.server_ignored_users.includes(messageThatTriggered.author.id) ||
+			channelIdsToCheck.some((channelId) => databaseMember.server_ignored_channels.includes(channelId)) ||
+			databaseMember.globally_ignored_users.includes(messageThatTriggered.author.id)
 		) {
 			this.container.logger.debug(
-				`Member ${highlightResult.memberId} has ignored user ${messageThatTriggered.author.id} or channel ${messageThatTriggered.channel.id}, will not highlight`,
+				`Member ${highlightResult.memberId} has ignored user ${
+					messageThatTriggered.author.id
+				} or channels ${channelIdsToCheck.join(';')}, will not highlight`,
 			);
 			return;
 		}
 
 		// Step 5. Ensure the users highlight after afk delay in guild was passed
-		if (databaseMember.user.gracePeriod) {
-			// If the user has a grace period set, there _might_ be a UserActivity entry too (and there can only be one)
+		if (databaseMember.grace_period) {
+			// If the user has a grace period set, there _might_ be a last active at too
 			// Math is done based on message creation date
-			const userActivity = databaseMember.user.userActivity[0];
-
-			if (userActivity) {
+			if (databaseMember.last_active_at) {
 				// Get the seconds difference between the message that triggered the highlight and the last activity of the user
-				const timeDifference = (messageThatTriggered.createdTimestamp - userActivity.lastActiveAt.getTime()) / 1000;
+				const timeDifference =
+					(messageThatTriggered.createdTimestamp - databaseMember.last_active_at.getTime()) / 1000;
 
 				// If the difference is less than the grace period, then the user is still in grace period
-				if (timeDifference < databaseMember.user.gracePeriod) {
+				if (timeDifference < databaseMember.grace_period) {
 					this.container.logger.debug(
-						`Member ${highlightResult.memberId} is still in grace period in channel ${userActivity.channelId}, will not highlight.`,
+						`Member ${highlightResult.memberId} is still in grace period in channel ${messageThatTriggered.channelId}, will not highlight.`,
 						`time difference: ${timeDifference};`,
-						`grace period: ${databaseMember.user.gracePeriod}`,
+						`grace period: ${databaseMember.grace_period}`,
 					);
 					return;
 				}
@@ -323,7 +379,9 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			.setAuthor({
 				name: messageAuthorTag,
 				iconURL:
-					messageAuthorTag === UnknownUserTag ? undefined : messageThatTriggered.author.displayAvatarURL({ size: 128 }),
+					messageAuthorTag === UnknownUserTag
+						? undefined
+						: messageThatTriggered.author.displayAvatarURL({ size: 128 }),
 			})
 			.setTimestamp(messageThatTriggered.createdTimestamp)
 			.setFooter({ text: 'Highlighted' });
@@ -379,11 +437,7 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 	/**
 	 * Gets member data from the database fetch even if the member never interacted with the bot.
 	 */
-	private getMemberWithUserFromDatabase(
-		fetchedMembers: Map<string, Member & { user: User & { userActivity: UserActivity[] } }>,
-		memberId: string,
-		guildId: string,
-	): Member & { user: User & { userActivity: UserActivity[] } } {
+	private getMemberWithUserFromDatabase(fetchedMembers: Map<string, MemberInfo>, memberId: string): MemberInfo {
 		const entry = fetchedMembers.get(memberId);
 
 		if (entry) {
@@ -391,21 +445,14 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		}
 
 		return {
-			guildId,
-			ignoredChannels: [],
-			ignoredUsers: [],
-			regularExpressions: [],
-			userId: memberId,
-			words: [],
-			user: {
-				adultChannelHighlights: false,
-				globallyIgnoredUsers: [],
-				gracePeriod: null,
-				id: memberId,
-				optedOut: false,
-				optedOutAt: null,
-				userActivity: [],
-			},
+			adult_channel_highlights: false,
+			globally_ignored_users: [],
+			grace_period: null,
+			last_active_at: null,
+			opted_out: false,
+			server_ignored_channels: [],
+			server_ignored_users: [],
+			user_id: memberId,
 		};
 	}
 }

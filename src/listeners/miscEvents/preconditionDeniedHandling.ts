@@ -17,7 +17,7 @@ import type { BaseMessageOptions, InteractionReplyOptions, MessageCreateOptions 
 })
 export class MessageCommandDenied extends Listener<typeof Events.MessageCommandDenied> {
 	public override async run(error: UserError, { message }: MessageCommandDeniedPayload) {
-		await makeAndSendDeniedEmbed<MessageCreateOptions>(error, (options) => message.channel.send(options));
+		await makeAndSendDeniedEmbed<MessageCreateOptions>(error, (options) => message.reply(options));
 	}
 }
 

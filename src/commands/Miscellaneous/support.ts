@@ -28,7 +28,10 @@ export class SupportCommand extends Command {
 		});
 	}
 
-	protected async _sharedRun(messageOrInteraction: Message | Command.ChatInputCommandInteraction, isMessage: boolean) {
+	protected async _sharedRun(
+		messageOrInteraction: Message | Command.ChatInputCommandInteraction,
+		isMessage: boolean,
+	) {
 		const embed = createInfoEmbed(
 			[
 				italic("It's dangerous to go alone if you are lost..."),

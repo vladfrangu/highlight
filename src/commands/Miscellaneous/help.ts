@@ -28,7 +28,9 @@ const randomMissingPermissionMessages = [
 		quote(`If you want to get help for a specific command, here are some examples that you can use.`),
 		'',
 		italic(
-			`You should replace ${inlineCode('<command-name>')} with a command name (like ${inlineCode('help')} for example)`,
+			`You should replace ${inlineCode('<command-name>')} with a command name (like ${inlineCode(
+				'help',
+			)} for example)`,
 		),
 		'',
 		`For ${Emojis.ChatInputCommands} chat input commands: ${bold(inlineCode(`/help command:<command-name>`))}`,
@@ -92,7 +94,7 @@ export class HelpCommand extends Command {
 		}
 
 		const allCommands = [...this.store.values()] as Command[];
-		const providedAutocompleteName = focusedOption.value as string;
+		const providedAutocompleteName = focusedOption.value;
 		const providedAutocompleteFilterName = providedAutocompleteName.toLowerCase();
 
 		const startsWithChunk = allCommands
@@ -229,7 +231,9 @@ export class HelpCommand extends Command {
 									empathyChance
 										? '🍌 Not even the empathy banana knows of a command called'
 										: "👀 I don't know of a command called"
-								} ${bold(inlineCode(input))}. Try running ${bold(inlineCode('/help'))} to see all available commands!`,
+								} ${bold(inlineCode(input))}. Try running ${bold(
+									inlineCode('/help'),
+								)} to see all available commands!`,
 							),
 						],
 						ephemeral: true,
@@ -274,9 +278,13 @@ export class HelpCommand extends Command {
 		let globalResult: Result<unknown, unknown>;
 
 		if (isMessage) {
-			globalResult = await preconditionStore.messageRun(messageOrInteraction as Message, command as MessageCommand, {
-				external: true,
-			});
+			globalResult = await preconditionStore.messageRun(
+				messageOrInteraction as Message,
+				command as MessageCommand,
+				{
+					external: true,
+				},
+			);
 		} else {
 			globalResult = await preconditionStore.chatInputRun(
 				messageOrInteraction as Command.ChatInputCommandInteraction,
@@ -295,9 +303,13 @@ export class HelpCommand extends Command {
 		let localResult: Result<unknown, unknown>;
 
 		if (isMessage) {
-			localResult = await command.preconditions.messageRun(messageOrInteraction as Message, command as MessageCommand, {
-				external: true,
-			});
+			localResult = await command.preconditions.messageRun(
+				messageOrInteraction as Message,
+				command as MessageCommand,
+				{
+					external: true,
+				},
+			);
 		} else {
 			localResult = await command.preconditions.chatInputRun(
 				messageOrInteraction as Command.ChatInputCommandInteraction,
@@ -325,8 +337,9 @@ export class HelpCommand extends Command {
 
 		if (!canRun) {
 			const randomMessage =
-				randomMissingPermissionMessages.at(Math.floor(Math.random() * randomMissingPermissionMessages.length)) ||
-				randomMissingPermissionMessages[0];
+				randomMissingPermissionMessages.at(
+					Math.floor(Math.random() * randomMissingPermissionMessages.length),
+				) || randomMissingPermissionMessages[0];
 
 			await messageOrInteraction.reply(
 				withDeprecationWarningForMessageCommands({

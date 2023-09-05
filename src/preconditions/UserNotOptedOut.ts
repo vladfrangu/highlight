@@ -15,10 +15,10 @@ export class AllowedRole extends AllFlowsPrecondition {
 	}
 
 	private async _sharedRun(userId: string) {
-		const userSettings = await this.container.prisma.user.findFirst({ where: { id: userId } });
+		const userSettings = await this.container.prisma.user.findFirst({ where: { id: userId, optedOut: true } });
 
 		// No user settings found or hasn't opted out
-		if (!userSettings?.optedOut) {
+		if (!userSettings) {
 			return this.ok();
 		}
 

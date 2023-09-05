@@ -10,10 +10,11 @@ import re2 from 're2';
 
 export type UserId = string;
 export type GuildId = string;
+export type WordOrRegularExpression = string;
 
 export class WorkerCache {
 	// Map of Guild ID => Word | Regular Expression => UserID
-	private guildMap = new Map<GuildId, Map<string, Set<UserId>>>();
+	private guildMap = new Map<GuildId, Map<WordOrRegularExpression, Set<UserId>>>();
 
 	// Cache of validated regular expressions
 	private validRegularExpressions = new Map<string, boolean>();
@@ -21,7 +22,7 @@ export class WorkerCache {
 	// Cache of created regular expressions
 	private stringToRegularExpression = new Map<string, re2>();
 
-	public updateGuild(id: GuildId, newEntries: Map<string, Set<UserId>>) {
+	public updateGuild(id: GuildId, newEntries: Map<WordOrRegularExpression, Set<UserId>>) {
 		this.guildMap.set(id, newEntries);
 	}
 
@@ -30,13 +31,17 @@ export class WorkerCache {
 		const guildEntry = this.guildMap.get(guildId);
 
 		// If this guild has no entries, return
-		if (!guildEntry) return;
+		if (!guildEntry) {
+			return;
+		}
 
 		// Get all trigger-able users for this trigger
 		const triggerables = guildEntry.get(trigger);
 
 		// If this isn't a trigger, return
-		if (!triggerables) return;
+		if (!triggerables) {
+			return;
+		}
 
 		// Remove the member
 		triggerables.delete(memberId);
@@ -58,7 +63,9 @@ export class WorkerCache {
 	 */
 	public isRegularExpressionValid(regex: string) {
 		const cached = this.validRegularExpressions.get(regex);
-		if (typeof cached === 'boolean') return cached;
+		if (typeof cached === 'boolean') {
+			return cached;
+		}
 
 		const [valid, validatedRegex] = tryRegex(regex);
 		this.setValidRegex(regex, valid);
@@ -161,7 +168,9 @@ export class WorkerCache {
 
 	private getOrCacheRegularExpression(input: string) {
 		const cached = this.stringToRegularExpression.get(input);
-		if (cached) return cached;
+		if (cached) {
+			return cached;
+		}
 
 		try {
 			const newExpression = new re2(input, 'gi');

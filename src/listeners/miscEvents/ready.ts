@@ -1,4 +1,5 @@
 import { InviteButton, inviteOptions, packageJsonFile, pluralize } from '#utils/misc';
+import { Prisma } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, LogLevel } from '@sapphire/framework';
 
@@ -31,9 +32,9 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			`v${packageJsonFile.version}`,
 		)} ${colors.magenta('-')} ${colors.blueBright('Sapphire and Application Command Edition')}`;
 
-		const userTagInColor = `${colors.magenta('Logged in as: ')}${colors.cyanBright(client.user!.tag)} (${colors.green(
-			client.user!.id,
-		)})`;
+		const userTagInColor = `${colors.magenta('Logged in as: ')}${colors.cyanBright(
+			client.user!.tag,
+		)} (${colors.green(client.user!.id)})`;
 
 		const finalMessageToLog = [
 			...asciiArt, //
@@ -41,12 +42,10 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			`  ${versionString}`,
 			'',
 			userTagInColor,
-			`${colors.magenta('               Guild count: ')}${colors.cyanBright(
-				client.guilds.cache.size.toLocaleString(),
-			)}`,
-			`${colors.magenta('        Invite application: ')}${colors.cyanBright(this.container.clientInvite)}`,
-			`${colors.magenta('             Public prefix: ')}${colors.cyanBright('/')}`,
-			`${colors.magenta('  Developer command prefix: ')}${colors.cyanBright(`@${client.user!.username}`)}`,
+			`${colors.magenta('    Guild count: ')}${colors.cyanBright(client.guilds.cache.size.toLocaleString())}`,
+			`${colors.magenta('    Public prefix: ')}${colors.cyanBright('/')}`,
+			`${colors.magenta('    Developer command prefix: ')}${colors.cyanBright(`@${client.user!.username}`)}`,
+			`${colors.magenta('  Invite application: ')}${colors.cyanBright(this.container.clientInvite)}`,
 		];
 
 		for (const entry of finalMessageToLog) {
@@ -65,7 +64,20 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 			}
 		}
 
+		await this.ensureAllGuildsAreInDatabase();
+
 		await this.container.highlightManager.updateAllCaches();
+	}
+
+	private async ensureAllGuildsAreInDatabase() {
+		const { prisma, client } = this.container;
+
+		await prisma.$executeRaw`INSERT INTO guilds (guild_id) VALUES ${Prisma.join(
+			[...client.guilds.cache.keys()],
+			'), (',
+			'(',
+			')',
+		)} ON CONFLICT DO NOTHING`;
 	}
 }
 

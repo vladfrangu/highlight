@@ -23,7 +23,7 @@ model User {
 
   /// Support globally ignoring users
   ///
-  /// /highlight ignored-users add/remove/list/clear [user_id]
+  /// /highlight globally-ignored-users add/remove/list/clear [user_id]
   globallyIgnoredUsers String[] @map("globally_ignored_users") @db.Text
 
   /// All members that point to this user
@@ -34,18 +34,28 @@ model User {
   @@map("users")
 }
 
-model GuildSetting {
-  guildId           String                 @id @map("guild_id") @db.Text
+model Guild {
+  guildId                       String                  @id @map("guild_id") @db.Text
   /// Keep default in sync with src/listeners/highlightRelated/parseMessage.ts
-  notificationStyle GuildNotificationStyle @default(WithContextAndAuthor) @map("notification_style")
+  notificationStyle             GuildNotificationStyle  @default(WithContextAndAuthor) @map("notification_style")
+  // Make this customizable per server, incentivize paid for more than 3
+  channelWithBotParsingsAllowed Int                     @default(3) @map("channel_with_bot_parsings_allowed")
+  /// All channels that have bot parsing enabled for this guild
+  channelsWithBotParsing        ChannelWithBotParsing[]
+  /// All user activities for this guild
+  userActivities                UserActivity[]
+  /// All members that point to this guild
+  members                       Member[]
 
-  @@map("guild_settings")
+  @@map("guilds")
 }
 
 /// Some people have requested that highlight parses bot messages too :shrug:
 /// There can be legit use cases I suppose, so for now this is added as an option
 model ChannelWithBotParsing {
   channelId String   @id @map("channel_id") @db.Text
+  guildId   String   @map("guild_id") @db.Text
+  guild     Guild    @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
   userId    String   @map("user_id") @db.Text
   addedAt   DateTime @default(now()) @map("added_at")
 
@@ -67,16 +77,21 @@ enum GuildNotificationStyle {
 
 model Member {
   guildId String @map("guild_id") @db.Text
+  guild   Guild  @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
   userId  String @map("user_id") @db.Text
-  user    User   @relation(fields: [userId], references: [id])
+  user    User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   /// Words that will trigger a highlight
   words              String[] @db.Text
   /// Patterns that will trigger a highlight
   regularExpressions String[] @map("regular_expressions") @db.Text
   /// Ignored users that will not trigger a highlight
+  ///
+  /// /server-ignore-list add/remove/list/clear [user_id|channel_id]
   ignoredUsers       String[] @map("ignored_users") @db.Text
   /// Ignored channels that will not trigger a highlight
+  ///
+  /// /server-ignore-list add/remove/list/clear [user_id|channel_id]
   ignoredChannels    String[] @map("ignored_channels") @db.Text
 
   @@id([guildId, userId])
@@ -86,11 +101,13 @@ model Member {
 // Used to power the grace period (but only for users who opted into having a grace period)
 model UserActivity {
   userId       String   @map("user_id") @db.Text
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   channelId    String   @map("channel_id") @db.Text
+  guildId      String   @map("guild_id") @db.Text
+  guild        Guild    @relation(fields: [guildId], references: [guildId], onDelete: Cascade)
   /// The last time the user was active
   lastActiveAt DateTime @map("last_active_at") @db.Timestamp()
 
   @@id([userId, channelId])
-  @@map("user_activity")
+  @@map("user_activities")
 }

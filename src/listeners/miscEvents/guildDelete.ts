@@ -32,7 +32,10 @@ export class GuildDeleteListener extends Listener<typeof Events.GuildDelete> {
 				},
 				{
 					name: 'Created at',
-					value: `${time(guild.createdTimestamp, TimestampStyles.ShortDateTime)} (${guild.createdAt.toISOString()})`,
+					value: `${time(
+						guild.createdTimestamp,
+						TimestampStyles.ShortDateTime,
+					)} (${guild.createdAt.toISOString()})`,
 					inline: true,
 				},
 			])

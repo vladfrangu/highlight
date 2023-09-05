@@ -146,13 +146,13 @@ async function makeAndSendErrorEmbed<Options>(
 				);
 			}
 
-			if (!foundMessageMapping) {
+			if (foundMessageMapping) {
 				await webhook.send({
 					content: `Encountered missing message command mapping for command ${inlineCode(
 						command.name,
-					)}, subcommand ${inlineCode(ctx.possibleSubcommandGroupOrName!)}. Take a look @here!\nUUID: ${bold(
-						inlineCode(errorUuid),
-					)}`,
+					)}, subcommand group ${inlineCode(`${ctx.possibleSubcommandGroupOrName}`)}, subcommand ${inlineCode(
+						`${ctx.possibleSubcommandGroupOrName}`,
+					)}.\n\nUUID: ${bold(inlineCode(errorUuid))}`,
 				});
 
 				await callback({
@@ -160,7 +160,9 @@ async function makeAndSendErrorEmbed<Options>(
 						createErrorEmbed(
 							`😖 I seem to have forgotten to map the ${inlineCode(
 								ctx.possibleSubcommandName ?? ctx.possibleSubcommandGroupOrName!,
-							)} properly for you. Please report this error ID to my developer: ${bold(inlineCode(errorUuid))}!`,
+							)} properly for you. Please report this error ID to my developer: ${bold(
+								inlineCode(errorUuid),
+							)}!`,
 						),
 					],
 					components: [new ActionRowBuilder().setComponents(SupportServerButton)],
@@ -182,7 +184,11 @@ async function makeAndSendErrorEmbed<Options>(
 							actualSubcommandNames.length,
 							'This is',
 							'These are',
-						)} the ${pluralize(actualSubcommandNames.length, 'subcommand', 'subcommands')} I know about: ${prettyList}`,
+						)} the ${pluralize(
+							actualSubcommandNames.length,
+							'subcommand',
+							'subcommands',
+						)} I know about: ${prettyList}`,
 					),
 				],
 			} as never);

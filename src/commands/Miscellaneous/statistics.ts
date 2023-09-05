@@ -32,13 +32,16 @@ export class StatisticsCommand extends Command {
 	}
 
 	public override registerApplicationCommands(registry: Command.Registry) {
-		registry.registerChatInputCommand((statistics) => statistics.setName(this.name).setDescription(this.description), {
-			guildIds: useDevelopmentGuildIds(),
-			idHints: [
-				// HighlightDev - Sapphire Guild Command
-				'950174971618005062',
-			],
-		});
+		registry.registerChatInputCommand(
+			(statistics) => statistics.setName(this.name).setDescription(this.description),
+			{
+				guildIds: useDevelopmentGuildIds(),
+				idHints: [
+					// HighlightDev - Sapphire Guild Command
+					'950174971618005062',
+				],
+			},
+		);
 	}
 
 	protected async _sharedRun(
@@ -69,7 +72,9 @@ export class StatisticsCommand extends Command {
 					`• Shards: ${bold((this.container.client.options.shardCount ?? 1).toLocaleString())}`,
 					`• Servers: ${bold(this.container.client.guilds.cache.size.toLocaleString())}`,
 					`• Users: ${bold(
-						this.container.client.guilds.cache.reduce((acc, curr) => acc + curr.memberCount, 0).toLocaleString(),
+						this.container.client.guilds.cache
+							.reduce((acc, curr) => acc + curr.memberCount, 0)
+							.toLocaleString(),
 					)}`,
 				].join('\n'),
 			},
