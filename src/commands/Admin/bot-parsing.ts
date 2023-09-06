@@ -5,6 +5,7 @@ import {
 	Emojis,
 	HelpDetailedDescriptionReplacers,
 	SupportServerButton,
+	pluralize,
 	resolveUserIdFromMessageOrInteraction,
 } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -159,6 +160,12 @@ export class BotParsingCommand extends Subcommand {
 		},
 		{
 			name: 'list',
+			chatInputRun: (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
+				return this.listSubcommand(interaction, false);
+			},
+			messageRun: (message: Message<true>) => {
+				return this.listSubcommand(message, true);
+			},
 		},
 	];
 
@@ -293,6 +300,86 @@ export class BotParsingCommand extends Subcommand {
 							`The channel ${channel.name} (${channelMention(
 								channel.id,
 							)}) has been removed from the list of channels that bots can trigger highlights for!`,
+						),
+					],
+					ephemeral: true,
+				},
+			}),
+		);
+	}
+
+	public async listSubcommand(
+		messageOrInteraction: Message<true> | Subcommand.ChatInputCommandInteraction<'cached'>,
+		isMessage: boolean,
+	) {
+		const guildSettings = await this.container.prisma.guild.findFirstOrThrow({
+			where: { guildId: messageOrInteraction.guildId },
+			include: { channelsWithBotParsing: true },
+		});
+
+		if (!guildSettings.channelsWithBotParsing.length) {
+			await messageOrInteraction.reply(
+				withDeprecationWarningForMessageCommands({
+					commandName: this.name,
+					guildId: messageOrInteraction.guildId,
+					receivedFromMessage: isMessage,
+					options: {
+						embeds: [
+							createInfoEmbed(
+								`This server has no channels that bots can trigger highlights for!\n\nAs a reminder, you can add up to ${bold(
+									inlineCode(`${guildSettings.channelWithBotParsingsAllowed}`),
+								)} channels to this list!`,
+							),
+						],
+						ephemeral: true,
+					},
+				}),
+			);
+
+			return;
+		}
+
+		const channels: string[] = [];
+
+		for (const channelData of guildSettings.channelsWithBotParsing) {
+			const guildChannel = messageOrInteraction.guild.channels.resolve(channelData.channelId);
+
+			if (!guildChannel) {
+				// TODO: maybe remove entry from DB
+				continue;
+			}
+
+			channels.push(`- ${channelMention(guildChannel.id)} (${guildChannel.name})`);
+		}
+
+		const availableSlots =
+			guildSettings.channelWithBotParsingsAllowed - guildSettings.channelsWithBotParsing.length;
+
+		await messageOrInteraction.reply(
+			withDeprecationWarningForMessageCommands({
+				commandName: this.name,
+				guildId: messageOrInteraction.guildId,
+				receivedFromMessage: isMessage,
+				options: {
+					embeds: [
+						createInfoEmbed(
+							[
+								`This server has ${bold(
+									inlineCode(`${guildSettings.channelsWithBotParsing.length}`),
+								)} ${pluralize(
+									guildSettings.channelsWithBotParsing.length,
+									'channel',
+									'channels',
+								)} that bots can trigger highlights for!`,
+								'',
+								`Here's the list of channels:`,
+								'',
+								channels.join('\n'),
+								'',
+								`There ${pluralize(availableSlots, 'is', 'are')} ${bold(
+									inlineCode(`${availableSlots}`),
+								)} more ${pluralize(availableSlots, 'slot', 'slots')} available!`,
+							].join('\n'),
 						),
 					],
 					ephemeral: true,

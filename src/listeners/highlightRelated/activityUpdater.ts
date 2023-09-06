@@ -1,15 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, container } from '@sapphire/framework';
-import type {
-	AnyThreadChannel,
-	DMChannel,
-	Guild,
-	Message,
-	MessageReaction,
-	NonThreadGuildBasedChannel,
-	Typing,
-	User,
-} from 'discord.js';
+import type { Message, MessageReaction, Typing, User } from 'discord.js';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageCreate, name: 'ActivityUpdater.MessageCreate' })
 export class MessageCreate extends Listener<typeof Events.MessageCreate> {
@@ -63,34 +54,6 @@ export class TypingStart extends Listener<typeof Events.TypingStart> {
 		}
 
 		await updateStateForUserInChannel(typingData.user.id, typingData.channel.id, typingData.guild.id);
-	}
-}
-
-@ApplyOptions<Listener.Options>({ event: Events.ChannelDelete, name: 'ActivityUpdater.ChannelDelete' })
-export class ChannelDelete extends Listener<typeof Events.ChannelDelete> {
-	public async run(channel: DMChannel | NonThreadGuildBasedChannel) {
-		if (channel.isDMBased()) {
-			return;
-		}
-
-		// Delete all user activities for this channel
-		await container.prisma.userActivity.deleteMany({ where: { channelId: channel.id } });
-	}
-}
-
-@ApplyOptions<Listener.Options>({ event: Events.GuildDelete, name: 'ActivityUpdater.GuildDelete' })
-export class GuildDelete extends Listener<typeof Events.GuildDelete> {
-	public async run(guild: Guild) {
-		// Delete all user activities for this guild
-		await container.prisma.userActivity.deleteMany({ where: { guildId: guild.id } });
-	}
-}
-
-@ApplyOptions<Listener.Options>({ event: Events.ThreadDelete, name: 'ActivityUpdater.ThreadDelete' })
-export class ThreadDelete extends Listener<typeof Events.ThreadDelete> {
-	public async run(thread: AnyThreadChannel) {
-		// Delete all user activities for this thread
-		await container.prisma.userActivity.deleteMany({ where: { channelId: thread.id } });
 	}
 }
 
