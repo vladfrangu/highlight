@@ -459,7 +459,7 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		} catch (err) {
 			const casted = err as DiscordAPIError;
 
-			if (casted.code === RESTJSONErrorCodes.CannotSendMessagesToThisUser) {
+			if (casted?.code === RESTJSONErrorCodes.CannotSendMessagesToThisUser) {
 				this.container.logger.warn(
 					`Failed to send highlight notification due to bot being blocked or user having disabled DMs, will prolong expiration date for cooldown`,
 					{
