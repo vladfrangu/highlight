@@ -175,7 +175,9 @@ export class HighlightManager {
 
 				if (!promiseData) {
 					container.logger.warn(
-						`Parsed highlight for message "${messageId}", but there was no promise in the promise map`,
+						//
+						`Parsed highlight for message, but there was no promise in the promise map`,
+						{ messageId },
 					);
 					return;
 				}

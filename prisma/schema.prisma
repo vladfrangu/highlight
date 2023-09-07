@@ -31,6 +31,14 @@ model User {
   /// All user activities for this user
   userActivity UserActivity[]
 
+  /// Represents the last time the user was unable to be DM'd.
+  /// This property is used to give people who add words and then block the bot a 24h cooldown on messages
+  /// to prevent abuse.
+  ///
+  /// Users can check this via `/highlight direct-message-cooldown`, and can reset it by pressing the button attached to the message
+  directMessageFailedAttempts    Int       @default(0) @map("direct_message_failed_attempts")
+  directMessageCooldownExpiresAt DateTime? @map("direct_message_cooldown_expires_at")
+
   @@map("users")
 }
 

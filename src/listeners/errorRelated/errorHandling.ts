@@ -132,6 +132,15 @@ async function makeAndSendErrorEmbed<Options>(
 			const casted = command as Subcommand;
 			const ctx = error.context as MessageSubcommandNoMatchContext;
 
+			if (!casted.supportsMessageCommands()) {
+				// This command can strictly be ran via slash commands only!
+				await callback({
+					embeds: [createErrorEmbed(`🤐 This command can only be ran via slash commands!`)],
+				} as never);
+
+				return;
+			}
+
 			const mappings = casted.parsedSubcommandMappings;
 
 			let foundMessageMapping = mappings.find(
@@ -206,7 +215,11 @@ async function makeAndSendErrorEmbed<Options>(
 		return;
 	}
 
-	container.logger.error(`Encountered error on command ${name} at path ${location.full}`, error);
+	container.logger.error(
+		`Encountered error while running command`,
+		{ commandName: name, filePath: location.full },
+		error,
+	);
 
 	await webhook.send({
 		content: `Encountered an unexpected error, take a look @here!\nUUID: ${bold(inlineCode(errorUuid))}`,

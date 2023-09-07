@@ -3,14 +3,17 @@ import { UnknownUserTag, getUserTag } from '#utils/tags';
 import { GuildNotificationStyle, Prisma, type Guild as GuildSetting } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
+import { Time } from '@sapphire/timestamp';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
+	DiscordAPIError,
 	EmbedBuilder,
 	Events,
 	Message,
 	PermissionFlagsBits,
+	RESTJSONErrorCodes,
 	TimestampStyles,
 	bold,
 	escapeMarkdown,
@@ -29,6 +32,8 @@ type DBReturn = {
 	server_ignored_channels: string[] | null;
 	server_ignored_users: string[] | null;
 	user_id: string;
+	direct_message_failed_attempts: number;
+	direct_message_cooldown_expires_at: Date | null;
 }[];
 
 interface MemberInfo {
@@ -40,6 +45,8 @@ interface MemberInfo {
 	server_ignored_channels: string[];
 	server_ignored_users: string[];
 	user_id: string;
+	direct_message_failed_attempts: number;
+	direct_message_cooldown_expires_at: Date | null;
 }
 
 function highlightShouldGetUserInfo(guildSettings: GuildSetting) {
@@ -224,6 +231,8 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		users.grace_period,
 		users.globally_ignored_users,
 		users.adult_channel_highlights,
+		users.direct_message_failed_attempts,
+		users.direct_message_cooldown_expires_at,
 		m.ignored_users as server_ignored_users,
 		m.ignored_channels as server_ignored_channels,
 		user_activities.last_active_at
@@ -252,6 +261,8 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 				server_ignored_channels: member.server_ignored_channels ?? [],
 				server_ignored_users: member.server_ignored_users ?? [],
 				user_id: member.user_id,
+				direct_message_failed_attempts: member.direct_message_failed_attempts,
+				direct_message_cooldown_expires_at: member.direct_message_cooldown_expires_at,
 			});
 		}
 
@@ -270,19 +281,21 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			.fetch({ user: highlightResult.memberId })
 			.catch(() => null);
 
+		const logParams = {
+			memberId: highlightResult.memberId,
+			channelId: messageThatTriggered.channelId,
+			guildId: messageThatTriggered.guildId,
+		};
+
 		if (!member) {
-			this.container.logger.debug(
-				`Failed to find member ${highlightResult.memberId} in guild ${messageThatTriggered.guildId} to send highlight`,
-			);
+			this.container.logger.debug(`Failed to find member in guild to send highlight`, logParams);
 
 			return;
 		}
 
 		// Step 1. Ensure the member that should be highlighted can see the channel
 		if (!messageThatTriggered.channel.permissionsFor(member, true).has(PermissionFlagsBits.ViewChannel)) {
-			this.container.logger.debug(
-				`Member ${highlightResult.memberId} can't see channel ${messageThatTriggered.channelId}, will not highlight`,
-			);
+			this.container.logger.debug(`Member can't see channel, will not highlight`, logParams);
 			return;
 		}
 
@@ -291,18 +304,35 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			messageThatTriggered.mentions.users.has(highlightResult.memberId) ||
 			messageThatTriggered.mentions.repliedUser?.id === highlightResult.memberId
 		) {
-			this.container.logger.debug(
-				`Member ${highlightResult.memberId} was mentioned in message ${messageThatTriggered.id} or was replied to, will not highlight`,
-			);
+			this.container.logger.debug(`Member was mentioned in message or was replied to, will not highlight`, {
+				...logParams,
+				messageId: messageThatTriggered.id,
+			});
 			return;
 		}
 
 		const databaseMember = this.getMemberWithUserFromDatabase(allHighlightedMembers, member.id);
 
-		// Step 3. Ensure the member that should be highlighted hasn't also opted out
+		// Step 3.1. Ensure the member that should be highlighted isn't on a DM cooldown
+		if (databaseMember.direct_message_cooldown_expires_at) {
+			if (Date.now() <= databaseMember.direct_message_cooldown_expires_at.getTime()) {
+				this.container.logger.debug(
+					`Member is still on DM cooldown for being unable to be reached out, will not highlight`,
+					{
+						...logParams,
+						directMessageFailedAttempts: databaseMember.direct_message_failed_attempts,
+						directMessageCooldownExpiresAt: databaseMember.direct_message_cooldown_expires_at.toISOString(),
+					},
+				);
+				return;
+			}
+		}
+
+		// Step 3.2. Ensure the member that should be highlighted hasn't also opted out
 		if (databaseMember.opted_out) {
 			this.container.logger.debug(
-				`Member ${highlightResult.memberId} who would've gotten highlighted has opted out, will not highlight`,
+				`Member who would've gotten highlighted has opted out, will not highlight`,
+				logParams,
 			);
 			return;
 		}
@@ -321,8 +351,8 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		// Step 3.1. If channel is NSFW, ensure the user opted into getting highlights from NSFW channels
 		if (channelIsNsfw && !databaseMember.adult_channel_highlights) {
 			this.container.logger.debug(
-				`Member ${highlightResult.memberId} has not opted into getting highlights from NSFW channels, will not highlight`,
-				`channel: ${messageThatTriggered.channelId}`,
+				`Member has not opted into getting highlights from NSFW channels, will not highlight`,
+				logParams,
 			);
 			return;
 		}
@@ -340,11 +370,11 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			channelIdsToCheck.some((channelId) => databaseMember.server_ignored_channels.includes(channelId)) ||
 			databaseMember.globally_ignored_users.includes(messageThatTriggered.author.id)
 		) {
-			this.container.logger.debug(
-				`Member ${highlightResult.memberId} has ignored user ${
-					messageThatTriggered.author.id
-				} or channels ${channelIdsToCheck.join(';')}, will not highlight`,
-			);
+			this.container.logger.debug(`Member has ignored message author or channel, will not highlight`, {
+				...logParams,
+				authorId: messageThatTriggered.author.id,
+				channelIdsToCheck,
+			});
 			return;
 		}
 
@@ -359,11 +389,11 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 
 				// If the difference is less than the grace period, then the user is still in grace period
 				if (timeDifference < databaseMember.grace_period) {
-					this.container.logger.debug(
-						`Member ${highlightResult.memberId} is still in grace period in channel ${messageThatTriggered.channelId}, will not highlight.`,
-						`time difference: ${timeDifference};`,
-						`grace period: ${databaseMember.grace_period}`,
-					);
+					this.container.logger.debug(`Member is still in grace period in channel, will not highlight.`, {
+						...logParams,
+						timeDifference,
+						gracePeriod: databaseMember.grace_period,
+					});
 					return;
 				}
 			}
@@ -427,10 +457,46 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 				components: [row],
 			});
 		} catch (err) {
-			this.container.logger.warn(
-				`Failed to send highlight notification to member ${highlightResult.memberId} in guild ${messageThatTriggered.guildId} for trigger ${highlightResult.trigger}`,
-				err,
-			);
+			const casted = err as DiscordAPIError;
+
+			if (casted.code === RESTJSONErrorCodes.CannotSendMessagesToThisUser) {
+				this.container.logger.warn(
+					`Failed to send highlight notification due to bot being blocked or user having disabled DMs, will prolong expiration date for cooldown`,
+					{
+						...logParams,
+						trigger: highlightResult.trigger,
+						directMessageFailedAttempts: databaseMember.direct_message_failed_attempts,
+					},
+				);
+
+				await this.container.prisma.user
+					.upsert({
+						where: { id: highlightResult.memberId },
+						update: {
+							directMessageCooldownExpiresAt: new Date(
+								Date.now() + Time.Day * Math.pow(2, databaseMember.direct_message_failed_attempts),
+							),
+							directMessageFailedAttempts: {
+								increment: 1,
+							},
+						},
+						create: {
+							id: highlightResult.memberId,
+							directMessageCooldownExpiresAt: new Date(Date.now() + Time.Day),
+							directMessageFailedAttempts: 1,
+						},
+					})
+					.catch(() => null);
+			} else {
+				this.container.logger.error(
+					`Failed to send highlight notification due to an unknown error`,
+					{
+						...logParams,
+						trigger: highlightResult.trigger,
+					},
+					err,
+				);
+			}
 		}
 	}
 
@@ -453,6 +519,8 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			server_ignored_channels: [],
 			server_ignored_users: [],
 			user_id: memberId,
+			direct_message_failed_attempts: 0,
+			direct_message_cooldown_expires_at: null,
 		};
 	}
 }
