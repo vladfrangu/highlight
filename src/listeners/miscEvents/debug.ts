@@ -14,3 +14,13 @@ export class DebugListener extends Listener<typeof Events.Debug> {
 		this.container.logger.debug(`${this.container.colors.cyanBright('discord.js:debug')}: ${message}`);
 	}
 }
+
+@ApplyOptions<Listener.Options>({
+	name: 'CacheSweepLogger',
+	event: Events.CacheSweep,
+})
+export class CacheSweepListener extends Listener<typeof Events.CacheSweep> {
+	public override run(message: string) {
+		this.container.logger.debug(`${this.container.colors.cyanBright('discord.js:cache-sweep')}: ${message}`);
+	}
+}

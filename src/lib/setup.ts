@@ -44,11 +44,11 @@ declare module '@sapphire/pieces' {
 
 // #region Prisma
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
-import Prisma, { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const highlighter = new SqlHighlighter();
 
-const prisma = new Prisma.PrismaClient({
+const prisma = new PrismaClient({
 	errorFormat: 'pretty',
 	log: [
 		{ emit: 'stdout', level: 'warn' },
@@ -113,7 +113,7 @@ const prisma = new Prisma.PrismaClient({
 					if (sqlString) {
 						if (args.length) {
 							for (let i = 1; i < args.length; i++) {
-								sqlString.replace(`$${i}`, JSON.stringify(args[i]));
+								sqlString.replace(`$${i}`, JSON.stringify(args[i - 1]));
 							}
 
 							consoleMessage.push(highlighter.highlight(sqlString));

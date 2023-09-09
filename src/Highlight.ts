@@ -55,18 +55,18 @@ const client = new HighlightClient({
 	sweepers: {
 		// Members, users and messages are needed for the bot to function
 		guildMembers: {
-			interval: Time.Minute * 15,
+			interval: (Time.Minute * 15) / 1000,
 			// Sweep all members except the bot member
 			filter: () => (member) => member.user.id !== member.client.user!.id,
 		},
 		users: {
-			interval: Time.Minute * 15,
+			interval: (Time.Minute * 15) / 1000,
 			// Sweep all users except the bot user
 			filter: () => (user) => user.id !== user.client.user!.id,
 		},
 		messages: {
-			interval: Time.Minute * 5,
-			lifetime: Time.Minute * 15,
+			interval: (Time.Minute * 5) / 1000,
+			lifetime: (Time.Minute * 15) / 1000,
 		},
 	},
 	caseInsensitiveCommands: true,
