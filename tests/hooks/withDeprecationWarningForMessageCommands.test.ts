@@ -53,10 +53,6 @@ vi.mock('@sapphire/framework', async () => {
 	};
 });
 
-afterAll(() => {
-	vi.unmock('@sapphire/framework');
-});
-
 const { container } = await import('@sapphire/framework');
 const { withDeprecationWarningForMessageCommands, withDeprecationWarningOnEmbedForMessageCommands } = await import(
 	'#hooks/withDeprecationWarningForMessageCommands'
@@ -220,7 +216,10 @@ describe('message command deprecation hooks', () => {
 			});
 
 			test('given content and an action row, it should add another action row', () => {
-				const original = { content: 'Hi', components: [new ActionRowBuilder<MessageActionRowComponentBuilder>()] };
+				const original = {
+					content: 'Hi',
+					components: [new ActionRowBuilder<MessageActionRowComponentBuilder>()],
+				};
 
 				const result = withDeprecationWarningForMessageCommands({
 					commandName: 'test',

@@ -6,8 +6,9 @@
 		"@sapphire/ts-config/verbatim"
 	],
 	"compilerOptions": {
-		"target": "ESNext",
-		"moduleResolution": "Node16",
+		"target": "ES2022",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"removeComments": true,
 		"declaration": false,
 		"declarationMap": false,

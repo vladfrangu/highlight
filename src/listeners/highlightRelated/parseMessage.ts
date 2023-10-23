@@ -1,4 +1,5 @@
 import { WorkerType, type ParsedHighlightData } from '#types/WorkerTypes';
+import type { EnsureArray } from '#utils/misc';
 import { UnknownUserTag, getUserTag } from '#utils/tags';
 import { GuildNotificationStyle, Prisma, type Guild as GuildSetting } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -24,30 +25,33 @@ import {
 } from 'discord.js';
 
 type DBReturn = {
-	adult_channel_highlights: boolean;
-	globally_ignored_users: string[] | null;
-	grace_period: number | null;
-	last_active_at: Date | null;
+	user_id: string;
 	opted_out: boolean;
+	grace_period: number | null;
+	adult_channel_highlights: boolean;
+	direct_message_failed_attempts: number;
+	direct_message_cooldown_expires_at: Date | null;
 	server_ignored_channels: string[] | null;
 	server_ignored_users: string[] | null;
-	user_id: string;
-	direct_message_failed_attempts: number;
-	direct_message_cooldown_expires_at: Date | null;
+	globally_ignored_users: string[] | null;
+	last_active_at: Date | null;
 }[];
 
-interface MemberInfo {
-	adult_channel_highlights: boolean;
-	globally_ignored_users: string[];
-	grace_period: number | null;
-	last_active_at: Date | null;
-	opted_out: boolean;
-	server_ignored_channels: string[];
-	server_ignored_users: string[];
+type MemberInfo = EnsureArray<DBReturn[number]>;
+//   ^?
+
+type ActualDBReturn = {
 	user_id: string;
+	opted_out: boolean;
+	grace_period: number | null;
+	adult_channel_highlights: boolean;
 	direct_message_failed_attempts: number;
 	direct_message_cooldown_expires_at: Date | null;
-}
+	server_ignored_channels: string[] | null[];
+	server_ignored_users: string[] | null[];
+	globally_ignored_users: string[] | null[];
+	last_active_at: Date | null;
+}[];
 
 function highlightShouldGetUserInfo(guildSettings: GuildSetting) {
 	return (
@@ -229,12 +233,12 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		users.id as user_id,
 		users.opted_out,
 		users.grace_period,
-		users.globally_ignored_users,
 		users.adult_channel_highlights,
 		users.direct_message_failed_attempts,
 		users.direct_message_cooldown_expires_at,
-		m.ignored_users as server_ignored_users,
-		m.ignored_channels as server_ignored_channels,
+		array_agg(guild_ignored_channels.ignored_channel_id) as server_ignored_channels,
+		array_agg(guild_ignored_users.ignored_user_id) as server_ignored_users,
+		array_agg(global_ignored_users.ignored_user_id) as globally_ignored_users,
 		user_activities.last_active_at
 	FROM users
 	LEFT JOIN members m ON
@@ -242,24 +246,44 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 	LEFT JOIN user_activities ON
 		channel_id = ${channelId}
 		AND users.id = user_activities.user_id
+	LEFT JOIN guild_ignored_channels ON
+		guild_ignored_channels.user_id = m.user_id
+		AND guild_ignored_channels.guild_id = m.guild_id
+	LEFT JOIN guild_ignored_users ON
+		guild_ignored_users.guild_id = m.guild_id
+		AND guild_ignored_users.user_id = m.user_id
+	LEFT JOIN global_ignored_users ON
+		global_ignored_users.user_id = m.user_id
 	WHERE
 		m.user_id IN (${Prisma.join([...members], ',')})
 		AND m.guild_id = ${guildId}
+	GROUP BY
+		users.id,
+		user_activities.last_active_at
 `;
 
-		const data = await this.container.prisma.$queryRaw<DBReturn>(query);
+		const data = await this.container.prisma.$queryRaw<ActualDBReturn>(query);
 
 		const result = new Map<string, MemberInfo>();
 
 		for (const member of data) {
+			const globallyIgnoredUsers =
+				member.globally_ignored_users[0] === null ? [] : (member.globally_ignored_users as string[]);
+
+			const serverIgnoredChannels =
+				member.server_ignored_channels[0] === null ? [] : (member.server_ignored_channels as string[]);
+
+			const serverIgnoredUsers =
+				member.server_ignored_users[0] === null ? [] : (member.server_ignored_users as string[]);
+
 			result.set(member.user_id, {
 				adult_channel_highlights: member.adult_channel_highlights,
-				globally_ignored_users: member.globally_ignored_users ?? [],
+				globally_ignored_users: globallyIgnoredUsers,
 				grace_period: member.grace_period,
 				last_active_at: member.last_active_at,
 				opted_out: member.opted_out,
-				server_ignored_channels: member.server_ignored_channels ?? [],
-				server_ignored_users: member.server_ignored_users ?? [],
+				server_ignored_channels: serverIgnoredChannels,
+				server_ignored_users: serverIgnoredUsers,
 				user_id: member.user_id,
 				direct_message_failed_attempts: member.direct_message_failed_attempts,
 				direct_message_cooldown_expires_at: member.direct_message_cooldown_expires_at,
@@ -456,6 +480,17 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 				content,
 				components: [row],
 			});
+
+			// We could message the user, so we can reset the cooldown
+			await this.container.prisma.user
+				.update({
+					where: { id: highlightResult.memberId },
+					data: {
+						directMessageFailedAttempts: 0,
+						directMessageCooldownExpiresAt: null,
+					},
+				})
+				.catch(() => null);
 		} catch (err) {
 			const casted = err as DiscordAPIError;
 

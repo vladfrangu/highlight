@@ -17,7 +17,10 @@ import {
 } from '@sapphire/framework';
 import {
 	Subcommand,
+	SubcommandPluginEvents,
 	SubcommandPluginIdentifiers,
+	type ChatInputSubcommandErrorPayload,
+	type MessageSubcommandErrorPayload,
 	type MessageSubcommandNoMatchContext,
 } from '@sapphire/plugin-subcommands';
 import {
@@ -92,6 +95,66 @@ export class ChatInputCommandError extends Listener<typeof Events.ChatInputComma
 })
 export class ContextMenuCommandError extends Listener<typeof Events.ContextMenuCommandError> {
 	public override async run(error: unknown, { interaction, command }: ContextMenuCommandErrorPayload) {
+		const maybeError = error as Error;
+
+		await makeAndSendErrorEmbed<InteractionReplyOptions>(
+			maybeError,
+			command,
+			(options) => {
+				if (interaction.replied) {
+					return interaction.followUp({
+						...options,
+						ephemeral: true,
+					});
+				} else if (interaction.deferred) {
+					return interaction.editReply(options);
+				}
+
+				return interaction.reply({
+					...options,
+					ephemeral: true,
+				});
+			},
+			command,
+		);
+	}
+}
+
+@ApplyOptions<Listener.Options>({
+	name: 'MessageCommandSubcommandCommandError',
+	event: SubcommandPluginEvents.MessageSubcommandError,
+})
+export class MessageCommandSubcommandCommandError extends Listener<
+	typeof SubcommandPluginEvents.MessageSubcommandError
+> {
+	public override async run(error: unknown, { message, command }: MessageSubcommandErrorPayload) {
+		const maybeError = error as Error;
+
+		await makeAndSendErrorEmbed<MessageCreateOptions>(
+			maybeError,
+			command,
+			(options) =>
+				message.channel.send(
+					withDeprecationWarningForMessageCommands({
+						commandName: command.name,
+						guildId: message.guildId,
+						receivedFromMessage: true,
+						options,
+					}),
+				),
+			command,
+		);
+	}
+}
+
+@ApplyOptions<Listener.Options>({
+	name: 'ChatInputCommandSubcommandCommandError',
+	event: SubcommandPluginEvents.ChatInputSubcommandError,
+})
+export class ChatInputCommandSubcommandCommandError extends Listener<
+	typeof SubcommandPluginEvents.ChatInputSubcommandError
+> {
+	public override async run(error: unknown, { interaction, command }: ChatInputSubcommandErrorPayload) {
 		const maybeError = error as Error;
 
 		await makeAndSendErrorEmbed<InteractionReplyOptions>(

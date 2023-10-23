@@ -172,12 +172,13 @@ export class WorkerCache {
 			return cached;
 		}
 
-		try {
-			const newExpression = new re2(input, 'gi');
-			this.stringToRegularExpression.set(input, newExpression);
-			return newExpression;
-		} catch {
+		const [valid, pattern] = tryRegex(input);
+
+		if (!valid) {
 			return null;
 		}
+
+		this.stringToRegularExpression.set(input, pattern!);
+		return pattern;
 	}
 }

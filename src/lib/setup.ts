@@ -1,9 +1,3 @@
-// #region Sapphire config
-import { ApplicationCommandRegistries, container, LogLevel, RegisterBehavior } from '@sapphire/framework';
-import '@sapphire/plugin-logger/register';
-ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.Overwrite);
-// #endregion
-
 // #region Env Setup
 import { setup, type ArrayString, type NumberString } from '@skyra/env-utilities';
 
@@ -24,6 +18,15 @@ declare module '@skyra/env-utilities' {
 		POSTGRES_URL: string;
 	}
 }
+// #endregion
+
+// #region Sapphire config
+import { ApplicationCommandRegistries, container, LogLevel, RegisterBehavior } from '@sapphire/framework';
+import '@sapphire/plugin-logger/register';
+
+const { useDevelopmentGuildIds } = await import('#hooks/useDevelopmentGuildIds');
+ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
+ApplicationCommandRegistries.setDefaultGuildIds(useDevelopmentGuildIds());
 // #endregion
 
 // #region NodeJS inspect settings

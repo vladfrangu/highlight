@@ -2,7 +2,7 @@ import { envParseString } from '@skyra/env-utilities';
 import {
 	ButtonBuilder,
 	ButtonStyle,
-	ChatInputCommandInteraction,
+	CommandInteraction,
 	Message,
 	MessageComponentInteraction,
 	OAuth2Scopes,
@@ -74,7 +74,11 @@ export const enum HelpDetailedDescriptionReplacers {
 }
 
 export function resolveUserIdFromMessageOrInteraction(
-	messageOrInteraction: Message | ChatInputCommandInteraction | MessageComponentInteraction,
+	messageOrInteraction: Message | CommandInteraction | MessageComponentInteraction,
 ): string {
 	return messageOrInteraction instanceof Message ? messageOrInteraction.author.id : messageOrInteraction.user.id;
 }
+
+export type EnsureArray<T> = {
+	[K in keyof T]: T[K] extends any[] | null ? Exclude<T[K], null> : T[K];
+};

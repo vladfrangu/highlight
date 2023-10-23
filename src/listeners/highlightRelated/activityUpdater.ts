@@ -58,9 +58,9 @@ export class TypingStart extends Listener<typeof Events.TypingStart> {
 }
 
 async function updateStateForUserInChannel(userId: string, channelId: string, guildId: string) {
-	// First check if the user has a grace period set
+	// First check if the user has a grace period set, and hasn't opted out
 	const user = await container.prisma.user.findFirst({
-		where: { id: userId, gracePeriod: { not: null } },
+		where: { id: userId, gracePeriod: { not: null }, optedOut: false },
 	});
 
 	if (!user) {
@@ -72,7 +72,7 @@ async function updateStateForUserInChannel(userId: string, channelId: string, gu
 	await container.prisma.$executeRaw`
 	INSERT INTO user_activities (user_id, channel_id, guild_id, last_active_at)
 	VALUES (${userId}, ${channelId}, ${guildId}, NOW())
-	ON CONFLICT (user_id, channel_id) DO
+	ON CONFLICT (user_id, channel_id, guild_id) DO
 		UPDATE SET last_active_at = NOW()
 `; // We love indentations >.>
 }

@@ -8,23 +8,26 @@ datasource db {
 }
 
 model User {
-  id                     String    @id @db.Text
+  id String @id @db.Text
+
   /// /highlight opt-in/opt-out
-  optedOut               Boolean   @default(false) @map("opted_out")
-  optedOutAt             DateTime? @map("opted_out_at")
+  optedOut   Boolean   @default(false) @map("opted_out")
+  optedOutAt DateTime? @map("opted_out_at")
+
   /// Used to say "only send me highlights after I've been away from the channel for x seconds"
   ///
   /// `null` means always send messages
   ///
   /// /highlight grace-period set/clear/show
-  gracePeriod            Int?      @map("grace_period")
+  gracePeriod Int? @map("grace_period")
+
   /// /highlight adult-channel-highlights enable/disable
-  adultChannelHighlights Boolean   @default(false) @map("adult_channel_highlights")
+  adultChannelHighlights Boolean @default(false) @map("adult_channel_highlights")
 
   /// Support globally ignoring users
   ///
   /// /highlight globally-ignored-users add/remove/list/clear [user_id]
-  globallyIgnoredUsers String[] @map("globally_ignored_users") @db.Text
+  globallyIgnoredUsers GlobalIgnoredUser[]
 
   /// All members that point to this user
   members      Member[]
@@ -32,7 +35,7 @@ model User {
   userActivity UserActivity[]
 
   /// Represents the last time the user was unable to be DM'd.
-  /// This property is used to give people who add words and then block the bot a 24h cooldown on messages
+  /// This property is used to give people who add words and then block the bot a cooldown on messages
   /// to prevent abuse.
   ///
   /// Users can check this via `/highlight direct-message-cooldown`, and can reset it by pressing the button attached to the message
@@ -40,6 +43,16 @@ model User {
   directMessageCooldownExpiresAt DateTime? @map("direct_message_cooldown_expires_at")
 
   @@map("users")
+}
+
+model GlobalIgnoredUser {
+  userId        String @map("user_id") @db.Text
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ignoredUserId String @map("ignored_user_id") @db.Text
+
+  @@id([userId, ignoredUserId])
+  @@index([userId])
+  @@map("global_ignored_users")
 }
 
 model Guild {
@@ -90,19 +103,20 @@ model Member {
   user    User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   /// Words that will trigger a highlight
-  words              String[] @db.Text
+  words              String[]              @db.Text
   /// Patterns that will trigger a highlight
-  regularExpressions String[] @map("regular_expressions") @db.Text
+  regularExpressions String[]              @map("regular_expressions") @db.Text
   /// Ignored users that will not trigger a highlight
   ///
   /// /server-ignore-list add/remove/list/clear [user_id|channel_id]
-  ignoredUsers       String[] @map("ignored_users") @db.Text
+  ignoredUsers       GuildIgnoredUser[]
   /// Ignored channels that will not trigger a highlight
   ///
   /// /server-ignore-list add/remove/list/clear [user_id|channel_id]
-  ignoredChannels    String[] @map("ignored_channels") @db.Text
+  ignoredChannels    GuildIgnoredChannel[]
 
   @@id([guildId, userId])
+  @@index([guildId])
   @@map("members")
 }
 
@@ -118,4 +132,30 @@ model UserActivity {
 
   @@id([userId, channelId])
   @@map("user_activities")
+}
+
+model GuildIgnoredChannel {
+  ignoredChannelId String @map("ignored_channel_id") @db.Text
+  userId           String @map("user_id") @db.Text
+  guildId          String @map("guild_id") @db.Text
+
+  member Member @relation(fields: [guildId, userId], references: [guildId, userId], onDelete: Cascade)
+
+  @@id([guildId, userId, ignoredChannelId])
+  @@index([userId, guildId])
+  @@index([guildId])
+  @@map("guild_ignored_channels")
+}
+
+model GuildIgnoredUser {
+  ignoredUserId String @map("ignored_user_id") @db.Text
+  userId        String @map("user_id") @db.Text
+  guildId       String @map("guild_id") @db.Text
+
+  member Member @relation(fields: [guildId, userId], references: [guildId, userId], onDelete: Cascade)
+
+  @@id([guildId, userId, ignoredUserId])
+  @@index([userId, guildId])
+  @@index([guildId])
+  @@map("guild_ignored_users")
 }

@@ -1,4 +1,3 @@
-import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createErrorEmbed, createSuccessEmbed } from '#utils/embeds';
 import { Emojis, HelpDetailedDescriptionReplacers, orList } from '#utils/misc';
@@ -156,25 +155,17 @@ export class HelpCommand extends Command {
 	}
 
 	public override registerApplicationCommands(registry: Command.Registry) {
-		registry.registerChatInputCommand(
-			(builder) =>
-				builder
-					.setName(this.name)
-					.setDescription(this.description)
-					.addStringOption((command) =>
-						command
-							.setName('command')
-							.setDescription('The command to get help for')
-							.setRequired(false)
-							.setAutocomplete(true),
-					),
-			{
-				guildIds: useDevelopmentGuildIds(),
-				idHints: [
-					// HighlightDev - Sapphire Guild Command
-					'955109568655015987',
-				],
-			},
+		registry.registerChatInputCommand((builder) =>
+			builder
+				.setName(this.name)
+				.setDescription(this.description)
+				.addStringOption((command) =>
+					command
+						.setName('command')
+						.setDescription('The command to get help for')
+						.setRequired(false)
+						.setAutocomplete(true),
+				),
 		);
 	}
 
@@ -378,7 +369,7 @@ export class HelpCommand extends Command {
 					inlineCode('_'),
 				)}, the dashes/underscores are optional in the command name when using message commands. (for example ${bold(
 					inlineCode(command.name),
-				)} can be used as ${bold(inlineCode(command.name.replace(/-_/g, '')))} too)`,
+				)} can be used as ${bold(inlineCode(command.name.replaceAll(/[\-_]/g, '')))} too)`,
 			});
 		}
 
@@ -422,7 +413,7 @@ export class HelpCommand extends Command {
 		const commandsTheUserCanRun = (
 			await Promise.all(
 				[...this.store.values()].map(async (command) => {
-					const canRun = await this.canRunCommand(messageOrInteraction, command as Command, isMessage);
+					const canRun = await this.canRunCommand(messageOrInteraction, command, isMessage);
 
 					return canRun ? command : null;
 				}),

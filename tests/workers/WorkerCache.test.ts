@@ -14,10 +14,6 @@ const { sendToMainProcess } = await import('#workers/common');
 
 const sendToMainProcessSpy = sendToMainProcess as MockedFunction<typeof sendToMainProcess>;
 
-afterAll(() => {
-	vi.unmock('#workers/common');
-});
-
 describe('WorkerCache', () => {
 	const cache = new WorkerCache();
 	const removeTriggerForUserSpy = vi.spyOn(cache, 'removeTriggerForUser');
@@ -140,7 +136,12 @@ describe('WorkerCache', () => {
 		])(
 			'parsing a valid %s (%p) for pre-registered guild %s (%p) should return valid data',
 			(_, workerType, __, guildId) => {
-				const { results, memberIds } = cache.parse(workerType, String(guildId), testSubjectTriggerUserId, 'word');
+				const { results, memberIds } = cache.parse(
+					workerType,
+					String(guildId),
+					testSubjectTriggerUserId,
+					'word',
+				);
 
 				expect(results).toHaveLength(1);
 				expect(memberIds).toHaveLength(1);

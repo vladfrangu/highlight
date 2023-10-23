@@ -1,4 +1,3 @@
-import { useDevelopmentGuildIds } from '#hooks/useDevelopmentGuildIds';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
 import { InviteButton } from '#utils/misc';
@@ -19,13 +18,7 @@ export class InviteCommand extends Command {
 	}
 
 	public override registerApplicationCommands(registry: Command.Registry) {
-		registry.registerChatInputCommand((invite) => invite.setName(this.name).setDescription(this.description), {
-			guildIds: useDevelopmentGuildIds(),
-			idHints: [
-				// HighlightDev - Sapphire Guild Command
-				'950166288959946752',
-			],
-		});
+		registry.registerChatInputCommand((invite) => invite.setName(this.name).setDescription(this.description));
 	}
 
 	protected async _sharedRun(
