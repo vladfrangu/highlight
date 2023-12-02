@@ -1,4 +1,5 @@
 // #region Env Setup
+import { rootDir } from '#utils/misc';
 import { setup, type ArrayString, type NumberString } from '@skyra/env-utilities';
 
 setup({ path: new URL('.env', rootDir) });
@@ -155,7 +156,6 @@ declare module '@sapphire/pieces' {
 
 // #region Highlight manager
 import { HighlightManager } from '#structures/HighlightManager';
-import { rootDir } from '#utils/misc';
 
 container.highlightManager = new HighlightManager();
 

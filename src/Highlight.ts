@@ -78,6 +78,19 @@ const client = new HighlightClient({
 	loadDefaultErrorListeners: false,
 });
 
+// Graceful shutdown
+(
+	[
+		'SIGTERM', //
+		'SIGINT',
+	] as const
+).forEach((event) =>
+	process.on(event, async () => {
+		container.logger.info(`${event} signal received, shutting down...`);
+		await client.destroy();
+	}),
+);
+
 try {
 	await client.login();
 } catch (err) {

@@ -59,10 +59,8 @@ export function pluralize(count: number, singular: string, plural: string) {
 	return count === 1 ? singular : plural;
 }
 
-// @ts-ignore - For tests
 export const andList = new Intl.ListFormat('en-US', { type: 'conjunction', style: 'long' });
 
-// @ts-ignore - For tests
 export const orList = new Intl.ListFormat('en-US', { type: 'disjunction', style: 'long' });
 
 export const enum Emojis {
