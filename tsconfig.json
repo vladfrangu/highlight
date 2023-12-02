@@ -14,16 +14,7 @@
 		"declarationMap": false,
 		"rootDir": "./src",
 		"outDir": "./dist",
-		"tsBuildInfoFile": "./dist/.tsbuildinfo",
-		"paths": {
-			"#internals/*": ["./src/lib/internals/*.ts"],
-			"#hooks/*": ["./src/lib/utils/hooks/*.ts"],
-			"#setup": ["./src/lib/setup.ts"],
-			"#structures/*": ["./src/lib/structures/*.ts"],
-			"#types/*": ["./src/lib/types/*.ts"],
-			"#utils/*": ["./src/lib/utils/*.ts"],
-			"#workers/*": ["./src/lib/workers/*.ts"]
-		}
+		"tsBuildInfoFile": "./dist/.tsbuildinfo"
 	},
 	"include": ["src"]
 }

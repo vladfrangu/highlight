@@ -25,45 +25,45 @@
 		"watch": "tsc -w"
 	},
 	"dependencies": {
-		"@discordjs/builders": "^1.6.5",
+		"@discordjs/builders": "^1.7.0",
 		"@mikro-orm/sql-highlighter": "^1.0.1",
-		"@prisma/client": "^5.4.2",
+		"@prisma/client": "^5.6.0",
 		"@sapphire/decorators": "^6.0.2",
-		"@sapphire/discord.js-utilities": "^7.0.2",
-		"@sapphire/framework": "^4.7.1",
-		"@sapphire/plugin-logger": "^3.0.6",
-		"@sapphire/plugin-subcommands": "^4.2.2",
+		"@sapphire/discord.js-utilities": "^7.1.2",
+		"@sapphire/framework": "^4.8.2",
+		"@sapphire/plugin-logger": "^3.0.7",
+		"@sapphire/plugin-subcommands": "^5.1.0",
 		"@sapphire/stopwatch": "^1.5.0",
 		"@sapphire/time-utilities": "^1.7.10",
-		"@sapphire/type": "^2.4.0",
+		"@sapphire/type": "^2.4.1",
 		"@sapphire/utilities": "^3.13.0",
 		"@skyra/env-utilities": "^1.2.1",
 		"@skyra/jaro-winkler": "^1.1.0",
 		"bufferutil": "^4.0.8",
 		"colorette": "^2.0.20",
 		"confusables": "^1.1.1",
-		"discord-api-types": "^0.37.60",
-		"discord.js": "^14.13.0",
-		"re2": "^1.20.4",
+		"discord-api-types": "^0.37.65",
+		"discord.js": "^14.14.1",
+		"re2": "^1.20.9",
 		"tslib": "^2.6.2",
 		"utf-8-validate": "^6.0.3",
-		"zlib-sync": "^0.1.8"
+		"zlib-sync": "^0.1.9"
 	},
 	"devDependencies": {
 		"@sapphire/eslint-config": "^5.0.2",
 		"@sapphire/prettier-config": "^2.0.0",
 		"@sapphire/ts-config": "^5.0.0",
-		"@types/node": "^20.8.7",
-		"@typescript-eslint/eslint-plugin": "^6.8.0",
-		"@typescript-eslint/parser": "^6.8.0",
+		"@types/node": "^20.10.2",
+		"@typescript-eslint/eslint-plugin": "^6.13.1",
+		"@typescript-eslint/parser": "^6.13.1",
 		"@vitest/coverage-c8": "^0.33.0",
-		"eslint": "^8.52.0",
+		"eslint": "^8.55.0",
 		"eslint-config-prettier": "^9.0.0",
 		"eslint-plugin-prettier": "^5.0.1",
-		"prettier": "^3.0.3",
-		"prisma": "^5.4.2",
+		"prettier": "^3.1.0",
+		"prisma": "^5.6.0",
 		"rimraf": "^5.0.5",
-		"typescript": "^5.2.2",
+		"typescript": "^5.3.2",
 		"vitest": "^0.34.6"
 	},
 	"author": {
@@ -73,9 +73,9 @@
 	"engines": {
 		"node": ">=20.0.0"
 	},
-	"packageManager": "yarn@4.0.0",
+	"packageManager": "yarn@4.0.2",
 	"volta": {
-		"node": "20.8.1",
-		"yarn": "4.0.0"
+		"node": "20.10.0",
+		"yarn": "4.0.2"
 	}
 }
