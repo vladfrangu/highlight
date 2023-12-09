@@ -248,8 +248,12 @@ export class BlockCommand extends Subcommand {
 						)
 						.addUserOption((user) => user.setName('user').setDescription('The user to stop ignoring')),
 				)
-				.addSubcommand(input)
-				.addSubcommand(input),
+				.addSubcommand((list) =>
+					list
+						.setName('list')
+						.setDescription('Lists all channels and users that you are ignoring from this server'),
+				)
+				.addSubcommand((clear) => clear.setName('clear').setDescription('Clears your server ignore list')),
 		);
 
 		registry.registerContextMenuCommand((ignoreUser) =>
