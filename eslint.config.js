@@ -26,7 +26,7 @@ const typeScriptRuleset = merge(...typescript, {
 	settings: {
 		'import/resolver': {
 			typescript: {
-				project: ['tsconfig.eslint.json'],
+				project: ['tsconfig.eslint.json', 'tests/tsconfig.json'],
 			},
 		},
 	},

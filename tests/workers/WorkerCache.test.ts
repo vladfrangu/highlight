@@ -1,6 +1,6 @@
 import type { MockInstance } from 'vitest';
-import { WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
 import { GuildIds, testSubjectTriggerUserId, testSubjectUserId } from '#test/constants';
+import { WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
 
 vi.mock('#workers/common', () => {
 	return {
