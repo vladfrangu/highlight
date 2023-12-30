@@ -1,9 +1,9 @@
-import { useGuildJoinLeaveWebhook } from '#hooks/useGuildJoinLeaveWebhook';
-import { createInfoEmbed } from '#utils/embeds';
-import { pluralize } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
 import { TimestampStyles, time, type Guild } from 'discord.js';
+import { useGuildJoinLeaveWebhook } from '#hooks/useGuildJoinLeaveWebhook';
+import { createInfoEmbed } from '#utils/embeds';
+import { pluralize } from '#utils/misc';
 
 @ApplyOptions<Listener.Options>({
 	name: 'GuildDeleteLogger',

@@ -1,28 +1,23 @@
-import { useErrorWebhook } from '#hooks/useErrorWebhook';
-import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
-import { createErrorEmbed } from '#utils/embeds';
-import { SupportServerButton, orList, pluralize, supportServerInvite } from '#utils/misc';
+/* eslint-disable sonarjs/no-identical-functions,n/no-callback-literal,n/callback-return,promise/prefer-await-to-callbacks */
+
+import { randomUUID } from 'node:crypto';
 import { ApplyOptions } from '@sapphire/decorators';
-import {
+import { Events, Listener, UserError, container } from '@sapphire/framework';
+import type {
 	Command,
-	Events,
-	Listener,
 	Piece,
-	UserError,
-	container,
-	type Awaitable,
-	type ChatInputCommandErrorPayload,
-	type ContextMenuCommandErrorPayload,
-	type MessageCommandErrorPayload,
+	Awaitable,
+	ChatInputCommandErrorPayload,
+	ContextMenuCommandErrorPayload,
+	MessageCommandErrorPayload,
 } from '@sapphire/framework';
-import {
+import type {
 	Subcommand,
-	SubcommandPluginEvents,
-	SubcommandPluginIdentifiers,
-	type ChatInputSubcommandErrorPayload,
-	type MessageSubcommandErrorPayload,
-	type MessageSubcommandNoMatchContext,
+	ChatInputSubcommandErrorPayload,
+	MessageSubcommandErrorPayload,
+	MessageSubcommandNoMatchContext,
 } from '@sapphire/plugin-subcommands';
+import { SubcommandPluginEvents, SubcommandPluginIdentifiers } from '@sapphire/plugin-subcommands';
 import {
 	ActionRowBuilder,
 	bold,
@@ -31,7 +26,10 @@ import {
 	type InteractionReplyOptions,
 	type MessageCreateOptions,
 } from 'discord.js';
-import { randomUUID } from 'node:crypto';
+import { useErrorWebhook } from '#hooks/useErrorWebhook';
+import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
+import { createErrorEmbed } from '#utils/embeds';
+import { SupportServerButton, orList, pluralize, supportServerInvite } from '#utils/misc';
 
 @ApplyOptions<Listener.Options>({
 	name: 'MessageCommandError',
@@ -44,7 +42,7 @@ export class MessageCommandError extends Listener<typeof Events.MessageCommandEr
 		await makeAndSendErrorEmbed<MessageCreateOptions>(
 			maybeError,
 			command,
-			(options) =>
+			async (options) =>
 				message.channel.send(
 					withDeprecationWarningForMessageCommands({
 						commandName: command.name,
@@ -69,7 +67,7 @@ export class ChatInputCommandError extends Listener<typeof Events.ChatInputComma
 		await makeAndSendErrorEmbed<InteractionReplyOptions>(
 			maybeError,
 			command,
-			(options) => {
+			async (options) => {
 				if (interaction.replied) {
 					return interaction.followUp({
 						...options,
@@ -100,7 +98,7 @@ export class ContextMenuCommandError extends Listener<typeof Events.ContextMenuC
 		await makeAndSendErrorEmbed<InteractionReplyOptions>(
 			maybeError,
 			command,
-			(options) => {
+			async (options) => {
 				if (interaction.replied) {
 					return interaction.followUp({
 						...options,
@@ -133,7 +131,7 @@ export class MessageCommandSubcommandCommandError extends Listener<
 		await makeAndSendErrorEmbed<MessageCreateOptions>(
 			maybeError,
 			command,
-			(options) =>
+			async (options) =>
 				message.channel.send(
 					withDeprecationWarningForMessageCommands({
 						commandName: command.name,
@@ -160,7 +158,7 @@ export class ChatInputCommandSubcommandCommandError extends Listener<
 		await makeAndSendErrorEmbed<InteractionReplyOptions>(
 			maybeError,
 			command,
-			(options) => {
+			async (options) => {
 				if (interaction.replied) {
 					return interaction.followUp({
 						...options,
@@ -207,14 +205,15 @@ async function makeAndSendErrorEmbed<Options>(
 			const mappings = casted.parsedSubcommandMappings;
 
 			let foundMessageMapping = mappings.find(
-				(m) =>
-					(m.type === 'method' && m.name === ctx.possibleSubcommandGroupOrName) ||
-					(m.type === 'group' && m.entries.some((entry) => entry.name === ctx.possibleSubcommandName)),
+				(mapping) =>
+					(mapping.type === 'method' && mapping.name === ctx.possibleSubcommandGroupOrName) ||
+					(mapping.type === 'group' &&
+						mapping.entries.some((entry) => entry.name === ctx.possibleSubcommandName)),
 			);
 
 			if (foundMessageMapping?.type === 'group') {
 				foundMessageMapping = foundMessageMapping.entries.find(
-					(m) => m.type === 'method' && m.name === ctx.possibleSubcommandName,
+					(mapping) => mapping.type === 'method' && mapping.name === ctx.possibleSubcommandName,
 				);
 			}
 

@@ -1,19 +1,20 @@
-import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
-import { createInfoEmbed } from '#utils/embeds';
-import { InviteButton, SupportServerButton, packageJsonFile } from '#utils/misc';
+import process from 'node:process';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, version as sapphireVersion } from '@sapphire/framework';
+import type { Message } from 'discord.js';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
-	Message,
 	bold,
 	version as discordJsVersion,
 	hyperlink,
 	italic,
 } from 'discord.js';
 import ts from 'typescript';
+import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
+import { createInfoEmbed } from '#utils/embeds';
+import { InviteButton, SupportServerButton, packageJsonFile } from '#utils/misc';
 
 const { version: typescriptVersion } = ts;
 
@@ -22,11 +23,11 @@ const { version: typescriptVersion } = ts;
 	description: 'Find out some statistics about this application',
 })
 export class StatisticsCommand extends Command {
-	public override messageRun(message: Message) {
+	public override async messageRun(message: Message) {
 		return this._sharedRun(message, true);
 	}
 
-	public override chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
 		return this._sharedRun(interaction, false);
 	}
 
@@ -37,7 +38,7 @@ export class StatisticsCommand extends Command {
 	}
 
 	protected async _sharedRun(
-		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
+		messageOrInteraction: Command.ChatInputCommandInteraction<'cached'> | Message,
 		isMessage: boolean,
 	) {
 		const embed = createInfoEmbed(

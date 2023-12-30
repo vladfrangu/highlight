@@ -1,5 +1,5 @@
-import { createCustomIdFactory } from '#utils/customIds';
 import { none, some } from '@sapphire/framework';
+import { createCustomIdFactory } from '#utils/customIds';
 
 describe('custom id helper with custom encoder/decoder', () => {
 	const test = createCustomIdFactory({

@@ -1,42 +1,53 @@
+/* eslint-disable import/order */
+
 // #region Env Setup
 import { rootDir } from '#utils/misc';
 import { setup, type ArrayString, type NumberString } from '@skyra/env-utilities';
-
-setup({ path: new URL('.env', rootDir) });
-
-declare module '@skyra/env-utilities' {
-	interface Env {
-		SUPPORT_SERVER_INVITE: string;
-		DEVELOPMENT_GUILD_IDS: ArrayString;
-		ERROR_WEBHOOK_URL: string;
-		GUILD_JOIN_LEAVE_WEBHOOK_URL: string;
-		POSTGRES_HOST: string;
-		POSTGRES_PORT: NumberString;
-		POSTGRES_DB: string;
-		POSTGRES_USERNAME: string;
-		POSTGRES_PASSWORD: string;
-		DISCORD_TOKEN: string;
-		POSTGRES_URL: string;
-	}
-}
 // #endregion
 
 // #region Sapphire config
 import { ApplicationCommandRegistries, container, LogLevel, RegisterBehavior } from '@sapphire/framework';
 import '@sapphire/plugin-logger/register';
-
-const { useDevelopmentGuildIds } = await import('#hooks/useDevelopmentGuildIds');
-ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
-ApplicationCommandRegistries.setDefaultGuildIds(useDevelopmentGuildIds());
 // #endregion
 
 // #region NodeJS inspect settings
 import { inspect } from 'node:util';
-inspect.defaultOptions.depth = 4;
 // #endregion
 
 // #region Global color utility
+// #endregion
+
+// #region Prisma
+import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
+import { PrismaClient } from '@prisma/client';
 import { createColors, type Colorette } from 'colorette';
+// #endregion
+
+// #region Highlight manager
+import { HighlightManager } from '#structures/HighlightManager';
+
+setup({ path: new URL('.env', rootDir) });
+
+declare module '@skyra/env-utilities' {
+	interface Env {
+		DEVELOPMENT_GUILD_IDS: ArrayString;
+		DISCORD_TOKEN: string;
+		ERROR_WEBHOOK_URL: string;
+		GUILD_JOIN_LEAVE_WEBHOOK_URL: string;
+		POSTGRES_DB: string;
+		POSTGRES_HOST: string;
+		POSTGRES_PASSWORD: string;
+		POSTGRES_PORT: NumberString;
+		POSTGRES_URL: string;
+		POSTGRES_USERNAME: string;
+		SUPPORT_SERVER_INVITE: string;
+	}
+}
+
+const { useDevelopmentGuildIds } = await import('#hooks/useDevelopmentGuildIds');
+ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
+ApplicationCommandRegistries.setDefaultGuildIds(useDevelopmentGuildIds());
+inspect.defaultOptions.depth = 4;
 container.colors = createColors({ useColor: true });
 
 declare module '@sapphire/pieces' {
@@ -44,11 +55,6 @@ declare module '@sapphire/pieces' {
 		colors: Colorette;
 	}
 }
-// #endregion
-
-// #region Prisma
-import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
-import { PrismaClient } from '@prisma/client';
 
 const highlighter = new SqlHighlighter();
 
@@ -85,7 +91,7 @@ const prisma = new PrismaClient({
 				);
 			} else {
 				// Most likely in $executeRaw/queryRaw
-				const casted = args as { values?: unknown[]; strings?: string[] } | undefined;
+				const casted = args as { strings?: string[]; values?: unknown[] } | undefined;
 
 				const consoleMessage = [
 					`${container.colors.cyanBright('prisma:query')} `,
@@ -116,8 +122,8 @@ const prisma = new PrismaClient({
 
 					if (sqlString) {
 						if (args.length) {
-							for (let i = 1; i < args.length; i++) {
-								sqlString.replace(`$${i}`, JSON.stringify(args[i - 1]));
+							for (let paramIndex = 1; paramIndex < args.length; paramIndex++) {
+								sqlString.replace(`$${paramIndex}`, JSON.stringify(args[paramIndex - 1]));
 							}
 
 							consoleMessage.push(highlighter.highlight(sqlString));
@@ -152,10 +158,6 @@ declare module '@sapphire/pieces' {
 		prisma: typeof prisma;
 	}
 }
-// #endregion
-
-// #region Highlight manager
-import { HighlightManager } from '#structures/HighlightManager';
 
 container.highlightManager = new HighlightManager();
 

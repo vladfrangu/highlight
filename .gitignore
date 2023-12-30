@@ -22,6 +22,7 @@ bwd/{pending,open,closed}Tickets
 **/*.js.map
 **/*.d.ts
 !src/**/*.d.ts
+!eslint.config.js
 **/*.tsbuildinfo
 
 # Ignore the config file (contains sensitive information such as tokens)

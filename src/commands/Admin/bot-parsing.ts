@@ -1,6 +1,3 @@
-import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
-import { createInfoEmbed } from '#utils/embeds';
-import { Emojis, SupportServerButton, pluralize, resolveUserIdFromMessageOrInteraction } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Subcommand, type SubcommandMappingArray } from '@sapphire/plugin-subcommands';
 import {
@@ -17,6 +14,9 @@ import {
 	type ForumChannel,
 	type GuildTextBasedChannel,
 } from 'discord.js';
+import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
+import { createInfoEmbed } from '#utils/embeds';
+import { Emojis, SupportServerButton, pluralize, resolveUserIdFromMessageOrInteraction } from '#utils/misc';
 
 const allowedChannelTypes = [
 	ChannelType.GuildText,
@@ -28,7 +28,7 @@ const allowedChannelTypes = [
 	ChannelType.GuildForum,
 ] as const;
 
-type AllowedChannel = GuildTextBasedChannel | ForumChannel;
+type AllowedChannel = ForumChannel | GuildTextBasedChannel;
 
 @ApplyOptions<Subcommand.Options>({
 	description: 'Control what channels should trigger highlights if a bot message is sent',
@@ -63,7 +63,7 @@ export class BotParsingCommand extends Subcommand {
 	public subcommandMappings: SubcommandMappingArray = [
 		{
 			name: 'add',
-			chatInputRun: (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
+			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
 				const channel = interaction.options.getChannel('channel', true, allowedChannelTypes);
 
 				return this.addSubcommand(interaction, channel);
@@ -71,7 +71,7 @@ export class BotParsingCommand extends Subcommand {
 		},
 		{
 			name: 'remove',
-			chatInputRun: (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
+			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
 				const channel = interaction.options.getChannel('channel', true, allowedChannelTypes);
 
 				return this.removeSubcommand(interaction, channel);
@@ -79,7 +79,7 @@ export class BotParsingCommand extends Subcommand {
 		},
 		{
 			name: 'list',
-			chatInputRun: (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
+			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
 				return this.listSubcommand(interaction);
 			},
 		},

@@ -1,16 +1,14 @@
+import { readFile } from 'node:fs/promises';
 import { envParseString } from '@skyra/env-utilities';
 import {
 	ButtonBuilder,
 	ButtonStyle,
-	CommandInteraction,
 	Message,
-	MessageComponentInteraction,
 	OAuth2Scopes,
 	PermissionFlagsBits,
 	PermissionsBitField,
-	type InviteGenerationOptions,
 } from 'discord.js';
-import { readFile } from 'node:fs/promises';
+import type { CommandInteraction, MessageComponentInteraction, InviteGenerationOptions } from 'discord.js';
 import re2 from 're2';
 
 export const rootDir = new URL('../../../', import.meta.url);
@@ -72,7 +70,7 @@ export const enum HelpDetailedDescriptionReplacers {
 }
 
 export function resolveUserIdFromMessageOrInteraction(
-	messageOrInteraction: Message | CommandInteraction | MessageComponentInteraction,
+	messageOrInteraction: CommandInteraction | Message | MessageComponentInteraction,
 ): string {
 	return messageOrInteraction instanceof Message ? messageOrInteraction.author.id : messageOrInteraction.user.id;
 }

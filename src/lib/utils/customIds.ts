@@ -1,13 +1,14 @@
-import { Option, none, some } from '@sapphire/framework';
+import type { Option } from '@sapphire/framework';
+import { none, some } from '@sapphire/framework';
 
 export interface CustomIdFactory<T> {
-	encodeId(data: T): Option<string>;
 	decodeId(id: string): Option<T>;
+	encodeId(data: T): Option<string>;
 }
 
 export interface CreateCustomIdFactoryOptions<T> {
-	encoder?: (prefix: string, data: T) => Option<string>;
-	decoder?: (id: string) => Option<T>;
+	decoder?(id: string): Option<T>;
+	encoder?(prefix: string, data: T): Option<string>;
 	prefix: string;
 }
 

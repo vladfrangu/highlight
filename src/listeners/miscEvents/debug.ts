@@ -7,7 +7,7 @@ import { Events, Listener } from '@sapphire/framework';
 })
 export class DebugListener extends Listener<typeof Events.Debug> {
 	public override run(message: string) {
-		if (/Heartbeat/gi.test(message)) {
+		if (/heartbeat/gi.test(message)) {
 			return;
 		}
 

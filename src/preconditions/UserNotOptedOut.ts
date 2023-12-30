@@ -1,5 +1,6 @@
 import { AllFlowsPrecondition } from '@sapphire/framework';
-import { ChatInputCommandInteraction, ContextMenuCommandInteraction, Message, TimestampStyles, time } from 'discord.js';
+import type { ChatInputCommandInteraction, ContextMenuCommandInteraction, Message } from 'discord.js';
+import { TimestampStyles, time } from 'discord.js';
 
 export class AllowedRole extends AllFlowsPrecondition {
 	public async chatInputRun(interaction: ChatInputCommandInteraction) {

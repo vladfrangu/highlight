@@ -1,18 +1,14 @@
-import { WorkerType, type ParsedHighlightData } from '#types/WorkerTypes';
-import type { EnsureArray } from '#utils/misc';
-import { UnknownUserTag, getUserTag } from '#utils/tags';
 import { GuildNotificationStyle, Prisma, type Guild as GuildSetting } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
 import { Time } from '@sapphire/timestamp';
+import type { DiscordAPIError, Message } from 'discord.js';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
 	ButtonStyle,
-	DiscordAPIError,
 	EmbedBuilder,
 	Events,
-	Message,
 	PermissionFlagsBits,
 	RESTJSONErrorCodes,
 	TimestampStyles,
@@ -23,35 +19,46 @@ import {
 	italic,
 	time,
 } from 'discord.js';
+import { WorkerType, type ParsedHighlightData } from '#types/WorkerTypes';
+import type { EnsureArray } from '#utils/misc';
+import { UnknownUserTag, getUserTag } from '#utils/tags';
 
 type DBReturn = {
-	user_id: string;
-	opted_out: boolean;
-	grace_period: number | null;
 	adult_channel_highlights: boolean;
-	direct_message_failed_attempts: number;
 	direct_message_cooldown_expires_at: Date | null;
+	direct_message_failed_attempts: number;
+	globally_ignored_users: string[] | null;
+	grace_period: number | null;
+	last_active_at: Date | null;
+	opted_out: boolean;
 	server_ignored_channels: string[] | null;
 	server_ignored_users: string[] | null;
-	globally_ignored_users: string[] | null;
-	last_active_at: Date | null;
+	user_id: string;
 }[];
 
 type MemberInfo = EnsureArray<DBReturn[number]>;
 //   ^?
 
 type ActualDBReturn = {
-	user_id: string;
-	opted_out: boolean;
-	grace_period: number | null;
 	adult_channel_highlights: boolean;
-	direct_message_failed_attempts: number;
 	direct_message_cooldown_expires_at: Date | null;
-	server_ignored_channels: string[] | null[];
-	server_ignored_users: string[] | null[];
-	globally_ignored_users: string[] | null[];
+	direct_message_failed_attempts: number;
+	globally_ignored_users: null[] | string[];
+	grace_period: number | null;
 	last_active_at: Date | null;
+	opted_out: boolean;
+	server_ignored_channels: null[] | string[];
+	server_ignored_users: null[] | string[];
+	user_id: string;
 }[];
+
+export const MessageDescription = {
+	Embed: italic('Message has embeds'),
+	Attachment: italic('Message has attachments'),
+	Sticker: italic('Message has stickers'),
+	Component: italic('Message has components'),
+	Unknown: italic('Message has something unknown'),
+};
 
 function highlightShouldGetUserInfo(guildSettings: GuildSetting) {
 	return (
@@ -338,18 +345,19 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		const databaseMember = this.getMemberWithUserFromDatabase(allHighlightedMembers, member.id);
 
 		// Step 3.1. Ensure the member that should be highlighted isn't on a DM cooldown
-		if (databaseMember.direct_message_cooldown_expires_at) {
-			if (Date.now() <= databaseMember.direct_message_cooldown_expires_at.getTime()) {
-				this.container.logger.debug(
-					`Member is still on DM cooldown for being unable to be reached out, will not highlight`,
-					{
-						...logParams,
-						directMessageFailedAttempts: databaseMember.direct_message_failed_attempts,
-						directMessageCooldownExpiresAt: databaseMember.direct_message_cooldown_expires_at.toISOString(),
-					},
-				);
-				return;
-			}
+		if (
+			databaseMember.direct_message_cooldown_expires_at &&
+			Date.now() <= databaseMember.direct_message_cooldown_expires_at.getTime()
+		) {
+			this.container.logger.debug(
+				`Member is still on DM cooldown for being unable to be reached out, will not highlight`,
+				{
+					...logParams,
+					directMessageFailedAttempts: databaseMember.direct_message_failed_attempts,
+					directMessageCooldownExpiresAt: databaseMember.direct_message_cooldown_expires_at.toISOString(),
+				},
+			);
+			return;
 		}
 
 		// Step 3.2. Ensure the member that should be highlighted hasn't also opted out
@@ -403,23 +411,23 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		}
 
 		// Step 5. Ensure the users highlight after afk delay in guild was passed
-		if (databaseMember.grace_period) {
-			// If the user has a grace period set, there _might_ be a last active at too
+		if (
+			databaseMember.grace_period && // If the user has a grace period set, there _might_ be a last active at too
 			// Math is done based on message creation date
-			if (databaseMember.last_active_at) {
-				// Get the seconds difference between the message that triggered the highlight and the last activity of the user
-				const timeDifference =
-					(messageThatTriggered.createdTimestamp - databaseMember.last_active_at.getTime()) / 1000;
+			databaseMember.last_active_at
+		) {
+			// Get the seconds difference between the message that triggered the highlight and the last activity of the user
+			const timeDifference =
+				(messageThatTriggered.createdTimestamp - databaseMember.last_active_at.getTime()) / 1_000;
 
-				// If the difference is less than the grace period, then the user is still in grace period
-				if (timeDifference < databaseMember.grace_period) {
-					this.container.logger.debug(`Member is still in grace period in channel, will not highlight.`, {
-						...logParams,
-						timeDifference,
-						gracePeriod: databaseMember.grace_period,
-					});
-					return;
-				}
+			// If the difference is less than the grace period, then the user is still in grace period
+			if (timeDifference < databaseMember.grace_period) {
+				this.container.logger.debug(`Member is still in grace period in channel, will not highlight.`, {
+					...logParams,
+					timeDifference,
+					gracePeriod: databaseMember.grace_period,
+				});
+				return;
 			}
 		}
 
@@ -491,8 +499,8 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 					},
 				})
 				.catch(() => null);
-		} catch (err) {
-			const casted = err as DiscordAPIError;
+		} catch (error) {
+			const casted = error as DiscordAPIError;
 
 			if (casted?.code === RESTJSONErrorCodes.CannotSendMessagesToThisUser) {
 				this.container.logger.warn(
@@ -509,7 +517,7 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 						where: { id: highlightResult.memberId },
 						update: {
 							directMessageCooldownExpiresAt: new Date(
-								Date.now() + Time.Day * Math.pow(2, databaseMember.direct_message_failed_attempts),
+								Date.now() + Time.Day * 2 ** databaseMember.direct_message_failed_attempts,
 							),
 							directMessageFailedAttempts: {
 								increment: 1,
@@ -529,7 +537,7 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 						...logParams,
 						trigger: highlightResult.trigger,
 					},
-					err,
+					error,
 				);
 			}
 		}
@@ -559,11 +567,3 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		};
 	}
 }
-
-export const MessageDescription = {
-	Embed: italic('Message has embeds'),
-	Attachment: italic('Message has attachments'),
-	Sticker: italic('Message has stickers'),
-	Component: italic('Message has components'),
-	Unknown: italic('Message has something unknown'),
-};

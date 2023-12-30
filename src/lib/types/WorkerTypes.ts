@@ -6,9 +6,9 @@ export enum WorkerType {
 }
 
 export interface HighlightResult {
-	type: WorkerType;
-	results: ParsedHighlightData[];
 	memberIds: string[];
+	results: ParsedHighlightData[];
+	type: WorkerType;
 }
 
 export interface ParsedHighlightData {
@@ -40,8 +40,8 @@ export type WorkerCommandsUnion =
 export type HandleHighlightCommand = BaseCommand<
 	WorkerCommands.HandleHighlight,
 	{
-		content: string;
 		authorId: string;
+		content: string;
 		guildId: string;
 		messageId: string;
 	}

@@ -1,7 +1,7 @@
-import { createInfoEmbed } from '#utils/embeds';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
 import { bold, inlineCode, italic, type Message } from 'discord.js';
+import { createInfoEmbed } from '#utils/embeds';
 
 const phrases = [
 	"It's dangerous to go alone, let me help you...",
@@ -22,7 +22,7 @@ const amnesia = 'Well...this is awkward, I forgot the phrase I was going to say.
 })
 export class MentionPrefixOnly extends Listener<typeof Events.MentionPrefixOnly> {
 	public override async run(message: Message) {
-		const randomEntry = phrases.at(Math.floor(Math.random() * phrases.length)) || amnesia;
+		const randomEntry = phrases.at(Math.floor(Math.random() * phrases.length)) ?? amnesia;
 
 		await message.reply({
 			embeds: [

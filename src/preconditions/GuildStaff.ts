@@ -1,6 +1,6 @@
-import { orList } from '#utils/misc';
 import { Precondition } from '@sapphire/framework';
 import { PermissionFlagsBits, bold, type CommandInteraction, type Message, type PermissionsBitField } from 'discord.js';
+import { orList } from '#utils/misc';
 
 export class GuildStaff extends Precondition {
 	public override async chatInputRun(interaction: CommandInteraction) {

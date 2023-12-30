@@ -1,11 +1,13 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { AutoCompleteLimits } from '@sapphire/discord-utilities';
+import { Command } from '@sapphire/framework';
+import type { Args, Result, ChatInputCommand, MessageCommand } from '@sapphire/framework';
+import { jaroWinkler } from '@skyra/jaro-winkler';
+import type { Message } from 'discord.js';
+import { Collection, bold, inlineCode, italic, quote } from 'discord.js';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createErrorEmbed, createSuccessEmbed } from '#utils/embeds';
 import { Emojis, HelpDetailedDescriptionReplacers, orList } from '#utils/misc';
-import { ApplyOptions } from '@sapphire/decorators';
-import { AutoCompleteLimits } from '@sapphire/discord-utilities';
-import { Args, Command, Result, type ChatInputCommand, type MessageCommand } from '@sapphire/framework';
-import { jaroWinkler } from '@skyra/jaro-winkler';
-import { Collection, Message, bold, inlineCode, italic, quote } from 'discord.js';
 
 const randomMissingPermissionMessages = [
 	'🙈 This maze was not meant for you.',
@@ -202,7 +204,7 @@ export class HelpCommand extends Command {
 	}
 
 	private async replyWithPossibleCommandNames(
-		messageOrInteraction: Message | Command.ChatInputCommandInteraction,
+		messageOrInteraction: Command.ChatInputCommandInteraction | Message,
 		input: string,
 		matches: Command[],
 		isMessage: boolean,
@@ -259,7 +261,7 @@ export class HelpCommand extends Command {
 	}
 
 	private async canRunCommand(
-		messageOrInteraction: Message | Command.ChatInputCommandInteraction,
+		messageOrInteraction: Command.ChatInputCommandInteraction | Message,
 		command: Command,
 		isMessage = false,
 	) {
@@ -311,16 +313,12 @@ export class HelpCommand extends Command {
 			);
 		}
 
-		if (!localResult.isOk()) {
-			return false;
-		}
-
 		// If all checks pass, we're good to go
-		return true;
+		return localResult.isOk();
 	}
 
 	private async sendSingleCommandHelp(
-		messageOrInteraction: Message | Command.ChatInputCommandInteraction,
+		messageOrInteraction: Command.ChatInputCommandInteraction | Message,
 		command: Command,
 		isMessage: boolean,
 	) {
@@ -330,7 +328,7 @@ export class HelpCommand extends Command {
 			const randomMessage =
 				randomMissingPermissionMessages.at(
 					Math.floor(Math.random() * randomMissingPermissionMessages.length),
-				) || randomMissingPermissionMessages[0];
+				) ?? randomMissingPermissionMessages[0];
 
 			await messageOrInteraction.reply(
 				withDeprecationWarningForMessageCommands({
@@ -369,7 +367,7 @@ export class HelpCommand extends Command {
 					inlineCode('_'),
 				)}, the dashes/underscores are optional in the command name when using message commands. (for example ${bold(
 					inlineCode(command.name),
-				)} can be used as ${bold(inlineCode(command.name.replaceAll(/[\-_]/g, '')))} too)`,
+				)} can be used as ${bold(inlineCode(command.name.replaceAll(/[_-]/g, '')))} too)`,
 			});
 		}
 
@@ -406,7 +404,7 @@ export class HelpCommand extends Command {
 	}
 
 	private async replyWithAllCommandsTheUserCanRun(
-		messageOrInteraction: Message | Command.ChatInputCommandInteraction,
+		messageOrInteraction: Command.ChatInputCommandInteraction | Message,
 		isMessage: boolean,
 	) {
 		// Step 1. Get all commands the user can run

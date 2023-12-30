@@ -1,15 +1,15 @@
-import { createErrorEmbed } from '#utils/embeds';
+/* eslint-disable sonarjs/no-identical-functions,n/no-callback-literal,n/callback-return,promise/prefer-await-to-callbacks */
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-	Events,
-	Listener,
+import { Events, Listener } from '@sapphire/framework';
+import type {
 	UserError,
-	type Awaitable,
-	type ChatInputCommandDeniedPayload,
-	type ContextMenuCommandDeniedPayload,
-	type MessageCommandDeniedPayload,
+	Awaitable,
+	ChatInputCommandDeniedPayload,
+	ContextMenuCommandDeniedPayload,
+	MessageCommandDeniedPayload,
 } from '@sapphire/framework';
 import type { BaseMessageOptions, InteractionReplyOptions, MessageCreateOptions } from 'discord.js';
+import { createErrorEmbed } from '#utils/embeds';
 
 @ApplyOptions<Listener.Options>({
 	name: 'MessageCommandDenied',
@@ -17,7 +17,7 @@ import type { BaseMessageOptions, InteractionReplyOptions, MessageCreateOptions 
 })
 export class MessageCommandDenied extends Listener<typeof Events.MessageCommandDenied> {
 	public override async run(error: UserError, { message }: MessageCommandDeniedPayload) {
-		await makeAndSendDeniedEmbed<MessageCreateOptions>(error, (options) => message.reply(options));
+		await makeAndSendDeniedEmbed<MessageCreateOptions>(error, async (options) => message.reply(options));
 	}
 }
 
@@ -27,7 +27,7 @@ export class MessageCommandDenied extends Listener<typeof Events.MessageCommandD
 })
 export class ChatInputCommandDenied extends Listener<typeof Events.ChatInputCommandDenied> {
 	public override async run(error: UserError, { interaction }: ChatInputCommandDeniedPayload) {
-		await makeAndSendDeniedEmbed<InteractionReplyOptions>(error, (options) => {
+		await makeAndSendDeniedEmbed<InteractionReplyOptions>(error, async (options) => {
 			if (interaction.replied) {
 				return interaction.followUp({
 					...options,
@@ -51,7 +51,7 @@ export class ChatInputCommandDenied extends Listener<typeof Events.ChatInputComm
 })
 export class ContextMenuCommandDenied extends Listener<typeof Events.ContextMenuCommandDenied> {
 	public override async run(error: UserError, { interaction }: ContextMenuCommandDeniedPayload) {
-		await makeAndSendDeniedEmbed<InteractionReplyOptions>(error, (options) => {
+		await makeAndSendDeniedEmbed<InteractionReplyOptions>(error, async (options) => {
 			if (interaction.replied) {
 				return interaction.followUp({
 					...options,

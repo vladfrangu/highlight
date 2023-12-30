@@ -1,3 +1,8 @@
+import { setTimeout } from 'node:timers';
+import { Worker } from 'node:worker_threads';
+import { container } from '@sapphire/framework';
+import { remove } from 'confusables';
+import type { Message } from 'discord.js';
 import {
 	WorkerCommands,
 	WorkerResponseTypes,
@@ -7,10 +12,6 @@ import {
 	type WorkerCommandsUnion,
 	type WorkerResponse,
 } from '#types/WorkerTypes';
-import { container } from '@sapphire/framework';
-import { remove } from 'confusables';
-import type { Message } from 'discord.js';
-import { Worker } from 'worker_threads';
 
 const WORKER_PATH = new URL('../workers/Worker.js', import.meta.url);
 
@@ -31,7 +32,7 @@ export class HighlightManager {
 		string,
 		{
 			promise: Promise<ResultsTuple>;
-			resolve: (data: ResultsTuple) => void;
+			resolve(data: ResultsTuple): void;
 			results: ResultsTuple;
 		}
 	>();
@@ -43,7 +44,7 @@ export class HighlightManager {
 
 	public async destroy() {
 		this.destroyed = true;
-		await Promise.all(this.workers.map((item) => item.terminate()));
+		await Promise.all(this.workers.map(async (item) => item.terminate()));
 	}
 
 	public async updateAllCaches() {
@@ -65,18 +66,20 @@ export class HighlightManager {
 		});
 	}
 
-	public validateRegularExpression(input: string) {
+	public async validateRegularExpression(input: string) {
 		const worker = this.workers[WorkerType.RegularExpression];
 
 		return new Promise<boolean>((resolve, reject) => {
 			const listener = (payload: WorkerResponse) => {
+				// eslint-disable-next-line @typescript-eslint/no-use-before-define
 				timeout.refresh();
 
-				if (payload.command === WorkerResponseTypes.ValidateRegularExpressionResult) {
-					if (payload.data.input === input) {
-						worker.off('message', listener);
-						resolve(payload.data.valid);
-					}
+				if (
+					payload.command === WorkerResponseTypes.ValidateRegularExpressionResult &&
+					payload.data.input === input
+				) {
+					worker.off('message', listener);
+					resolve(payload.data.valid);
 				}
 			};
 
@@ -84,7 +87,7 @@ export class HighlightManager {
 				worker.off('message', listener);
 				// eslint-disable-next-line prefer-promise-reject-errors
 				reject('Timed out after 30s');
-			}, 30000);
+			}, 30_000);
 
 			worker.on('message', listener);
 			worker.postMessage({
@@ -94,13 +97,13 @@ export class HighlightManager {
 		});
 	}
 
-	public parseHighlight(message: Message) {
-		let resolve: (data: ResultsTuple) => void;
-		const promise = new Promise<ResultsTuple>((pResolve) => {
-			resolve = pResolve;
+	public async parseHighlight(message: Message) {
+		let pResolve: (data: ResultsTuple) => void;
+		const promise = new Promise<ResultsTuple>((resolve) => {
+			pResolve = resolve;
 		});
 
-		const promiseObject = { promise, resolve: resolve!, results: [] as any };
+		const promiseObject = { promise, resolve: pResolve!, results: [] as any };
 
 		this.#promiseMap.set(message.id, promiseObject);
 
@@ -155,10 +158,9 @@ export class HighlightManager {
 
 	/**
 	 * Sends a command to the workers
-	 * @param command The data to send
 	 */
 	private broadcastCommand(command: WorkerCommandsUnion) {
-		this.workers.forEach((worker) => worker.postMessage(command));
+		for (const worker of this.workers) worker.postMessage(command);
 	}
 
 	private onWorkerResponse(type: WorkerType, payload: WorkerResponse) {
@@ -169,6 +171,7 @@ export class HighlightManager {
 				void this.deleteInvalidRegularExpression(payload.data);
 				break;
 			}
+
 			case WorkerResponseTypes.HighlightResult: {
 				const { messageId, result } = payload.data;
 				const promiseData = this.#promiseMap.get(messageId);
@@ -192,8 +195,14 @@ export class HighlightManager {
 
 				break;
 			}
+
 			case WorkerResponseTypes.Ready: {
 				container.logger.info(`[${colored}]: READY`);
+				break;
+			}
+
+			case WorkerResponseTypes.ValidateRegularExpressionResult: {
+				// Do a whole lot of nothing
 				break;
 			}
 		}

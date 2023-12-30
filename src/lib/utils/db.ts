@@ -3,19 +3,19 @@ import { container } from '@sapphire/framework';
 
 interface RawMember {
 	guild_id: string;
+	regular_expressions: string[] | null;
 	user_id: string;
 	words: string[] | null;
-	regular_expressions: string[] | null;
 }
 
 interface RawIgnored {
-	ignored_users: string[] | null[] | null;
-	ignored_channels: string[] | null[] | null;
+	ignored_channels: null[] | string[] | null;
+	ignored_users: null[] | string[] | null;
 }
 
 export interface FullMember extends Member {
-	ignoredUsers: string[];
 	ignoredChannels: string[];
+	ignoredUsers: string[];
 }
 
 export async function getDatabaseMember(guildId: string, userId: string): Promise<FullMember> {
@@ -45,11 +45,11 @@ export async function getDatabaseMember(guildId: string, userId: string): Promis
 	let ignoredUsers: string[] = [];
 	let ignoredChannels: string[] = [];
 
-	if (rawIgnored.ignored_users && rawIgnored.ignored_users[0] !== null) {
+	if (rawIgnored.ignored_users?.[0] !== null) {
 		ignoredUsers = rawIgnored.ignored_users as string[];
 	}
 
-	if (rawIgnored.ignored_channels && rawIgnored.ignored_channels[0] !== null) {
+	if (rawIgnored.ignored_channels?.[0] !== null) {
 		ignoredChannels = rawIgnored.ignored_channels as string[];
 	}
 

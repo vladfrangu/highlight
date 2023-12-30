@@ -1,9 +1,15 @@
 import '#setup';
 
-import { HighlightClient } from '#structures/HighlightClient';
+import process from 'node:process';
 import { container, LogLevel } from '@sapphire/framework';
 import { Time } from '@sapphire/time-utilities';
+import type { GuildMember, User } from 'discord.js';
 import { ActivityType, GatewayIntentBits, IntentsBitField, Options } from 'discord.js';
+import { HighlightClient } from '#structures/HighlightClient';
+
+function clientUserFilter(member: GuildMember | User) {
+	return member.id !== member.client.user!.id;
+}
 
 const client = new HighlightClient({
 	presence: {
@@ -55,18 +61,18 @@ const client = new HighlightClient({
 	sweepers: {
 		// Members, users and messages are needed for the bot to function
 		guildMembers: {
-			interval: (Time.Minute * 15) / 1000,
+			interval: (Time.Minute * 15) / 1_000,
 			// Sweep all members except the bot member
-			filter: () => (member) => member.user.id !== member.client.user!.id,
+			filter: () => clientUserFilter,
 		},
 		users: {
-			interval: (Time.Minute * 15) / 1000,
+			interval: (Time.Minute * 15) / 1_000,
 			// Sweep all users except the bot user
-			filter: () => (user) => user.id !== user.client.user!.id,
+			filter: () => clientUserFilter,
 		},
 		messages: {
-			interval: (Time.Minute * 5) / 1000,
-			lifetime: (Time.Minute * 15) / 1000,
+			interval: (Time.Minute * 5) / 1_000,
+			lifetime: (Time.Minute * 15) / 1_000,
 		},
 	},
 	caseInsensitiveCommands: true,
@@ -79,22 +85,19 @@ const client = new HighlightClient({
 });
 
 // Graceful shutdown
-(
-	[
-		'SIGTERM', //
-		'SIGINT',
-	] as const
-).forEach((event) =>
+for (const event of [
+	'SIGTERM', //
+	'SIGINT',
+] as const)
 	process.on(event, async () => {
 		container.logger.info(`${event} signal received, shutting down...`);
 		await client.destroy();
-	}),
-);
+	});
 
 try {
 	await client.login();
-} catch (err) {
+} catch (error) {
 	container.logger.fatal(container.colors.redBright('Failed to start Highlight'));
-	container.logger.error((err as Error).message);
+	container.logger.error((error as Error).message);
 	await client.destroy();
 }

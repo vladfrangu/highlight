@@ -1,4 +1,3 @@
-import { createInfoEmbed } from '#utils/embeds';
 import { MessageLimits } from '@sapphire/discord-utilities';
 import { deepClone } from '@sapphire/utilities';
 import {
@@ -14,18 +13,21 @@ import {
 	bold,
 	hyperlink,
 	inlineCode,
-	type MessageActionRowComponentBuilder,
 } from 'discord.js';
+import type { Client, MessageActionRowComponentBuilder } from 'discord.js';
+import { createInfoEmbed } from '#utils/embeds';
 
-vi.mock('@sapphire/framework', async () => {
-	const actual = (await vi.importActual('@sapphire/framework')) as typeof import('@sapphire/framework');
+vi.mock('@sapphire/framework', async (importActual) => {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+	const actual = await importActual<typeof import('@sapphire/framework')>();
 	return {
 		...actual,
 		container: {
 			client: {
 				generateInvite: vi.fn(
 					(
-						options: Parameters<import('discord.js').Client['generateInvite']>[0] = {
+						// eslint-disable-next-line unicorn/no-object-as-default-parameter
+						options: Parameters<Client['generateInvite']>[0] = {
 							scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
 						},
 					) => {
@@ -75,11 +77,11 @@ const authButton = new ButtonBuilder()
 	.setLabel('Re-authorize me with slash commands!')
 	.setEmoji('🤖');
 
+const twentyFiveFields = () => Array.from({ length: 25 }, () => ({ name: 'example', value: 'owo' }));
+
 describe('message command deprecation hooks', () => {
 	describe('withDeprecationWarningOnEmbedForMessageCommands', () => {
 		describe('given embed with too many fields, then it should update the description', () => {
-			const twentyFiveFields = () => Array.from({ length: 25 }, () => ({ name: 'example', value: 'owo' }));
-
 			test('given no button notice, it should just warn about the migration', () => {
 				const embed = createInfoEmbed().setFields(twentyFiveFields());
 				withDeprecationWarningOnEmbedForMessageCommands(embed, 'test');

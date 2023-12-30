@@ -1,3 +1,4 @@
+import type re2 from 're2';
 import {
 	WorkerResponseTypes,
 	WorkerType,
@@ -6,7 +7,6 @@ import {
 } from '#types/WorkerTypes';
 import { tryRegex } from '#utils/misc';
 import { sendToMainProcess } from '#workers/common';
-import re2 from 're2';
 
 export type UserId = string;
 export type GuildId = string;
@@ -59,7 +59,6 @@ export class WorkerCache {
 
 	/**
 	 * Checks if a regular expression string is valid
-	 * @param regex The regular expression to validate
 	 */
 	public isRegularExpressionValid(regex: string) {
 		const cached = this.validRegularExpressions.get(regex);
@@ -121,14 +120,17 @@ export class WorkerCache {
 						if (memberId === authorId || alreadyHighlighted.has(memberId)) {
 							continue;
 						}
+
 						alreadyHighlighted.add(memberId);
 						returnData.results.push({ memberId, parsedContent, trigger: regexString });
 					}
 				}
+
 				break;
 			}
+
 			case WorkerType.Word: {
-				const originalSplit = content.toLowerCase().split(/(\s+)/);
+				const originalSplit = content.toLowerCase().split(/\s+/);
 
 				for (const [word, possibleMembers] of guildData.entries()) {
 					const wordIndex = originalSplit.indexOf(word.toLowerCase());
@@ -148,11 +150,13 @@ export class WorkerCache {
 						if (memberId === authorId || alreadyHighlighted.has(memberId)) {
 							continue;
 						}
+
 						alreadyHighlighted.add(memberId);
 
 						returnData.results.push({ memberId, parsedContent, trigger: word });
 					}
 				}
+
 				break;
 			}
 		}

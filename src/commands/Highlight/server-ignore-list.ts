@@ -1,8 +1,3 @@
-import { ServerIgnoreListClearCustomIdActions, ServerIgnoreListClearIdFactory } from '#customIds/server-ignore-list';
-import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
-import { getDatabaseMember } from '#utils/db';
-import { createInfoEmbed } from '#utils/embeds';
-import { Emojis, HelpDetailedDescriptionReplacers, resolveUserIdFromMessageOrInteraction } from '#utils/misc';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Args, Resolvers } from '@sapphire/framework';
 import { Subcommand, type SubcommandMappingArray } from '@sapphire/plugin-subcommands';
@@ -12,21 +7,23 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	ChannelType,
-	Message,
 	bold,
 	channelMention,
 	inlineCode,
 	italic,
 	quote,
 	userMention,
-	type ForumChannel,
-	type GuildTextBasedChannel,
-	type User,
 } from 'discord.js';
+import type { Message, ForumChannel, GuildTextBasedChannel, User } from 'discord.js';
+import { ServerIgnoreListClearCustomIdActions, ServerIgnoreListClearIdFactory } from '#customIds/server-ignore-list';
+import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
+import { getDatabaseMember } from '#utils/db';
+import { createInfoEmbed } from '#utils/embeds';
+import { Emojis, HelpDetailedDescriptionReplacers, resolveUserIdFromMessageOrInteraction } from '#utils/misc';
 import type { HelpCommand } from '../Miscellaneous/help.js';
 
-type AllowedChannel = GuildTextBasedChannel | ForumChannel;
-type BlockArgument = { type: 'user'; value: User } | { type: 'channel'; value: AllowedChannel };
+type AllowedChannel = ForumChannel | GuildTextBasedChannel;
+type BlockArgument = { type: 'channel'; value: AllowedChannel } | { type: 'user'; value: User };
 
 const allowedChannelTypes = [
 	ChannelType.GuildAnnouncement,
@@ -196,19 +193,19 @@ export class BlockCommand extends Subcommand {
 		},
 		{
 			name: 'list',
-			chatInputRun: (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
+			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
 				return this.listSubcommand(interaction, false);
 			},
-			messageRun: (message: Message<true>) => {
+			messageRun: async (message: Message<true>) => {
 				return this.listSubcommand(message, true);
 			},
 		},
 		{
 			name: 'clear',
-			chatInputRun: (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
+			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
 				return this.clearSubcommand(interaction, false);
 			},
-			messageRun: (message: Message<true>) => {
+			messageRun: async (message: Message<true>) => {
 				return this.clearSubcommand(message, true);
 			},
 		},
@@ -216,7 +213,7 @@ export class BlockCommand extends Subcommand {
 		{
 			name: 'help',
 			default: true,
-			messageRun: (message) => {
+			messageRun: async (message) => {
 				return (this.container.stores.get('commands').get('help') as HelpCommand)['sendSingleCommandHelp'](
 					message,
 					this,
@@ -226,7 +223,7 @@ export class BlockCommand extends Subcommand {
 		},
 	];
 
-	public override contextMenuRun(interaction: Subcommand.ContextMenuCommandInteraction<'cached'>) {
+	public override async contextMenuRun(interaction: Subcommand.ContextMenuCommandInteraction<'cached'>) {
 		if (!interaction.isUserContextMenuCommand()) {
 			throw new Error('unreachable.');
 		}
@@ -346,6 +343,7 @@ export class BlockCommand extends Subcommand {
 					userIdsToAdd.push(value.id);
 					break;
 				}
+
 				case 'channel': {
 					// Check that the channel isn't already ignored
 					if (member.ignoredChannels.includes(value.id)) {
@@ -485,6 +483,7 @@ export class BlockCommand extends Subcommand {
 					userIdsToRemove.push(value.id);
 					break;
 				}
+
 				case 'channel': {
 					// Check that the channel isn't already ignored
 					if (!member.ignoredChannels.includes(value.id)) {
@@ -621,11 +620,7 @@ export class BlockCommand extends Subcommand {
 					},
 				}),
 			);
-
-			return;
 		}
-
-		await 1;
 	}
 
 	private resolveChatInputCommandArgs(interaction: Subcommand.ChatInputCommandInteraction<'cached'>) {
@@ -645,7 +640,6 @@ export class BlockCommand extends Subcommand {
 		return args;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/member-ordering
 	private UserOrChannelArg = Args.make<BlockArgument>(async (parameter, { argument, message }) => {
 		const maybeChannel = Resolvers.resolveGuildChannel(parameter, message.guild!);
 

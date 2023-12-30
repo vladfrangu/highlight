@@ -1,5 +1,3 @@
-import { createInfoEmbed } from '#utils/embeds';
-import { inviteOptions } from '#utils/misc';
 import { container } from '@sapphire/framework';
 import { deepClone } from '@sapphire/utilities';
 import {
@@ -16,6 +14,8 @@ import {
 	type MessageCreateOptions,
 	type WebhookMessageEditOptions,
 } from 'discord.js';
+import { createInfoEmbed } from '#utils/embeds';
+import { inviteOptions } from '#utils/misc';
 
 export function withDeprecationWarningOnEmbedForMessageCommands(
 	embed: EmbedBuilder,
@@ -34,9 +34,9 @@ export function withDeprecationWarningOnEmbedForMessageCommands(
 				buttonNotice
 					? `> If you don't see the slash commands popping up when you type ${bold(
 							inlineCode(`/${commandName}`),
-					  )}, click the ${bold('Re-authorize')} button if present (or click ${bold(
+						)}, click the ${bold('Re-authorize')} button if present (or click ${bold(
 							hyperlink('here to re-authorize', buttonNotice),
-					  )}) and try again!`
+						)}) and try again!`
 					: undefined,
 			]
 				.filter((item) => typeof item === 'string')
@@ -56,9 +56,9 @@ export function withDeprecationWarningOnEmbedForMessageCommands(
 				buttonNotice
 					? `If you don't see the slash commands popping up when you type ${bold(
 							inlineCode(`/${commandName}`),
-					  )}, click the ${bold('Re-authorize')} button if present (or click ${bold(
+						)}, click the ${bold('Re-authorize')} button if present (or click ${bold(
 							hyperlink('here to re-authorize', buttonNotice),
-					  )}) and try again!`
+						)}) and try again!`
 					: undefined,
 			]
 				.filter((item) => typeof item === 'string')
@@ -77,10 +77,10 @@ export function withDeprecationWarningForMessageCommands<
 	receivedFromMessage,
 	guildId,
 }: {
-	options: T;
 	commandName: string;
-	receivedFromMessage: boolean;
 	guildId: string | null;
+	options: T;
+	receivedFromMessage: boolean;
 }) {
 	// If we didn't get it from messages, might as well not do anything
 	if (!receivedFromMessage) {

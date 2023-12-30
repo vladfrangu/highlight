@@ -1,19 +1,20 @@
+import { ApplyOptions } from '@sapphire/decorators';
+import { Command } from '@sapphire/framework';
+import type { ButtonBuilder, Message } from 'discord.js';
+import { ActionRowBuilder, hyperlink } from 'discord.js';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createInfoEmbed } from '#utils/embeds';
 import { InviteButton } from '#utils/misc';
-import { ApplyOptions } from '@sapphire/decorators';
-import { Command } from '@sapphire/framework';
-import { ActionRowBuilder, ButtonBuilder, Message, hyperlink } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	description: 'Get a link with which you can invite the application to your server',
 })
 export class InviteCommand extends Command {
-	public override messageRun(message: Message) {
+	public override async messageRun(message: Message) {
 		return this._sharedRun(message, true);
 	}
 
-	public override chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
+	public override async chatInputRun(interaction: Command.ChatInputCommandInteraction<'cached'>) {
 		return this._sharedRun(interaction, false);
 	}
 
@@ -22,7 +23,7 @@ export class InviteCommand extends Command {
 	}
 
 	protected async _sharedRun(
-		messageOrInteraction: Message | Command.ChatInputCommandInteraction<'cached'>,
+		messageOrInteraction: Command.ChatInputCommandInteraction<'cached'> | Message,
 		isMessage: boolean,
 	) {
 		const embed = createInfoEmbed(

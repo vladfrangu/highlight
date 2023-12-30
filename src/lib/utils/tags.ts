@@ -1,6 +1,6 @@
 import { GuildMember, escapeMarkdown, type User } from 'discord.js';
 
-export function getUserTag(userOrMember: User | GuildMember) {
+export function getUserTag(userOrMember: GuildMember | User) {
 	if (userOrMember instanceof GuildMember) {
 		return getUserTag(userOrMember.user);
 	}

@@ -1,6 +1,7 @@
-import { GuildIds, testSubjectTriggerUserId, testSubjectUserId } from '#test/constants';
-import { WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
+/* eslint-disable @typescript-eslint/dot-notation */
 import type { MockInstance } from 'vitest';
+import { WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
+import { GuildIds, testSubjectTriggerUserId, testSubjectUserId } from '#test/constants';
 
 vi.mock('#workers/common', () => {
 	return {

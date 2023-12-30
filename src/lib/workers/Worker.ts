@@ -1,8 +1,9 @@
-import { WorkerCommands, WorkerResponseTypes, WorkerType, type WorkerCommandsUnion } from '#types/WorkerTypes';
-import { checkParentPort, sendToMainProcess } from '#workers/common';
-import { WorkerCache, type GuildId, type UserId } from '#workers/WorkerCache';
+import { setInterval } from 'node:timers';
+import { parentPort, workerData } from 'node:worker_threads';
 import type { Member } from '@prisma/client';
-import { parentPort, workerData } from 'worker_threads';
+import { WorkerCommands, WorkerResponseTypes, WorkerType, type WorkerCommandsUnion } from '#types/WorkerTypes';
+import { WorkerCache, type GuildId, type UserId } from '#workers/WorkerCache';
+import { checkParentPort, sendToMainProcess } from '#workers/common';
 
 const CACHE = new WorkerCache();
 const MEMBER_TYPE_KEY = workerData.type === WorkerType.Word ? 'words' : 'regularExpressions';
@@ -23,6 +24,7 @@ parentPort.on('message', (payload: WorkerCommandsUnion) => {
 			sendToMainProcess({ command: WorkerResponseTypes.HighlightResult, data: { messageId, result } });
 			break;
 		}
+
 		case WorkerCommands.UpdateCacheForGuild: {
 			const res = new Map<string, Set<string>>();
 
@@ -32,6 +34,7 @@ parentPort.on('message', (payload: WorkerCommandsUnion) => {
 			CACHE.updateGuild(payload.data.guildId, res);
 			break;
 		}
+
 		case WorkerCommands.UpdateFullCache: {
 			const guildMap = new Map<GuildId, Map<string, Set<UserId>>>();
 
@@ -56,6 +59,7 @@ parentPort.on('message', (payload: WorkerCommandsUnion) => {
 
 			break;
 		}
+
 		case WorkerCommands.ValidateRegularExpression: {
 			const valid = CACHE.isRegularExpressionValid(payload.data.regularExpression);
 			sendToMainProcess({
@@ -64,6 +68,7 @@ parentPort.on('message', (payload: WorkerCommandsUnion) => {
 			});
 			break;
 		}
+
 		case WorkerCommands.RemoveTriggerForUser: {
 			CACHE.removeTriggerForUser(payload.data);
 			break;
