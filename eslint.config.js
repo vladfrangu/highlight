@@ -46,13 +46,5 @@ export default [
 		files: ['**/*{ts,mts,cts,tsx}'],
 		rules: { 'jsdoc/no-undefined-types': 0 },
 	},
-	{
-		files: [`packages/{api-extractor,brokers,create-discord-bot,docgen,ws}/**/*${commonFiles}`],
-		rules: { 'n/no-sync': 0 },
-	},
-	{
-		files: ['**/*{js,mjs,cjs,jsx}'],
-		rules: { 'tsdoc/syntax': 0 },
-	},
 	prettierRuleset,
 ];
