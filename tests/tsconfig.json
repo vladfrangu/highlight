@@ -7,6 +7,8 @@
 			"#internals/*": ["../src/lib/internals/*.ts"],
 			"#hooks/*": ["../src/lib/utils/hooks/*.ts"],
 			"#setup": ["../src/lib/setup.ts"],
+			"#customIds/*": ["../src/lib/utils/customIds/*.ts"],
+			"#structures/*": ["../src/lib/structures/*.ts"],
 			"#types/*": ["../src/lib/types/*.ts"],
 			"#utils/*": ["../src/lib/utils/*.ts"],
 			"#workers/*": ["../src/lib/workers/*.ts"],
