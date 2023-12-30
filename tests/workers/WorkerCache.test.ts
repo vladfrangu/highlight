@@ -233,7 +233,7 @@ describe('WorkerCache', () => {
 					WorkerType.Word,
 					String(GuildIds.WordGuild),
 					testSubjectTriggerUserId,
-					`hello ${trigger} ${trigger}`,
+					`hello ${trigger} ${trigger}  ${trigger}`,
 				);
 
 				expect(result.results).toHaveLength(1);
@@ -242,7 +242,7 @@ describe('WorkerCache', () => {
 
 				expect(resultItem.memberId).toBe(String(testSubjectUserId));
 				expect(resultItem.trigger).toBe(trigger);
-				expect(resultItem.parsedContent).toBe(`hello **${trigger}** **${trigger}**`);
+				expect(resultItem.parsedContent).toBe(`hello **${trigger}** **${trigger}**  **${trigger}**`);
 			},
 		);
 	});
