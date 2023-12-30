@@ -1,3 +1,4 @@
+import { ServerIgnoreListClearCustomIdActions, ServerIgnoreListClearIdFactory } from '#customIds/server-ignore-list';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { getDatabaseMember } from '#utils/db';
 import { createInfoEmbed } from '#utils/embeds';
@@ -6,7 +7,10 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Args, Resolvers } from '@sapphire/framework';
 import { Subcommand, type SubcommandMappingArray } from '@sapphire/plugin-subcommands';
 import {
+	ActionRowBuilder,
 	ApplicationCommandType,
+	ButtonBuilder,
+	ButtonStyle,
 	ChannelType,
 	Message,
 	bold,
@@ -192,9 +196,21 @@ export class BlockCommand extends Subcommand {
 		},
 		{
 			name: 'list',
+			chatInputRun: (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
+				return this.listSubcommand(interaction, false);
+			},
+			messageRun: (message: Message<true>) => {
+				return this.listSubcommand(message, true);
+			},
 		},
 		{
 			name: 'clear',
+			chatInputRun: (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
+				return this.clearSubcommand(interaction, false);
+			},
+			messageRun: (message: Message<true>) => {
+				return this.clearSubcommand(message, true);
+			},
 		},
 		// Hidden subcommand to show the help menu by default
 		{
@@ -541,6 +557,75 @@ export class BlockCommand extends Subcommand {
 				},
 			}),
 		);
+	}
+
+	private async clearSubcommand(
+		messageOrInteraction: Message<true> | Subcommand.ChatInputCommandInteraction<'cached'>,
+		receivedFromMessage: boolean,
+	) {
+		const id = resolveUserIdFromMessageOrInteraction(messageOrInteraction);
+
+		await messageOrInteraction.reply(
+			withDeprecationWarningForMessageCommands({
+				commandName: this.name,
+				guildId: messageOrInteraction.guildId,
+				receivedFromMessage,
+				options: {
+					embeds: [createInfoEmbed('Are you sure you want to clear your ignore list?')],
+					ephemeral: true,
+					components: [
+						new ActionRowBuilder<ButtonBuilder>().addComponents(
+							new ButtonBuilder()
+								.setLabel('Confirm')
+								.setStyle(ButtonStyle.Danger)
+								.setCustomId(
+									ServerIgnoreListClearIdFactory.encodeId({
+										userId: id,
+										action: ServerIgnoreListClearCustomIdActions.Confirm,
+									}).unwrap(),
+								)
+								.setEmoji('🧹'),
+							new ButtonBuilder()
+								.setLabel('Cancel')
+								.setStyle(ButtonStyle.Secondary)
+								.setCustomId(
+									ServerIgnoreListClearIdFactory.encodeId({
+										userId: id,
+										action: ServerIgnoreListClearCustomIdActions.Reject,
+									}).unwrap(),
+								)
+								.setEmoji('❌'),
+						),
+					],
+				},
+			}),
+		);
+	}
+
+	private async listSubcommand(
+		messageOrInteraction: Message<true> | Subcommand.ChatInputCommandInteraction<'cached'>,
+		receivedFromMessage: boolean,
+	) {
+		const userId = resolveUserIdFromMessageOrInteraction(messageOrInteraction);
+		const member = await getDatabaseMember(messageOrInteraction.guildId, userId);
+
+		if (member.ignoredUsers.length === 0 && member.ignoredChannels.length === 0) {
+			await messageOrInteraction.reply(
+				withDeprecationWarningForMessageCommands({
+					commandName: this.name,
+					guildId: messageOrInteraction.guildId,
+					receivedFromMessage,
+					options: {
+						embeds: [createInfoEmbed('You are not ignoring any users or channels from this server.')],
+						ephemeral: true,
+					},
+				}),
+			);
+
+			return;
+		}
+
+		await 1;
 	}
 
 	private resolveChatInputCommandArgs(interaction: Subcommand.ChatInputCommandInteraction<'cached'>) {

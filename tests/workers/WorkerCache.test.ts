@@ -1,6 +1,6 @@
 import { GuildIds, testSubjectTriggerUserId, testSubjectUserId } from '#test/constants';
 import { WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
-import type { MockedFunction, SpyInstance } from 'vitest';
+import type { MockInstance } from 'vitest';
 
 vi.mock('#workers/common', () => {
 	return {
@@ -12,7 +12,7 @@ vi.mock('#workers/common', () => {
 const { WorkerCache } = await import('#workers/WorkerCache');
 const { sendToMainProcess } = await import('#workers/common');
 
-const sendToMainProcessSpy = sendToMainProcess as MockedFunction<typeof sendToMainProcess>;
+const sendToMainProcessSpy = vitest.mocked(sendToMainProcess);
 
 describe('WorkerCache', () => {
 	const cache = new WorkerCache();
@@ -57,7 +57,7 @@ describe('WorkerCache', () => {
 
 		test('should have cached the provided regular expressions and subsequent calls should return cached value', () => {
 			const cachedExpressions = cache['validRegularExpressions'];
-			const setValidRegexSpy = vi.spyOn(cache, 'setValidRegex' as any) as unknown as SpyInstance<
+			const setValidRegexSpy = vi.spyOn(cache, 'setValidRegex' as any) as MockInstance<
 				[],
 				[regex: string, valid: boolean]
 			>;

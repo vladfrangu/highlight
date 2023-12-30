@@ -15,6 +15,10 @@ export default defineConfig({
 	},
 	test: {
 		globals: true,
+		coverage: {
+			provider: 'v8',
+			include: ['src/lib/**/*'],
+		},
 	},
 	esbuild: {
 		target: 'es2022',
