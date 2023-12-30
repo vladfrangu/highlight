@@ -205,9 +205,9 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		guildSettings: GuildSetting,
 	): [fieldTitle: string, fieldValue: string] {
 		const tag =
-			guildSettings.notificationStyle === GuildNotificationStyle.WithContextButNoAuthor
-				? UnknownUserTag
-				: getUserTag(message.author);
+			guildSettings.notificationStyle === GuildNotificationStyle.WithContextButNoAuthor ?
+				UnknownUserTag
+			:	getUserTag(message.author);
 
 		const messageHyperlink = `${italic(`Click ${bold(hyperlink('here', message.url))} to view it.`)}`;
 		let shortSnippet = '';
@@ -432,18 +432,17 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 		}
 
 		// Step 6. Create embed based on the guild's style
-		const messageAuthorTag = highlightShouldGetUserInfo(guildSettings)
-			? getUserTag(messageThatTriggered.author)
-			: UnknownUserTag;
+		const messageAuthorTag =
+			highlightShouldGetUserInfo(guildSettings) ? getUserTag(messageThatTriggered.author) : UnknownUserTag;
 
 		const embed = new EmbedBuilder()
 			.setColor(0x3669fa)
 			.setAuthor({
 				name: messageAuthorTag,
 				iconURL:
-					messageAuthorTag === UnknownUserTag
-						? undefined
-						: messageThatTriggered.author.displayAvatarURL({ size: 128 }),
+					messageAuthorTag === UnknownUserTag ? undefined : (
+						messageThatTriggered.author.displayAvatarURL({ size: 128 })
+					),
 			})
 			.setTimestamp(messageThatTriggered.createdTimestamp)
 			.setFooter({ text: 'Highlighted' });

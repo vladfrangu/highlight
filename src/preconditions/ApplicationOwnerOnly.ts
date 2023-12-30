@@ -19,9 +19,9 @@ export class AllowedRole extends AllFlowsPrecondition {
 		const application = await this.container.client.application!.fetch();
 
 		if (application.owner instanceof User) {
-			return application.owner.id === userId
-				? this.ok()
-				: this.error({ message: `This maze was not meant for you.` });
+			return application.owner.id === userId ?
+					this.ok()
+				:	this.error({ message: `This maze was not meant for you.` });
 		}
 
 		if (application.owner?.ownerId === userId) return this.ok();

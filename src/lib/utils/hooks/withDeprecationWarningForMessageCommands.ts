@@ -31,13 +31,13 @@ export function withDeprecationWarningOnEmbedForMessageCommands(
 				`> ${bold('Did you know?')}`,
 				`> Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
 				`> You should use the ${bold(inlineCode(`/${commandName}`))} slash command instead!`,
-				buttonNotice
-					? `> If you don't see the slash commands popping up when you type ${bold(
-							inlineCode(`/${commandName}`),
-						)}, click the ${bold('Re-authorize')} button if present (or click ${bold(
-							hyperlink('here to re-authorize', buttonNotice),
-						)}) and try again!`
-					: undefined,
+				buttonNotice ?
+					`> If you don't see the slash commands popping up when you type ${bold(
+						inlineCode(`/${commandName}`),
+					)}, click the ${bold('Re-authorize')} button if present (or click ${bold(
+						hyperlink('here to re-authorize', buttonNotice),
+					)}) and try again!`
+				:	undefined,
 			]
 				.filter((item) => typeof item === 'string')
 				.join('\n'),
@@ -53,13 +53,13 @@ export function withDeprecationWarningOnEmbedForMessageCommands(
 				)}, and will be removed in the future.\nYou should use the ${bold(
 					inlineCode(`/${commandName}`),
 				)} slash command instead!`,
-				buttonNotice
-					? `If you don't see the slash commands popping up when you type ${bold(
-							inlineCode(`/${commandName}`),
-						)}, click the ${bold('Re-authorize')} button if present (or click ${bold(
-							hyperlink('here to re-authorize', buttonNotice),
-						)}) and try again!`
-					: undefined,
+				buttonNotice ?
+					`If you don't see the slash commands popping up when you type ${bold(
+						inlineCode(`/${commandName}`),
+					)}, click the ${bold('Re-authorize')} button if present (or click ${bold(
+						hyperlink('here to re-authorize', buttonNotice),
+					)}) and try again!`
+				:	undefined,
 			]
 				.filter((item) => typeof item === 'string')
 				.join('\n'),

@@ -1,8 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { InteractionHandler, InteractionHandlerTypes } from '@sapphire/framework';
 import type { ButtonInteraction } from 'discord.js';
-import { createInfoEmbed } from '#utils/embeds';
 import { ServerIgnoreListClearCustomIdActions, ServerIgnoreListClearIdFactory } from '#customIds/server-ignore-list';
+import { createInfoEmbed } from '#utils/embeds';
 
 @ApplyOptions<InteractionHandler.Options>({
 	interactionHandlerType: InteractionHandlerTypes.Button,

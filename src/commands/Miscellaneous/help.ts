@@ -221,9 +221,9 @@ export class HelpCommand extends Command {
 						embeds: [
 							createErrorEmbed(
 								`${
-									empathyChance
-										? '🍌 Not even the empathy banana knows of a command called'
-										: "👀 I don't know of a command called"
+									empathyChance ?
+										'🍌 Not even the empathy banana knows of a command called'
+									:	"👀 I don't know of a command called"
 								} ${bold(inlineCode(input))}. Try running ${bold(
 									inlineCode('/help'),
 								)} to see all available commands!`,
@@ -248,9 +248,9 @@ export class HelpCommand extends Command {
 					embeds: [
 						createErrorEmbed(
 							`${
-								empathyChance
-									? "🍌 The magnifier broke, but fear not! Empathy banana is here to let you know that I couldn't find a command called"
-									: "🔎 I couldn't find a command called"
+								empathyChance ?
+									"🍌 The magnifier broke, but fear not! Empathy banana is here to let you know that I couldn't find a command called"
+								:	"🔎 I couldn't find a command called"
 							} ${bold(inlineCode(input))}. Maybe one of these match your search: ${list}`,
 						),
 					],
