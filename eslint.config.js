@@ -22,6 +22,17 @@ const typeScriptRuleset = merge(...typescript, {
 	rules: {
 		'@typescript-eslint/consistent-type-definitions': [2, 'interface'],
 		'@typescript-eslint/dot-notation': 0,
+		'import/order': [
+			1,
+			{
+				alphabetize: {
+					caseInsensitive: false,
+					order: 'asc',
+				},
+				groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+				'newlines-between': 'never',
+			},
+		],
 	},
 	settings: {
 		'import/resolver': {
