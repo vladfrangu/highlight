@@ -120,7 +120,7 @@ const prisma = new PrismaClient({
 
 					if (sqlString) {
 						if (args.length) {
-							for (let paramIndex = 1; paramIndex < args.length; paramIndex++) {
+							for (let paramIndex = 1; paramIndex <= args.length; paramIndex++) {
 								sqlString.replace(`$${paramIndex}`, JSON.stringify(args[paramIndex - 1]));
 							}
 
