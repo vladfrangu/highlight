@@ -1,30 +1,8 @@
-/* eslint-disable import/order */
+/* eslint-disable import/order, import/first */
 
 // #region Env Setup
 import { rootDir } from '#utils/misc';
 import { setup, type ArrayString, type NumberString } from '@skyra/env-utilities';
-// #endregion
-
-// #region Sapphire config
-import { ApplicationCommandRegistries, container, LogLevel, RegisterBehavior } from '@sapphire/framework';
-import '@sapphire/plugin-logger/register';
-// #endregion
-
-// #region NodeJS inspect settings
-import { inspect } from 'node:util';
-// #endregion
-
-// #region Global color utility
-// #endregion
-
-// #region Prisma
-import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
-import { PrismaClient } from '@prisma/client';
-import { createColors, type Colorette } from 'colorette';
-// #endregion
-
-// #region Highlight manager
-import { HighlightManager } from '#structures/HighlightManager';
 
 setup({ path: new URL('.env', rootDir) });
 
@@ -43,11 +21,26 @@ declare module '@skyra/env-utilities' {
 		SUPPORT_SERVER_INVITE: string;
 	}
 }
+// #endregion
+
+// #region Sapphire config
+import { ApplicationCommandRegistries, container, LogLevel, RegisterBehavior } from '@sapphire/framework';
+import '@sapphire/plugin-logger/register';
 
 const { useDevelopmentGuildIds } = await import('#hooks/useDevelopmentGuildIds');
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(RegisterBehavior.BulkOverwrite);
 ApplicationCommandRegistries.setDefaultGuildIds(useDevelopmentGuildIds());
+// #endregion
+
+// #region NodeJS inspect settings
+import { inspect } from 'node:util';
+
 inspect.defaultOptions.depth = 4;
+// #endregion
+
+// #region Global color utility
+import { createColors, type Colorette } from 'colorette';
+
 container.colors = createColors({ useColor: true });
 
 declare module '@sapphire/pieces' {
@@ -55,6 +48,11 @@ declare module '@sapphire/pieces' {
 		colors: Colorette;
 	}
 }
+// #endregion
+
+// #region Prisma
+import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
+import { PrismaClient } from '@prisma/client';
 
 const highlighter = new SqlHighlighter();
 
@@ -158,6 +156,10 @@ declare module '@sapphire/pieces' {
 		prisma: typeof prisma;
 	}
 }
+// #endregion
+
+// #region Highlight manager
+import { HighlightManager } from '#structures/HighlightManager';
 
 container.highlightManager = new HighlightManager();
 
