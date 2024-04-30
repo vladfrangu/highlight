@@ -24,8 +24,7 @@
 		"format": "prettier --write . && cross-env TIMING=1 eslint --fix --format=pretty src tests",
 		"start": "yarn cleanbuild && node .",
 		"test": "vitest run",
-		"watch": "tsc -w",
-		"dev": "bun ./src/bun.ts"
+		"watch": "tsc -w"
 	},
 	"dependencies": {
 		"@discordjs/builders": "^1.7.0",
