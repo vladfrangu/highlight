@@ -27,13 +27,13 @@
 		"watch": "tsc -w"
 	},
 	"dependencies": {
-		"@discordjs/builders": "^1.7.0",
+		"@discordjs/builders": "^1.8.1",
 		"@mikro-orm/sql-highlighter": "^1.0.1",
 		"@prisma/client": "^5.13.0",
 		"@sapphire/decorators": "^6.1.0",
 		"@sapphire/discord-utilities": "^3.2.3",
-		"@sapphire/discord.js-utilities": "^7.2.0",
-		"@sapphire/framework": "^5.1.0",
+		"@sapphire/discord.js-utilities": "^7.2.1",
+		"@sapphire/framework": "^5.2.1",
 		"@sapphire/plugin-logger": "^4.0.2",
 		"@sapphire/plugin-subcommands": "^6.0.3",
 		"@sapphire/stopwatch": "^1.5.2",
@@ -45,31 +45,35 @@
 		"bufferutil": "^4.0.8",
 		"colorette": "^2.0.20",
 		"confusables": "^1.1.1",
-		"discord-api-types": "^0.37.71",
-		"discord.js": "^14.14.1",
-		"re2": "^1.20.10",
+		"discord-api-types": "0.37.83",
+		"discord.js": "^14.15.2",
+		"re2": "^1.20.11",
 		"tslib": "^2.6.2",
-		"utf-8-validate": "^6.0.3",
+		"utf-8-validate": "^6.0.4",
 		"zlib-sync": "^0.1.9"
 	},
 	"devDependencies": {
 		"@sapphire/prettier-config": "^2.0.0",
 		"@sapphire/ts-config": "^5.0.1",
+		"@ts-safeql/eslint-plugin": "^3.1.0",
+		"@types/is-ci": "^3",
 		"@types/lodash.merge": "^4.6.9",
-		"@types/node": "^20.12.7",
+		"@types/node": "^20.12.11",
 		"@typescript-eslint/eslint-plugin": "^7.8.0",
 		"@typescript-eslint/parser": "^7.8.0",
-		"@vitest/coverage-v8": "^1.5.2",
+		"@vitest/coverage-v8": "^1.6.0",
 		"cross-env": "^7.0.3",
 		"eslint": "^8.57.0",
 		"eslint-config-neon": "^0.1.62",
 		"eslint-formatter-pretty": "^6.0.1",
+		"is-ci": "^3.0.1",
+		"libpg-query": "^16.2.0",
 		"lodash.merge": "^4.6.2",
 		"prettier": "^3.2.5",
 		"prisma": "^5.13.0",
-		"rimraf": "^5.0.5",
+		"rimraf": "^5.0.6",
 		"typescript": "^5.4.5",
-		"vitest": "^1.5.2"
+		"vitest": "^1.6.0"
 	},
 	"author": {
 		"name": "Vlad Frangu",
@@ -78,9 +82,9 @@
 	"engines": {
 		"node": ">=20.0.0"
 	},
-	"packageManager": "yarn@4.1.1",
+	"packageManager": "yarn@4.2.2",
 	"volta": {
 		"node": "20.12.2",
-		"yarn": "4.1.1"
+		"yarn": "4.2.2"
 	}
 }

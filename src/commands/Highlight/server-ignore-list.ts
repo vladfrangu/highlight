@@ -83,7 +83,7 @@ const allowedChannelTypes = [
 	generateDashLessAliases: true,
 	generateUnderscoreLessAliases: true,
 })
-export class BlockCommand extends Subcommand {
+export class ServerBlockCommand extends Subcommand {
 	public subcommandMappings: SubcommandMappingArray = [
 		{
 			name: 'add',
@@ -402,7 +402,7 @@ export class BlockCommand extends Subcommand {
 		}
 
 		if (ignored.length) {
-			embed.addFields({ name: 'Ignored', value: ignored.join('\n') });
+			embed.addFields({ name: 'Already added', value: ignored.join('\n') });
 		}
 
 		await messageOrInteraction.reply(
@@ -542,7 +542,7 @@ export class BlockCommand extends Subcommand {
 		}
 
 		if (ignored.length) {
-			embed.addFields({ name: 'Ignored', value: ignored.join('\n') });
+			embed.addFields({ name: 'Not present', value: ignored.join('\n') });
 		}
 
 		await messageOrInteraction.reply(

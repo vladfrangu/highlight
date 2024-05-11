@@ -3,7 +3,7 @@ import { AutoCompleteLimits } from '@sapphire/discord-utilities';
 import { Command } from '@sapphire/framework';
 import type { Args, Result, ChatInputCommand, MessageCommand } from '@sapphire/framework';
 import { jaroWinkler } from '@skyra/jaro-winkler';
-import type { Message } from 'discord.js';
+import type { ApplicationCommandOptionChoiceData, Message } from 'discord.js';
 import { Collection, bold, inlineCode, italic, quote } from 'discord.js';
 import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecationWarningForMessageCommands';
 import { createErrorEmbed, createSuccessEmbed } from '#utils/embeds';
@@ -107,7 +107,7 @@ export class HelpCommand extends Command {
 			.sort((a, b) => a.name.localeCompare(b.name));
 
 		const alreadyProcessed: string[] = [];
-		const options: Parameters<(typeof interaction)['respond']>[0] = [];
+		const options: ApplicationCommandOptionChoiceData[] = [];
 
 		for (const command of startsWithChunk) {
 			// If we already got all possible commands, exit early

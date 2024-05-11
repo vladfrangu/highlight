@@ -141,7 +141,9 @@ export function withDeprecationWarningForMessageCommands<
 				freeRow.components.push(authButton);
 			}
 		} else {
-			cloned.components.push(new ActionRowBuilder<ButtonBuilder>().addComponents(authButton));
+			(cloned.components as ActionRowBuilder[]).push(
+				new ActionRowBuilder<ButtonBuilder>().addComponents(authButton),
+			);
 		}
 	}
 	// We don't have any components, so we can just add a new one

@@ -1,8 +1,14 @@
+import process from 'node:process';
+import { setup } from '@skyra/env-utilities';
+import safeqlPlugin from '@ts-safeql/eslint-plugin';
 import common from 'eslint-config-neon/flat/common.js';
 import node from 'eslint-config-neon/flat/node.js';
 import prettier from 'eslint-config-neon/flat/prettier.js';
 import typescript from 'eslint-config-neon/flat/typescript.js';
+import isCI from 'is-ci';
 import merge from 'lodash.merge';
+
+setup({ path: new URL('.env', import.meta.url) });
 
 const commonFiles = '{js,mjs,cjs,ts,mts,cts,jsx,tsx}';
 
@@ -45,8 +51,37 @@ const typeScriptRuleset = merge(...typescript, {
 
 const prettierRuleset = merge(...prettier, { files: [`**/*${commonFiles}`] });
 
+/** @type {import('eslint').Linter.FlatConfig} */
+const safeqlRuleset = {
+	files: [`**/*${commonFiles}`],
+	plugins: {
+		safeql: safeqlPlugin,
+	},
+	languageOptions: {
+		parserOptions: {
+			project: ['tsconfig.eslint.json'],
+		},
+	},
+	rules: {
+		'safeql/check-sql': [
+			2,
+			{
+				connections: [
+					{
+						connectionUrl: process.env.POSTGRES_URL,
+						migrationsDir: './prisma/migrations',
+						targets: [
+							{ tag: '**prisma.+($queryRaw|$executeRaw)', transform: '{type}[]' },
+						],
+					},
+				],
+			},
+		],
+	},
+};
+
 /** @type {import('eslint').Linter.FlatConfig[]} */
-export default [
+const rules = [
 	{
 		ignores: ['**/node_modules/', '.git/', '**/dist/', '**/coverage/'],
 	},
@@ -59,3 +94,9 @@ export default [
 	},
 	prettierRuleset,
 ];
+
+if (!isCI) {
+	rules.push(safeqlRuleset);
+}
+
+export default rules;

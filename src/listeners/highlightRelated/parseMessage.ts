@@ -467,7 +467,7 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 			bold(inlineCode(escapeMarkdown(highlightResult.trigger))),
 			'was mentioned by',
 			bold(messageAuthorTag),
-			// eslint-disable-next-line @typescript-eslint/no-base-to-string
+
 			`in ${messageThatTriggered.channel.toString()}`,
 		].join(' ');
 

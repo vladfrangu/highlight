@@ -253,7 +253,6 @@ export class BotParsingCommand extends Subcommand {
 			const guildChannel = interaction.guild.channels.resolve(channelData.channelId);
 
 			if (!guildChannel) {
-				// TODO: maybe remove entry from DB
 				continue;
 			}
 

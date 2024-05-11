@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/no-identical-functions,n/no-callback-literal,n/callback-return,promise/prefer-await-to-callbacks */
+/* eslint-disable sonarjs/no-identical-functions,n/callback-return,promise/prefer-await-to-callbacks */
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
 import type {
