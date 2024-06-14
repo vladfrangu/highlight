@@ -1,6 +1,6 @@
 import process from 'node:process';
 import { setup } from '@skyra/env-utilities';
-import safeqlPlugin from '@ts-safeql/eslint-plugin';
+import safeql from '@ts-safeql/eslint-plugin/config';
 import common from 'eslint-config-neon/flat/common.js';
 import node from 'eslint-config-neon/flat/node.js';
 import prettier from 'eslint-config-neon/flat/prettier.js';
@@ -39,6 +39,7 @@ const typeScriptRuleset = merge(...typescript, {
 				'newlines-between': 'never',
 			},
 		],
+		'tsdoc/syntax': 0,
 	},
 	settings: {
 		'import/resolver': {
@@ -53,30 +54,17 @@ const prettierRuleset = merge(...prettier, { files: [`**/*${commonFiles}`] });
 
 /** @type {import('eslint').Linter.FlatConfig} */
 const safeqlRuleset = {
+	...safeql.configs.connections({
+		connectionUrl: process.env.POSTGRES_URL,
+		migrationsDir: './prisma/migrations',
+		targets: [{ tag: '**prisma.+($queryRaw|$executeRaw)', transform: '{type}[]' }],
+		overrides: {},
+	}),
 	files: [`**/*${commonFiles}`],
-	plugins: {
-		safeql: safeqlPlugin,
-	},
 	languageOptions: {
 		parserOptions: {
 			project: ['tsconfig.eslint.json'],
 		},
-	},
-	rules: {
-		'safeql/check-sql': [
-			2,
-			{
-				connections: [
-					{
-						connectionUrl: process.env.POSTGRES_URL,
-						migrationsDir: './prisma/migrations',
-						targets: [
-							{ tag: '**prisma.+($queryRaw|$executeRaw)', transform: '{type}[]' },
-						],
-					},
-				],
-			},
-		],
 	},
 };
 

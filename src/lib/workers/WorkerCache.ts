@@ -130,7 +130,7 @@ export class WorkerCache {
 			}
 
 			case WorkerType.Word: {
-				const originalSplit = content.toLowerCase().split(/(\s+)/);
+				const originalSplit = content.toLowerCase().split(/\s+/);
 
 				for (const [word, possibleMembers] of guildData.entries()) {
 					const wordIndex = originalSplit.indexOf(word.toLowerCase());

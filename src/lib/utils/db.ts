@@ -21,7 +21,7 @@ export interface FullMember extends Member {
 export async function getDatabaseMember(guildId: string, userId: string): Promise<FullMember> {
 	const [_, [rawMember], [rawIgnored]] = await container.prisma.$transaction([
 		container.prisma.$queryRaw`INSERT INTO users (id) VALUES (${userId}) ON CONFLICT (id) DO NOTHING`,
-		// eslint-disable-next-line safeql/check-sql
+		// eslint-disable-next-line @ts-safeql/check-sql
 		container.prisma.$queryRaw<[RawMember]>`
 	INSERT INTO members (guild_id, user_id)
 	VALUES (${guildId}, ${userId})
@@ -29,7 +29,7 @@ export async function getDatabaseMember(guildId: string, userId: string): Promis
 		UPDATE SET user_id = ${userId}
 	RETURNING *
 `,
-		// eslint-disable-next-line safeql/check-sql
+		// eslint-disable-next-line @ts-safeql/check-sql
 		container.prisma.$queryRaw<[RawIgnored]>`
 	SELECT
 		array_agg(guild_ignored_channels.ignored_channel_id) as ignored_channels,
