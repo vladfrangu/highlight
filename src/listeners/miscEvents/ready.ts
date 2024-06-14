@@ -72,7 +72,7 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 	private async ensureAllGuildsAreInDatabase() {
 		const { prisma, client } = this.container;
 
-		// eslint-disable-next-line @ts-safeql/check-sql -- This is validated to work but its SO JANK
+		// eslint-disable-next-line -- This is validated to work but its SO JANK
 		await prisma.$executeRaw`INSERT INTO guilds (guild_id) VALUES ${Prisma.join(
 			[...client.guilds.cache.keys()],
 			'), (',

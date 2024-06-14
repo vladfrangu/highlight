@@ -1,18 +1,6 @@
 import type { Member } from '@prisma/client';
 import { container } from '@sapphire/framework';
 
-interface RawMember {
-	guild_id: string;
-	regular_expressions: string[] | null;
-	user_id: string;
-	words: string[] | null;
-}
-
-interface RawIgnored {
-	ignored_channels: null[] | string[] | null;
-	ignored_users: null[] | string[] | null;
-}
-
 export interface FullMember extends Member {
 	ignoredChannels: string[];
 	ignoredUsers: string[];
@@ -21,16 +9,21 @@ export interface FullMember extends Member {
 export async function getDatabaseMember(guildId: string, userId: string): Promise<FullMember> {
 	const [_, [rawMember], [rawIgnored]] = await container.prisma.$transaction([
 		container.prisma.$queryRaw`INSERT INTO users (id) VALUES (${userId}) ON CONFLICT (id) DO NOTHING`,
-		// eslint-disable-next-line @ts-safeql/check-sql
-		container.prisma.$queryRaw<[RawMember]>`
+		container.prisma.$queryRaw<
+			{
+				guild_id: string | null;
+				regular_expressions: string[] | null;
+				user_id: string | null;
+				words: string[] | null;
+			}[]
+		>`
 	INSERT INTO members (guild_id, user_id)
 	VALUES (${guildId}, ${userId})
 	ON CONFLICT (guild_id, user_id) DO
 		UPDATE SET user_id = ${userId}
 	RETURNING *
 `,
-		// eslint-disable-next-line @ts-safeql/check-sql
-		container.prisma.$queryRaw<[RawIgnored]>`
+		container.prisma.$queryRaw<{ ignored_channels: string[] | null; ignored_users: (string | null)[] | null }[]>`
 	SELECT
 		array_agg(guild_ignored_channels.ignored_channel_id) as ignored_channels,
 		array_agg(guild_ignored_users.ignored_user_id) as ignored_users
@@ -56,8 +49,8 @@ export async function getDatabaseMember(guildId: string, userId: string): Promis
 	}
 
 	return {
-		guildId: rawMember.guild_id,
-		userId: rawMember.user_id,
+		guildId: rawMember.guild_id!,
+		userId: rawMember.user_id!,
 		words: rawMember.words ?? [],
 		regularExpressions: rawMember.regular_expressions ?? [],
 		ignoredUsers,
