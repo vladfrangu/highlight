@@ -2829,6 +2829,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"discord-api-types@npm:0.37.91":
+  version: 0.37.91
+  resolution: "discord-api-types@npm:0.37.91"
+  checksum: 10/046c2f42161e65bdd26d68869c4ceae4aa0937d6535f5ba62ab0e8ea0bcacbfa93f35d9b8cbccd5929ab0fb094e5f82d2600cc931637295030ebca5cd4d9647e
+  languageName: node
+  linkType: hard
+
 "discord-api-types@npm:^0.37.84":
   version: 0.37.89
   resolution: "discord-api-types@npm:0.37.89"
@@ -4391,7 +4398,7 @@ __metadata:
     colorette: "npm:^2.0.20"
     confusables: "npm:^1.1.1"
     cross-env: "npm:^7.0.3"
-    discord-api-types: "npm:0.37.83"
+    discord-api-types: "npm:0.37.91"
     discord.js: "npm:^14.15.3"
     eslint: "npm:^8.57.0"
     eslint-config-neon: "npm:^0.1.62"

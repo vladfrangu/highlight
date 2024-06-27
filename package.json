@@ -45,7 +45,7 @@
 		"bufferutil": "^4.0.8",
 		"colorette": "^2.0.20",
 		"confusables": "^1.1.1",
-		"discord-api-types": "0.37.83",
+		"discord-api-types": "0.37.91",
 		"discord.js": "^14.15.3",
 		"re2": "^1.21.3",
 		"tslib": "^2.6.3",
