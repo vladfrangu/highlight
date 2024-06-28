@@ -150,6 +150,8 @@ export class HighlightManager {
 					this.destroyed ? '' : ' Respawning...'
 				}`,
 			);
+
+			// @ts-expect-error TS 5.5.2 shenanigans
 			worker.removeAllListeners();
 			this.createWorkerType(type);
 		});

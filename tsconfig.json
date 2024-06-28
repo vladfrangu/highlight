@@ -24,7 +24,9 @@
 			"#types/*": ["./src/lib/types/*.ts"],
 			"#utils/*": ["./src/lib/utils/*.ts"],
 			"#workers/*": ["./src/lib/workers/*.ts"]
-		}
+		},
+		// TODO: remove once 5.5.2 stabilizes or something
+		"skipLibCheck": true
 	},
 	"include": ["src"]
 }

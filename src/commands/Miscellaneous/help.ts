@@ -2,6 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { AutoCompleteLimits } from '@sapphire/discord-utilities';
 import { Command } from '@sapphire/framework';
 import type { Args, Result, ChatInputCommand, MessageCommand } from '@sapphire/framework';
+import type { Subcommand } from '@sapphire/plugin-subcommands';
 import { jaroWinkler } from '@skyra/jaro-winkler';
 import type { ApplicationCommandOptionChoiceData, Message } from 'discord.js';
 import { Collection, bold, inlineCode, italic, quote } from 'discord.js';
@@ -262,7 +263,7 @@ export class HelpCommand extends Command {
 
 	private async canRunCommand(
 		messageOrInteraction: Command.ChatInputCommandInteraction | Message,
-		command: Command,
+		command: Command | Subcommand,
 		isMessage = false,
 	) {
 		const preconditionStore = this.container.stores.get('preconditions');
@@ -319,7 +320,7 @@ export class HelpCommand extends Command {
 
 	private async sendSingleCommandHelp(
 		messageOrInteraction: Command.ChatInputCommandInteraction | Message,
-		command: Command,
+		command: Command | Subcommand,
 		isMessage: boolean,
 	) {
 		const canRun = await this.canRunCommand(messageOrInteraction, command, isMessage);
