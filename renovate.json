@@ -15,5 +15,6 @@
 			"groupSlug": "all-non-major"
 		}
 	],
-	"schedule": ["before 1pm every friday"]
+	"schedule": ["before 1pm every friday"],
+	"ignoreDeps": ["discord-api-types"]
 }
