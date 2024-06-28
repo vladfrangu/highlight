@@ -806,13 +806,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pgsql/types@npm:^15.0.1":
-  version: 15.0.2
-  resolution: "@pgsql/types@npm:15.0.2"
-  checksum: 10/852c1f83f358e1afb8d94edace121b55dea1fbfd662591866fd7b1e3e2a7d57e686dcb45f76e5f66372bfb0385a52aa5682663f6fd6c46b5338edd3d0b33ada3
-  languageName: node
-  linkType: hard
-
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -4057,7 +4050,7 @@ __metadata:
     eslint-config-neon: "npm:^0.1.62"
     eslint-formatter-pretty: "npm:^6.0.1"
     is-ci: "npm:^3.0.1"
-    libpg-query: "npm:^15.2.0"
+    libpg-query: "npm:^16.0.0"
     lodash.merge: "npm:^4.6.2"
     prettier: "npm:^3.3.2"
     prisma: "npm:^5.15.0"
@@ -4666,16 +4659,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libpg-query@npm:^15.2.0":
-  version: 15.2.0
-  resolution: "libpg-query@npm:15.2.0"
+"libpg-query@npm:^16.0.0":
+  version: 16.2.0
+  resolution: "libpg-query@npm:16.2.0"
   dependencies:
     "@emnapi/runtime": "npm:^0.43.1"
     "@mapbox/node-pre-gyp": "npm:^1.0.8"
-    "@pgsql/types": "npm:^15.0.1"
     node-addon-api: "npm:^7.0.0"
     node-gyp: "npm:^10.0.1"
-  checksum: 10/10313d5049fd0d28ed8e92d66d472ce63262aba0daa2be8218a5f3afec21a15a20acd52ed65a1c93d4a6fc5ddc3298e825c4022e90d898893dbeee9fffb5d5cf
+  checksum: 10/3cc56694b25b7ede09b705157d8fed1ffa7e56668f288993737b651aa96a08450e25726e83fcd02a934e77cbd2204235c241489fac6b36e9c963faf10ae0e4b9
   languageName: node
   linkType: hard
 
