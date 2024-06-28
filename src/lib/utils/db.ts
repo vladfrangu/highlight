@@ -9,14 +9,7 @@ export interface FullMember extends Member {
 export async function getDatabaseMember(guildId: string, userId: string): Promise<FullMember> {
 	const [_, [rawMember], [rawIgnored]] = await container.prisma.$transaction([
 		container.prisma.$queryRaw`INSERT INTO users (id) VALUES (${userId}) ON CONFLICT (id) DO NOTHING`,
-		container.prisma.$queryRaw<
-			{
-				guild_id: string | null;
-				regular_expressions: string[] | null;
-				user_id: string | null;
-				words: string[] | null;
-			}[]
-		>`
+		container.prisma.$queryRaw<{ guild_id: string; regular_expressions: string[] | null, user_id: string; words: string[] | null; }[]>`
 	INSERT INTO members (guild_id, user_id)
 	VALUES (${guildId}, ${userId})
 	ON CONFLICT (guild_id, user_id) DO
