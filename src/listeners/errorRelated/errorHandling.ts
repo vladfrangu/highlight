@@ -180,7 +180,7 @@ export class ChatInputCommandSubcommandCommandError extends Listener<
 
 async function makeAndSendErrorEmbed<Options>(
 	error: Error | UserError,
-	command: Command,
+	command: Command | Subcommand,
 	callback: (options: Options) => Awaitable<unknown>,
 	piece: Piece,
 ) {
