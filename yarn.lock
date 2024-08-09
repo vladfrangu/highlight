@@ -1192,8 +1192,8 @@ __metadata:
   linkType: hard
 
 "@ts-safeql/eslint-plugin@npm:^3.3.1":
-  version: 3.4.0
-  resolution: "@ts-safeql/eslint-plugin@npm:3.4.0"
+  version: 3.4.1
+  resolution: "@ts-safeql/eslint-plugin@npm:3.4.1"
   dependencies:
     "@typescript-eslint/utils": "npm:^7.8.0"
     chokidar: "npm:^3.6.0"
@@ -1207,7 +1207,7 @@ __metadata:
     zod-to-json-schema: "npm:3.20.1"
   peerDependencies:
     libpg-query: ">=13.2.5"
-  checksum: 10/a74cd1c648f050a0586283b6df192914d4dce05b12d147c4b686760cfe5df57b2ff20fde29defb59edc366181e12f2c23083dbedf6a19f1dece8d10f12fe1b93
+  checksum: 10/439b5434e20f5c1986ad9fa35e335eb28cee963c3c5f643eda4a1a7880832706dccacb52ef9ddebd8335dfa3f788899410e07118a2c429ad7fce998122bbba0c
   languageName: node
   linkType: hard
 
