@@ -27,15 +27,15 @@
 		"watch": "tsc -w"
 	},
 	"dependencies": {
-		"@discordjs/builders": "^1.8.2",
+		"@discordjs/builders": "^1.9.0",
 		"@mikro-orm/sql-highlighter": "^1.0.1",
-		"@prisma/client": "^5.17.0",
+		"@prisma/client": "^5.19.1",
 		"@sapphire/decorators": "^6.1.0",
-		"@sapphire/discord-utilities": "^3.3.0",
+		"@sapphire/discord-utilities": "^3.4.0",
 		"@sapphire/discord.js-utilities": "^7.3.0",
 		"@sapphire/framework": "^5.2.1",
 		"@sapphire/plugin-logger": "^4.0.2",
-		"@sapphire/plugin-subcommands": "^6.0.3",
+		"@sapphire/plugin-subcommands": "^7.0.0",
 		"@sapphire/stopwatch": "^1.5.2",
 		"@sapphire/time-utilities": "^1.7.12",
 		"@sapphire/timestamp": "^1.0.3",
@@ -45,17 +45,17 @@
 		"bufferutil": "^4.0.8",
 		"colorette": "^2.0.20",
 		"confusables": "^1.1.1",
-		"discord-api-types": "0.37.83",
-		"discord.js": "^14.15.3",
-		"re2": "^1.21.3",
-		"tslib": "^2.6.3",
+		"discord-api-types": "0.37.97",
+		"discord.js": "^14.16.1",
+		"re2": "^1.21.4",
+		"tslib": "^2.7.0",
 		"utf-8-validate": "^6.0.4",
 		"zlib-sync": "^0.1.9"
 	},
 	"devDependencies": {
 		"@sapphire/prettier-config": "^2.0.0",
 		"@sapphire/ts-config": "^5.0.1",
-		"@ts-safeql/eslint-plugin": "^3.3.1",
+		"@ts-safeql/eslint-plugin": "^3.4.1",
 		"@types/is-ci": "^3.0.4",
 		"@types/lodash.merge": "^4.6.9",
 		"@types/node": "^20.14.12",
@@ -70,14 +70,14 @@
 		"libpg-query": "^16.2.0",
 		"lodash.merge": "^4.6.2",
 		"prettier": "^3.3.3",
-		"prisma": "^5.17.0",
+		"prisma": "^5.19.1",
 		"rimraf": "^6.0.1",
 		"typescript": "^5.5.4",
-		"vitest": "^2.0.4"
+		"vitest": "^2.0.5"
 	},
 	"author": {
 		"name": "Vlad Frangu",
-		"email": "kingdgrizzle@gmail.com"
+		"email": "me@vladfrangu.dev"
 	},
 	"engines": {
 		"node": ">=20.0.0"

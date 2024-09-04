@@ -23,6 +23,8 @@ import {
 	bold,
 	codeBlock,
 	inlineCode,
+	Message,
+	PartialGroupDMChannel,
 	type InteractionReplyOptions,
 	type MessageCreateOptions,
 } from 'discord.js';
@@ -43,7 +45,7 @@ export class MessageCommandError extends Listener<typeof Events.MessageCommandEr
 			maybeError,
 			command,
 			async (options) =>
-				message.channel.send(
+				(message.channel as Exclude<Message['channel'], PartialGroupDMChannel>).send(
 					withDeprecationWarningForMessageCommands({
 						commandName: command.name,
 						guildId: message.guildId,
@@ -132,7 +134,7 @@ export class MessageCommandSubcommandCommandError extends Listener<
 			maybeError,
 			command,
 			async (options) =>
-				message.channel.send(
+				(message.channel as Exclude<Message['channel'], PartialGroupDMChannel>).send(
 					withDeprecationWarningForMessageCommands({
 						commandName: command.name,
 						guildId: message.guildId,

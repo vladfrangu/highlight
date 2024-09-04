@@ -151,7 +151,6 @@ export class HighlightManager {
 				}`,
 			);
 
-			// @ts-expect-error TS 5.5.2 shenanigans
 			worker.removeAllListeners();
 			this.createWorkerType(type);
 		});
