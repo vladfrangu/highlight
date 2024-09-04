@@ -35,7 +35,7 @@
 		"@sapphire/discord.js-utilities": "^7.3.0",
 		"@sapphire/framework": "^5.2.1",
 		"@sapphire/plugin-logger": "^4.0.2",
-		"@sapphire/plugin-subcommands": "^7.0.0",
+		"@sapphire/plugin-subcommands": "^6.0.3",
 		"@sapphire/stopwatch": "^1.5.2",
 		"@sapphire/time-utilities": "^1.7.12",
 		"@sapphire/timestamp": "^1.0.3",
@@ -58,10 +58,10 @@
 		"@ts-safeql/eslint-plugin": "^3.4.1",
 		"@types/is-ci": "^3.0.4",
 		"@types/lodash.merge": "^4.6.9",
-		"@types/node": "^20.14.12",
-		"@typescript-eslint/eslint-plugin": "^8.0.0",
-		"@typescript-eslint/parser": "^8.0.0",
-		"@vitest/coverage-v8": "^2.0.4",
+		"@types/node": "^20.16.4",
+		"@typescript-eslint/eslint-plugin": "^8.4.0",
+		"@typescript-eslint/parser": "^8.4.0",
+		"@vitest/coverage-v8": "^2.0.5",
 		"cross-env": "^7.0.3",
 		"eslint": "^8.57.0",
 		"eslint-config-neon": "^0.1.62",
@@ -82,9 +82,9 @@
 	"engines": {
 		"node": ">=20.0.0"
 	},
-	"packageManager": "yarn@4.4.0",
+	"packageManager": "yarn@4.4.1",
 	"volta": {
 		"node": "20.16.0",
-		"yarn": "4.4.0"
+		"yarn": "4.4.1"
 	}
 }
