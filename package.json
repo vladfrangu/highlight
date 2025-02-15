@@ -29,7 +29,7 @@
 	"dependencies": {
 		"@discordjs/builders": "^1.9.0",
 		"@mikro-orm/sql-highlighter": "^1.0.1",
-		"@prisma/client": "^5.19.1",
+		"@prisma/client": "^6.0.0",
 		"@sapphire/decorators": "^6.1.0",
 		"@sapphire/discord-utilities": "^3.4.0",
 		"@sapphire/discord.js-utilities": "^7.3.0",
@@ -70,7 +70,7 @@
 		"libpg-query": "^16.2.0",
 		"lodash.merge": "^4.6.2",
 		"prettier": "^3.3.3",
-		"prisma": "^5.19.1",
+		"prisma": "^6.0.0",
 		"rimraf": "^6.0.1",
 		"typescript": "^5.5.4",
 		"vitest": "^2.0.5"
