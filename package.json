@@ -82,9 +82,9 @@
 	"engines": {
 		"node": ">=20.0.0"
 	},
-	"packageManager": "yarn@4.4.1",
+	"packageManager": "yarn@4.6.0",
 	"volta": {
-		"node": "20.17.0",
-		"yarn": "4.4.1"
+		"node": "20.18.3",
+		"yarn": "4.6.0"
 	}
 }
