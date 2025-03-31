@@ -4,7 +4,7 @@ import { TimestampStyles, time, type Guild } from 'discord.js';
 import { useGuildJoinLeaveWebhook } from '#hooks/useGuildJoinLeaveWebhook';
 import { createInfoEmbed } from '#utils/embeds';
 import { pluralize } from '#utils/misc';
-import { getUserTag } from '#utils/tags';
+import { getUserTag } from '#utils/userTags';
 
 @ApplyOptions<Listener.Options>({
 	name: 'GuildCreateLogger',

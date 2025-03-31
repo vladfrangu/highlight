@@ -494,7 +494,11 @@ export class GlobalBlockCommand extends Subcommand {
 					},
 				}),
 			);
+
+			return;
 		}
+
+		1;
 	}
 
 	private async resolveMessageArgs(args: Args) {

@@ -21,7 +21,7 @@ import {
 } from 'discord.js';
 import { WorkerType, type ParsedHighlightData } from '#types/WorkerTypes';
 import type { EnsureArray } from '#utils/misc';
-import { UnknownUserTag, getUserTag } from '#utils/tags';
+import { UnknownUserTag, getUserTag } from '#utils/userTags';
 
 type DBReturn = {
 	adult_channel_highlights: boolean;
