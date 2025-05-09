@@ -211,7 +211,7 @@ describe('WorkerCache', () => {
 			);
 		});
 
-		test.each(['word', 'o', 'help'])('given %p then it should return bolded content', (trigger) => {
+		test.each(['word', 'o', 'help'])('given "%s" then it should return bolded content', (trigger) => {
 			const result = cache.parse(
 				WorkerType.Word,
 				String(GuildIds.WordGuild),
@@ -229,7 +229,7 @@ describe('WorkerCache', () => {
 		});
 
 		test.each(['word', 'o', 'help'])(
-			'given multiple mentions of %p then it should return bolded content',
+			'given multiple mentions of "%s" then it should return bolded content',
 			(trigger) => {
 				const result = cache.parse(
 					WorkerType.Word,
@@ -267,7 +267,7 @@ describe('WorkerCache', () => {
 			['o', 'o'],
 			['help', 'help?'],
 			['hel', 'help?'],
-		])('given %p then it should return bolded content', (testCase, trigger) => {
+		])('given "%s" then it should return bolded content', (testCase, trigger) => {
 			const result = cache.parse(
 				WorkerType.RegularExpression,
 				String(GuildIds.RegExpGuild),

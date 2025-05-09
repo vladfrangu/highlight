@@ -152,6 +152,10 @@ export class WorkerCache {
 
 		let finalString = input;
 
+		if (hadCaseSensitiveMatch) {
+			finalString = finalString.replace(RegularExpressionCaseSensitiveMatch, '');
+		}
+
 		if (hadWordMarker) {
 			finalString = finalString.replace(RegularExpressionWordMarker, '');
 
@@ -162,10 +166,6 @@ export class WorkerCache {
 			if (finalString.endsWith('\\b')) {
 				finalString = finalString.slice(0, -2);
 			}
-		}
-
-		if (hadCaseSensitiveMatch) {
-			finalString = finalString.replace(RegularExpressionCaseSensitiveMatch, '');
 		}
 
 		return finalString;
