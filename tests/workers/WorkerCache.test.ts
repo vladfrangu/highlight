@@ -1,12 +1,10 @@
 import type { MockInstance } from 'vitest';
-import { WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
 import { GuildIds, testSubjectTriggerUserId, testSubjectUserId } from '#test/constants';
+import { WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
+import { RegularExpressionCaseSensitiveMatch, RegularExpressionWordMarker } from '#utils/misc';
 
 vi.mock('#workers/common', () => {
-	return {
-		checkParentPort: vi.fn(() => true),
-		sendToMainProcess: vi.fn(() => void 0),
-	};
+	return { checkParentPort: vi.fn(() => true), sendToMainProcess: vi.fn(() => void 0) };
 });
 
 const { WorkerCache } = await import('#workers/WorkerCache');
@@ -57,9 +55,8 @@ describe('WorkerCache', () => {
 
 		test('should have cached the provided regular expressions and subsequent calls should return cached value', () => {
 			const cachedExpressions = cache['validRegularExpressions'];
-			const setValidRegexSpy = vi.spyOn(cache, 'setValidRegex' as any) as MockInstance<
-				[],
-				[regex: string, valid: boolean]
+			const setValidRegexSpy = vi.spyOn(cache, 'setValidRegex' as never) as MockInstance<
+				(regex: string, valid: boolean) => void
 			>;
 
 			expect(cachedExpressions.size).toBe(2);
@@ -182,11 +179,7 @@ describe('WorkerCache', () => {
 			expect(results).toStrictEqual([]);
 			expect(sendToMainProcessSpy).toHaveBeenCalledWith<Parameters<typeof sendToMainProcess>>({
 				command: WorkerResponseTypes.DeleteInvalidRegularExpression,
-				data: {
-					guildId: String(GuildIds.InvalidRegExpGuild),
-					memberId: testSubjectUserId,
-					value: '[a-z',
-				},
+				data: { guildId: String(GuildIds.InvalidRegExpGuild), memberId: testSubjectUserId, value: '[a-z' },
 			});
 			expect(removeTriggerForUserSpy).toHaveBeenCalledWith<Parameters<(typeof cache)['removeTriggerForUser']>>({
 				guildId: String(GuildIds.InvalidRegExpGuild),
@@ -202,19 +195,28 @@ describe('WorkerCache', () => {
 			cache.updateGuild(
 				String(GuildIds.WordGuild),
 				new Map([
-					['word', new Set([testSubjectUserId])],
-					['o', new Set([testSubjectUserId])],
-					['help?', new Set([testSubjectUserId])],
+					[
+						`\\bword\\b${RegularExpressionWordMarker}${RegularExpressionCaseSensitiveMatch}`,
+						new Set([testSubjectUserId]),
+					],
+					[
+						`\\bo\\b${RegularExpressionWordMarker}${RegularExpressionCaseSensitiveMatch}`,
+						new Set([testSubjectUserId]),
+					],
+					[
+						`\\bhelp\\b${RegularExpressionWordMarker}${RegularExpressionCaseSensitiveMatch}`,
+						new Set([testSubjectUserId]),
+					],
 				]),
 			);
 		});
 
-		test.each(['word', 'o', 'help?'])('given %p then it should return bolded content', (trigger) => {
+		test.each(['word', 'o', 'help'])('given %p then it should return bolded content', (trigger) => {
 			const result = cache.parse(
 				WorkerType.Word,
 				String(GuildIds.WordGuild),
 				testSubjectTriggerUserId,
-				`hello ${trigger}`,
+				`hello ${trigger}~`,
 			);
 
 			expect(result.results).toHaveLength(1);
@@ -223,10 +225,10 @@ describe('WorkerCache', () => {
 
 			expect(resultItem.memberId).toBe(String(testSubjectUserId));
 			expect(resultItem.trigger).toBe(trigger);
-			expect(resultItem.parsedContent).toBe(`hello **${trigger}**`);
+			expect(resultItem.parsedContent).toBe(`hello **${trigger}**~`);
 		});
 
-		test.each(['word', 'o', 'help?'])(
+		test.each(['word', 'o', 'help'])(
 			'given multiple mentions of %p then it should return bolded content',
 			(trigger) => {
 				const result = cache.parse(

@@ -10,7 +10,7 @@ export async function getDatabaseMember(guildId: string, userId: string): Promis
 	const [_, [rawMember], [rawIgnored]] = await container.prisma.$transaction([
 		container.prisma.$queryRaw`INSERT INTO users (id) VALUES (${userId}) ON CONFLICT (id) DO NOTHING`,
 		container.prisma.$queryRaw<
-			{ guild_id: string; regular_expressions: string[] | null; user_id: string; words: string[] | null }[]
+			{ guild_id: string; regular_expressions: string[] | null; user_id: string }[]
 		>/* sql */ `
 	INSERT INTO members (guild_id, user_id)
 	VALUES (${guildId}, ${userId})
@@ -46,7 +46,6 @@ export async function getDatabaseMember(guildId: string, userId: string): Promis
 	return {
 		guildId: rawMember.guild_id!,
 		userId: rawMember.user_id!,
-		words: rawMember.words ?? [],
 		regularExpressions: rawMember.regular_expressions ?? [],
 		ignoredUsers,
 		ignoredChannels,
@@ -58,8 +57,6 @@ export async function getDatabaseUser(userId: string) {
 		where: { id: userId },
 		create: { id: userId },
 		update: {},
-		include: {
-			globallyIgnoredUsers: true,
-		},
+		include: { globallyIgnoredUsers: true },
 	});
 }

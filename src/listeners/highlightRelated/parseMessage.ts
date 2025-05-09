@@ -60,11 +60,13 @@ export const MessageDescription = {
 	Unknown: italic('Message has something unknown'),
 };
 
+const stylesWithUserInfo: GuildNotificationStyle[] = [
+	GuildNotificationStyle.WithContextAndAuthor,
+	GuildNotificationStyle.WithoutContextButWithAuthor,
+];
+
 function highlightShouldGetUserInfo(guildSettings: GuildSetting) {
-	return (
-		guildSettings.notificationStyle === GuildNotificationStyle.WithContextAndAuthor ||
-		guildSettings.notificationStyle === GuildNotificationStyle.WithoutContextButWithAuthor
-	);
+	return stylesWithUserInfo.includes(guildSettings.notificationStyle);
 }
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageCreate })

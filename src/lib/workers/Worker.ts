@@ -2,11 +2,11 @@ import { setInterval } from 'node:timers';
 import { parentPort, workerData } from 'node:worker_threads';
 import type { Member } from '@prisma/client';
 import { WorkerCommands, WorkerResponseTypes, WorkerType, type WorkerCommandsUnion } from '#types/WorkerTypes';
+import { RegularExpressionWordMarker } from '#utils/misc';
 import { WorkerCache, type GuildId, type UserId } from '#workers/WorkerCache';
 import { checkParentPort, sendToMainProcess } from '#workers/common';
 
 const CACHE = new WorkerCache();
-const MEMBER_TYPE_KEY = workerData.type === WorkerType.Word ? 'words' : 'regularExpressions';
 
 checkParentPort(parentPort);
 sendToMainProcess({ command: WorkerResponseTypes.Ready, data: { ready: true } });
@@ -43,7 +43,18 @@ parentPort.on('message', (payload: WorkerCommandsUnion) => {
 				const guildData = guildMap.get(member.guildId) ?? new Map<string, Set<UserId>>();
 
 				// Iterate over the current member's data
-				for (const wordOrPattern of member[MEMBER_TYPE_KEY]) {
+				for (const wordOrPattern of member.regularExpressions) {
+					if (
+						workerData.type === WorkerType.RegularExpression &&
+						wordOrPattern.includes(RegularExpressionWordMarker)
+					) {
+						continue;
+					}
+
+					if (workerData.type === WorkerType.Word && !wordOrPattern.includes(RegularExpressionWordMarker)) {
+						continue;
+					}
+
 					const cachedWordOrPattern = guildData.get(wordOrPattern) ?? new Set<string>();
 					cachedWordOrPattern.add(member.userId);
 					if (cachedWordOrPattern.size) guildData.set(wordOrPattern, cachedWordOrPattern);
@@ -78,7 +89,15 @@ parentPort.on('message', (payload: WorkerCommandsUnion) => {
 
 function processMemberCacheUpdate(cacheToUpdate: Map<string, Set<string>>, members: Member[]) {
 	for (const member of members) {
-		for (const option of member[MEMBER_TYPE_KEY]) {
+		for (const option of member.regularExpressions) {
+			if (workerData.type === WorkerType.Word && !option.includes(RegularExpressionWordMarker)) {
+				continue;
+			}
+
+			if (workerData.type === WorkerType.RegularExpression && option.includes(RegularExpressionWordMarker)) {
+				continue;
+			}
+
 			const cachedInstance = cacheToUpdate.get(option) ?? new Set();
 			cachedInstance.add(member.userId);
 			cacheToUpdate.set(option, cachedInstance);

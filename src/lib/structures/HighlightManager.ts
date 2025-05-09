@@ -30,11 +30,7 @@ export class HighlightManager {
 
 	#promiseMap = new Map<
 		string,
-		{
-			promise: Promise<ResultsTuple>;
-			resolve(data: ResultsTuple): void;
-			results: ResultsTuple;
-		}
+		{ promise: Promise<ResultsTuple>; resolve(data: ResultsTuple): void; results: ResultsTuple }
 	>();
 
 	public async start() {
@@ -49,21 +45,12 @@ export class HighlightManager {
 
 	public async updateAllCaches() {
 		const members = await container.prisma.member.findMany();
-		this.broadcastCommand({
-			command: WorkerCommands.UpdateFullCache,
-			data: { members },
-		});
+		this.broadcastCommand({ command: WorkerCommands.UpdateFullCache, data: { members } });
 	}
 
 	public async updateCacheForGuildID(guildId: string) {
 		const members = await container.prisma.member.findMany({ where: { guildId } });
-		this.broadcastCommand({
-			command: WorkerCommands.UpdateCacheForGuild,
-			data: {
-				guildId,
-				members,
-			},
-		});
+		this.broadcastCommand({ command: WorkerCommands.UpdateCacheForGuild, data: { guildId, members } });
 	}
 
 	public async validateRegularExpression(input: string) {
@@ -121,14 +108,7 @@ export class HighlightManager {
 	}
 
 	public removeTriggerForUser(guildId: string, memberId: string, trigger: string) {
-		this.broadcastCommand({
-			command: WorkerCommands.RemoveTriggerForUser,
-			data: {
-				guildId,
-				memberId,
-				trigger,
-			},
-		});
+		this.broadcastCommand({ command: WorkerCommands.RemoveTriggerForUser, data: { guildId, memberId, trigger } });
 	}
 
 	private initializeWorkers() {

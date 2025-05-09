@@ -33,10 +33,7 @@ import { withDeprecationWarningForMessageCommands } from '#hooks/withDeprecation
 import { createErrorEmbed } from '#utils/embeds';
 import { SupportServerButton, orList, pluralize, supportServerInvite } from '#utils/misc';
 
-@ApplyOptions<Listener.Options>({
-	name: 'MessageCommandError',
-	event: Events.MessageCommandError,
-})
+@ApplyOptions<Listener.Options>({ name: 'MessageCommandError', event: Events.MessageCommandError })
 export class MessageCommandError extends Listener<typeof Events.MessageCommandError> {
 	public override async run(error: unknown, { message, command }: MessageCommandErrorPayload) {
 		const maybeError = error as Error;
@@ -58,10 +55,7 @@ export class MessageCommandError extends Listener<typeof Events.MessageCommandEr
 	}
 }
 
-@ApplyOptions<Listener.Options>({
-	name: 'ChatInputCommandError',
-	event: Events.ChatInputCommandError,
-})
+@ApplyOptions<Listener.Options>({ name: 'ChatInputCommandError', event: Events.ChatInputCommandError })
 export class ChatInputCommandError extends Listener<typeof Events.ChatInputCommandError> {
 	public override async run(error: unknown, { interaction, command }: ChatInputCommandErrorPayload) {
 		const maybeError = error as Error;
@@ -71,28 +65,19 @@ export class ChatInputCommandError extends Listener<typeof Events.ChatInputComma
 			command,
 			async (options) => {
 				if (interaction.replied) {
-					return interaction.followUp({
-						...options,
-						ephemeral: true,
-					});
+					return interaction.followUp({ ...options, ephemeral: true });
 				} else if (interaction.deferred) {
-					return interaction.editReply(options);
+					return interaction.editReply(options as never);
 				}
 
-				return interaction.reply({
-					...options,
-					ephemeral: true,
-				});
+				return interaction.reply({ ...options, ephemeral: true });
 			},
 			command,
 		);
 	}
 }
 
-@ApplyOptions<Listener.Options>({
-	name: 'ContextMenuCommandError',
-	event: Events.ContextMenuCommandError,
-})
+@ApplyOptions<Listener.Options>({ name: 'ContextMenuCommandError', event: Events.ContextMenuCommandError })
 export class ContextMenuCommandError extends Listener<typeof Events.ContextMenuCommandError> {
 	public override async run(error: unknown, { interaction, command }: ContextMenuCommandErrorPayload) {
 		const maybeError = error as Error;
@@ -102,18 +87,12 @@ export class ContextMenuCommandError extends Listener<typeof Events.ContextMenuC
 			command,
 			async (options) => {
 				if (interaction.replied) {
-					return interaction.followUp({
-						...options,
-						ephemeral: true,
-					});
+					return interaction.followUp({ ...options, ephemeral: true });
 				} else if (interaction.deferred) {
-					return interaction.editReply(options);
+					return interaction.editReply(options as never);
 				}
 
-				return interaction.reply({
-					...options,
-					ephemeral: true,
-				});
+				return interaction.reply({ ...options, ephemeral: true });
 			},
 			command,
 		);
@@ -162,18 +141,12 @@ export class ChatInputCommandSubcommandCommandError extends Listener<
 			command,
 			async (options) => {
 				if (interaction.replied) {
-					return interaction.followUp({
-						...options,
-						ephemeral: true,
-					});
+					return interaction.followUp({ ...options, ephemeral: true });
 				} else if (interaction.deferred) {
-					return interaction.editReply(options);
+					return interaction.editReply(options as never);
 				}
 
-				return interaction.reply({
-					...options,
-					ephemeral: true,
-				});
+				return interaction.reply({ ...options, ephemeral: true });
 			},
 			command,
 		);
@@ -271,10 +244,7 @@ async function makeAndSendErrorEmbed<Options>(
 
 		const errorEmbed = createErrorEmbed(error.message);
 
-		await callback({
-			embeds: [errorEmbed],
-			allowedMentions: { parse: [] },
-		} as never);
+		await callback({ embeds: [errorEmbed], allowedMentions: { parse: [] } } as never);
 
 		return;
 	}

@@ -15,13 +15,12 @@ export const rootDir = new URL('../../../', import.meta.url);
 export const packageJsonFile = JSON.parse(await readFile(new URL('package.json', rootDir), 'utf8'));
 
 export const supportServerInvite = envParseString('SUPPORT_SERVER_INVITE', 'https://discord.gg/C6D9bge');
+
 export const SupportServerButton = new ButtonBuilder()
 	.setStyle(ButtonStyle.Link)
 	.setURL(supportServerInvite)
 	.setLabel('Support server')
-	.setEmoji({
-		name: '🆘',
-	});
+	.setEmoji({ name: '🆘' });
 
 export const inviteOptions: InviteGenerationOptions = {
 	scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
@@ -32,19 +31,31 @@ export const inviteOptions: InviteGenerationOptions = {
 		PermissionFlagsBits.EmbedLinks,
 	]),
 };
+
 export const InviteButton = new ButtonBuilder() //
 	.setStyle(ButtonStyle.Link)
 	.setLabel('Add me to your server!')
-	.setEmoji({
-		name: '🎉',
-	});
+	.setEmoji({ name: '🎉' });
 
 export const RegularExpressionCaseSensitiveMatch = '$$HIGHLIGHT_CASE_SENSITIVE$$';
 
+export const RegularExpressionWordMarker = '$$HIGHLIGHT_WORD_MARKER$$';
+
 export function tryRegex(input: string): [boolean, re2 | null] {
-	const caseSensitiveMatch = input.endsWith(RegularExpressionCaseSensitiveMatch);
+	const caseSensitiveMatch = input.includes(RegularExpressionCaseSensitiveMatch);
+	const wordMarker = input.includes(RegularExpressionWordMarker);
+
 	const flags = caseSensitiveMatch ? 'g' : 'gi';
-	const finalInput = caseSensitiveMatch ? input.slice(0, -RegularExpressionCaseSensitiveMatch.length) : input;
+
+	let finalInput = input;
+
+	if (wordMarker) {
+		finalInput = finalInput.replace(RegularExpressionWordMarker, '');
+	}
+
+	if (caseSensitiveMatch) {
+		finalInput = finalInput.replace(RegularExpressionCaseSensitiveMatch, '');
+	}
 
 	try {
 		return [true, new re2(finalInput, flags)];
@@ -75,6 +86,4 @@ export function resolveUserIdFromMessageOrInteraction(
 	return messageOrInteraction instanceof Message ? messageOrInteraction.author.id : messageOrInteraction.user.id;
 }
 
-export type EnsureArray<T> = {
-	[K in keyof T]: T[K] extends any[] | null ? Exclude<T[K], null> : T[K];
-};
+export type EnsureArray<T> = { [K in keyof T]: T[K] extends any[] | null ? Exclude<T[K], null> : T[K] };

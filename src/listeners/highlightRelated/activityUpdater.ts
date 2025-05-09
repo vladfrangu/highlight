@@ -17,7 +17,7 @@ export class MessageCreate extends Listener<typeof Events.MessageCreate> {
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageUpdate, name: 'ActivityUpdater.MessageUpdate' })
 export class MessageUpdate extends Listener<typeof Events.MessageUpdate> {
-	public async run(_: Message, message: Message) {
+	public async run(_: never, message: Message) {
 		if (!message.inGuild()) {
 			return;
 		}

@@ -31,55 +31,40 @@ const typeScriptRuleset = merge(...typescript, {
 		'import/order': [
 			1,
 			{
-				alphabetize: {
-					caseInsensitive: false,
-					order: 'asc',
-				},
+				alphabetize: { caseInsensitive: false, order: 'asc' },
 				groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
 				'newlines-between': 'never',
 			},
 		],
 		'tsdoc/syntax': 0,
 	},
-	settings: {
-		'import/resolver': {
-			typescript: {
-				project: ['tsconfig.eslint.json', 'tests/tsconfig.json'],
-			},
-		},
-	},
+	settings: { 'import/resolver': { typescript: { project: ['tsconfig.eslint.json', 'tests/tsconfig.json'] } } },
 });
 
 const prettierRuleset = merge(...prettier, { files: [`**/*${commonFiles}`] });
 
+const url = new URL(process.env.POSTGRES_URL);
+url.searchParams.delete('schema');
+
 /** @type {import('eslint').Linter.FlatConfig} */
 const safeqlRuleset = {
 	...safeql.configs.connections({
-		connectionUrl: process.env.POSTGRES_URL,
+		connectionUrl: url.toString(),
 		migrationsDir: './prisma/migrations',
 		targets: [{ tag: '**prisma.+($queryRaw|$executeRaw)', transform: '{type}[]' }],
 		overrides: {},
 	}),
 	files: [`**/*${commonFiles}`],
-	languageOptions: {
-		parserOptions: {
-			project: ['tsconfig.eslint.json'],
-		},
-	},
+	languageOptions: { parserOptions: { project: ['tsconfig.eslint.json'] } },
 };
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
 const rules = [
-	{
-		ignores: ['**/node_modules/', '.git/', '**/dist/', '**/coverage/'],
-	},
+	{ ignores: ['**/node_modules/', '.git/', '**/dist/', '**/coverage/'] },
 	commonRuleset,
 	nodeRuleset,
 	typeScriptRuleset,
-	{
-		files: ['**/*{ts,mts,cts,tsx}'],
-		rules: { 'jsdoc/no-undefined-types': 0 },
-	},
+	{ files: ['**/*{ts,mts,cts,tsx}'], rules: { 'jsdoc/no-undefined-types': 0 } },
 	prettierRuleset,
 ];
 

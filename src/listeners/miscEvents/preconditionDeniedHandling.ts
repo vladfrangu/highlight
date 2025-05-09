@@ -11,60 +11,39 @@ import type {
 import type { BaseMessageOptions, InteractionReplyOptions, MessageCreateOptions } from 'discord.js';
 import { createErrorEmbed } from '#utils/embeds';
 
-@ApplyOptions<Listener.Options>({
-	name: 'MessageCommandDenied',
-	event: Events.MessageCommandDenied,
-})
+@ApplyOptions<Listener.Options>({ name: 'MessageCommandDenied', event: Events.MessageCommandDenied })
 export class MessageCommandDenied extends Listener<typeof Events.MessageCommandDenied> {
 	public override async run(error: UserError, { message }: MessageCommandDeniedPayload) {
 		await makeAndSendDeniedEmbed<MessageCreateOptions>(error, async (options) => message.reply(options));
 	}
 }
 
-@ApplyOptions<Listener.Options>({
-	name: 'ChatInputCommandDenied',
-	event: Events.ChatInputCommandDenied,
-})
+@ApplyOptions<Listener.Options>({ name: 'ChatInputCommandDenied', event: Events.ChatInputCommandDenied })
 export class ChatInputCommandDenied extends Listener<typeof Events.ChatInputCommandDenied> {
 	public override async run(error: UserError, { interaction }: ChatInputCommandDeniedPayload) {
 		await makeAndSendDeniedEmbed<InteractionReplyOptions>(error, async (options) => {
 			if (interaction.replied) {
-				return interaction.followUp({
-					...options,
-					ephemeral: true,
-				});
+				return interaction.followUp({ ...options, ephemeral: true });
 			} else if (interaction.deferred) {
-				return interaction.editReply(options);
+				return interaction.editReply(options as never);
 			}
 
-			return interaction.reply({
-				...options,
-				ephemeral: true,
-			});
+			return interaction.reply({ ...options, ephemeral: true });
 		});
 	}
 }
 
-@ApplyOptions<Listener.Options>({
-	name: 'ContextMenuCommandDenied',
-	event: Events.ContextMenuCommandDenied,
-})
+@ApplyOptions<Listener.Options>({ name: 'ContextMenuCommandDenied', event: Events.ContextMenuCommandDenied })
 export class ContextMenuCommandDenied extends Listener<typeof Events.ContextMenuCommandDenied> {
 	public override async run(error: UserError, { interaction }: ContextMenuCommandDeniedPayload) {
 		await makeAndSendDeniedEmbed<InteractionReplyOptions>(error, async (options) => {
 			if (interaction.replied) {
-				return interaction.followUp({
-					...options,
-					ephemeral: true,
-				});
+				return interaction.followUp({ ...options, ephemeral: true });
 			} else if (interaction.deferred) {
-				return interaction.editReply(options);
+				return interaction.editReply(options as never);
 			}
 
-			return interaction.reply({
-				...options,
-				ephemeral: true,
-			});
+			return interaction.reply({ ...options, ephemeral: true });
 		});
 	}
 }

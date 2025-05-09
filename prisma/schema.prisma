@@ -102,8 +102,6 @@ model Member {
   userId  String @map("user_id") @db.Text
   user    User   @relation(fields: [userId], references: [id], onDelete: Restrict)
 
-  /// Words that will trigger a highlight
-  words              String[]              @db.Text
   /// Patterns that will trigger a highlight
   regularExpressions String[]              @map("regular_expressions") @db.Text
   /// Ignored users that will not trigger a highlight

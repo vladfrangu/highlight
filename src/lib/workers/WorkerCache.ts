@@ -1,11 +1,12 @@
+import { escapeMarkdown } from 'discord.js';
 import type re2 from 're2';
 import {
+	type WorkerType,
 	WorkerResponseTypes,
-	WorkerType,
 	type HighlightResult,
 	type RemoveTriggerForUserCommand,
 } from '#types/WorkerTypes';
-import { tryRegex } from '#utils/misc';
+import { RegularExpressionCaseSensitiveMatch, RegularExpressionWordMarker, tryRegex } from '#utils/misc';
 import { sendToMainProcess } from '#workers/common';
 
 export type UserId = string;
@@ -86,78 +87,37 @@ export class WorkerCache {
 
 		// We now have a map of Word | Regular Expression => User IDs
 
-		switch (type) {
-			case WorkerType.RegularExpression: {
-				for (const [regexString, members] of guildData.entries()) {
-					const actualRegularExpression = this.getOrCacheRegularExpression(regexString);
+		for (const [regexString, members] of guildData.entries()) {
+			const actualRegularExpression = this.getOrCacheRegularExpression(regexString);
 
-					if (!actualRegularExpression) {
-						for (const member of members) {
-							sendToMainProcess({
-								command: WorkerResponseTypes.DeleteInvalidRegularExpression,
-								data: {
-									guildId,
-									memberId: member,
-									value: regexString,
-								},
-							});
-							this.removeTriggerForUser({ guildId, memberId: member, trigger: regexString });
-						}
-
-						continue;
-					}
-
-					if (!actualRegularExpression.test(content)) {
-						continue;
-					}
-
-					const parsedContent = content.trim().replace(actualRegularExpression, (matchedValue) => {
-						if (matchedValue.trim().length > 0) return `**${matchedValue}**`;
-						return `__${matchedValue}__`;
+			if (!actualRegularExpression) {
+				for (const member of members) {
+					sendToMainProcess({
+						command: WorkerResponseTypes.DeleteInvalidRegularExpression,
+						data: { guildId, memberId: member, value: regexString },
 					});
-
-					for (const memberId of members) {
-						if (memberId === authorId || alreadyHighlighted.has(memberId)) {
-							continue;
-						}
-
-						alreadyHighlighted.add(memberId);
-						returnData.results.push({ memberId, parsedContent, trigger: regexString });
-					}
+					this.removeTriggerForUser({ guildId, memberId: member, trigger: regexString });
 				}
 
-				break;
+				continue;
 			}
 
-			case WorkerType.Word: {
-				const originalSplit = content.toLowerCase().split(/(\s+)/);
+			if (!actualRegularExpression.test(content)) {
+				continue;
+			}
 
-				for (const [word, possibleMembers] of guildData.entries()) {
-					const wordIndex = originalSplit.indexOf(word.toLowerCase());
+			const parsedContent = content.trim().replace(actualRegularExpression, (matchedValue) => {
+				if (matchedValue.trim().length > 0) return `**${escapeMarkdown(matchedValue)}**`;
+				return `__${escapeMarkdown(matchedValue)}__`;
+			});
 
-					if (wordIndex === -1) {
-						continue;
-					}
-
-					const cloned = originalSplit.map((item) => {
-						if (item.toLowerCase() === word.toLowerCase()) return `**${item}**`;
-						return item;
-					});
-
-					const parsedContent = cloned.join('');
-
-					for (const memberId of possibleMembers) {
-						if (memberId === authorId || alreadyHighlighted.has(memberId)) {
-							continue;
-						}
-
-						alreadyHighlighted.add(memberId);
-
-						returnData.results.push({ memberId, parsedContent, trigger: word });
-					}
+			for (const memberId of members) {
+				if (memberId === authorId || alreadyHighlighted.has(memberId)) {
+					continue;
 				}
 
-				break;
+				alreadyHighlighted.add(memberId);
+				returnData.results.push({ memberId, parsedContent, trigger: this.cleanupRegexString(regexString) });
 			}
 		}
 
@@ -184,5 +144,30 @@ export class WorkerCache {
 
 		this.stringToRegularExpression.set(input, pattern!);
 		return pattern;
+	}
+
+	private cleanupRegexString(input: string) {
+		const hadWordMarker = input.includes(RegularExpressionWordMarker);
+		const hadCaseSensitiveMatch = input.includes(RegularExpressionCaseSensitiveMatch);
+
+		let finalString = input;
+
+		if (hadWordMarker) {
+			finalString = finalString.replace(RegularExpressionWordMarker, '');
+
+			if (finalString.startsWith('\\b')) {
+				finalString = finalString.slice(2);
+			}
+
+			if (finalString.endsWith('\\b')) {
+				finalString = finalString.slice(0, -2);
+			}
+		}
+
+		if (hadCaseSensitiveMatch) {
+			finalString = finalString.replace(RegularExpressionCaseSensitiveMatch, '');
+		}
+
+		return finalString;
 	}
 }
