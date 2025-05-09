@@ -35,7 +35,7 @@
 		"@sapphire/discord.js-utilities": "^7.3.3",
 		"@sapphire/framework": "^5.3.4",
 		"@sapphire/plugin-logger": "^4.0.2",
-		"@sapphire/plugin-subcommands": "^6.0.3",
+		"@sapphire/plugin-subcommands": "^7.0.0",
 		"@sapphire/stopwatch": "^1.5.4",
 		"@sapphire/time-utilities": "^1.7.14",
 		"@sapphire/timestamp": "^1.0.5",
