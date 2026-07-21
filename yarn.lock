@@ -815,10 +815,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pgsql/types@npm:^16.1.0":
-  version: 16.1.1
-  resolution: "@pgsql/types@npm:16.1.1"
-  checksum: 10/488e7e9c5de27964aa0e315fd043bda81f5f44be3d147dfef95f185206563179dfdba0cff11b19500192128bacc23331e7b62f9f183dcaa547ae939e73eec2dc
+"@pgsql/types@npm:^17.6.2":
+  version: 17.6.2
+  resolution: "@pgsql/types@npm:17.6.2"
+  checksum: 10/f96bb8c30915647699feae08234a84a167229824fb4f4f06c7a9a72f69be5878a479f3dcf23dc4ab934b787a44429d32fd8a9709eaf5b382f624f7127e2ab819
   languageName: node
   linkType: hard
 
@@ -4281,7 +4281,7 @@ __metadata:
     eslint-config-neon: "npm:^0.1.62"
     eslint-formatter-pretty: "npm:^6.0.1"
     is-ci: "npm:^4.1.0"
-    libpg-query: "npm:^16.3.0"
+    libpg-query: "npm:^17.0.0"
     lodash.merge: "npm:^4.6.2"
     lru-cache: "npm:^11.1.0"
     prettier: "npm:^3.5.3"
@@ -4861,12 +4861,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libpg-query@npm:^16.3.0":
-  version: 16.5.5
-  resolution: "libpg-query@npm:16.5.5"
+"libpg-query@npm:^17.0.0":
+  version: 17.7.4
+  resolution: "libpg-query@npm:17.7.4"
   dependencies:
-    "@pgsql/types": "npm:^16.1.0"
-  checksum: 10/bc2ff5af1c8cc095672d407531ad1c2f4820b738189413e6a1a969372b394f87810d4b55dbdeab910765cbdbcdf2cf35cb15887ba87dd07936584f2b356ab185
+    "@pgsql/types": "npm:^17.6.2"
+  checksum: 10/793a25ac079f9148aa288f66055944970def8987b7da8990d7bfb2beda6764b4c89695079bfa6760affc183a394461b37c22c5f0a537129a46b5b2131d9597d0
   languageName: node
   linkType: hard
 

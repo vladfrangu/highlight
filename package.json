@@ -65,7 +65,7 @@
 		"eslint-config-neon": "^0.1.62",
 		"eslint-formatter-pretty": "^6.0.1",
 		"is-ci": "^4.1.0",
-		"libpg-query": "^16.3.0",
+		"libpg-query": "^17.0.0",
 		"lodash.merge": "^4.6.2",
 		"prettier": "^3.5.3",
 		"prisma": "^6.7.0",
