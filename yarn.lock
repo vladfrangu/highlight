@@ -2174,6 +2174,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"abbrev@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "abbrev@npm:5.0.0"
+  checksum: 10/a32641fb7a8ba0ad6f65efda80a632c965a2567f52c988897bffc47f473c4e9c3f0166de19d939866b1ed58ec50ce36f697d54a476589ca2706f8b5605ed41f0
+  languageName: node
+  linkType: hard
+
 "acorn-jsx@npm:^5.0.0, acorn-jsx@npm:^5.3.2":
   version: 5.3.2
   resolution: "acorn-jsx@npm:5.3.2"
@@ -4429,13 +4436,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"install-artifact-from-github@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "install-artifact-from-github@npm:1.4.0"
+"install-artifact-from-github@npm:^1.7.0":
+  version: 1.8.0
+  resolution: "install-artifact-from-github@npm:1.8.0"
   bin:
+    hash-github-cache: bin/hash-github-cache.js
     install-from-cache: bin/install-from-cache.js
     save-to-github-cache: bin/save-to-github-cache.js
-  checksum: 10/04844f8f8f068b978cc09880fe02ce6f0857c357265ac9d778cfae9b748d92f76989de1401ceec3f1337f6f7b237aea7ce9e08c4bc51c68e52c6d7637c70f274
+  checksum: 10/82087379934d2948f05748fe44577c86ed9a826a3890ccc42267b745f9ec1689fd163a876cdf1e027fed53b1ff6c375981d6af63b502f3abacfbee798b43ded4
   languageName: node
   linkType: hard
 
@@ -4608,6 +4616,13 @@ __metadata:
   version: 3.1.1
   resolution: "isexe@npm:3.1.1"
   checksum: 10/7fe1931ee4e88eb5aa524cd3ceb8c882537bc3a81b02e438b240e47012eef49c86904d0f0e593ea7c3a9996d18d0f1f3be8d3eaa92333977b0c3a9d353d5563e
+  languageName: node
+  linkType: hard
+
+"isexe@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "isexe@npm:4.0.0"
+  checksum: 10/2ead327ef596042ef9c9ec5f236b316acfaedb87f4bb61b3c3d574fb2e9c8a04b67305e04733bde52c24d9622fdebd3270aadb632adfbf9cadef88fe30f479e5
   languageName: node
   linkType: hard
 
@@ -5633,6 +5648,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minizlib@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "minizlib@npm:3.1.0"
+  dependencies:
+    minipass: "npm:^7.1.2"
+  checksum: 10/f47365cc2cb7f078cbe7e046eb52655e2e7e97f8c0a9a674f4da60d94fb0624edfcec9b5db32e8ba5a99a5f036f595680ae6fe02a262beaa73026e505cc52f99
+  languageName: node
+  linkType: hard
+
 "mkdirp@npm:^3.0.1":
   version: 3.0.1
   resolution: "mkdirp@npm:3.0.1"
@@ -5656,12 +5680,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.22.2":
-  version: 2.23.0
-  resolution: "nan@npm:2.23.0"
+"nan@npm:^2.28.0":
+  version: 2.28.0
+  resolution: "nan@npm:2.28.0"
   dependencies:
     node-gyp: "npm:latest"
-  checksum: 10/9822b384189769ebb9d69160d9f5276bb2644467fe6a8e23ae849d607da5b34940f9abf03605f5f747395c17b0dac5e470aea29e72b4988918edb082d78b5858
+  checksum: 10/299ffb18f43cc53b0728cb16ed15e868960168b84d4140b54c8e057c54e6714d0291eee63c02c3cae4bcf5d0d06b6a93fc8717d8d9ae72ad6d4e8eba5ddacc66
   languageName: node
   linkType: hard
 
@@ -5695,23 +5719,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:^11.2.0":
-  version: 11.2.0
-  resolution: "node-gyp@npm:11.2.0"
+"node-gyp@npm:^13.0.1":
+  version: 13.0.2
+  resolution: "node-gyp@npm:13.0.2"
   dependencies:
     env-paths: "npm:^2.2.0"
     exponential-backoff: "npm:^3.1.1"
     graceful-fs: "npm:^4.2.6"
-    make-fetch-happen: "npm:^14.0.3"
-    nopt: "npm:^8.0.0"
-    proc-log: "npm:^5.0.0"
+    nopt: "npm:^10.0.0"
+    proc-log: "npm:^7.0.0"
     semver: "npm:^7.3.5"
-    tar: "npm:^7.4.3"
+    tar: "npm:^7.5.4"
     tinyglobby: "npm:^0.2.12"
-    which: "npm:^5.0.0"
+    undici: "npm:^8.4.1"
+    which: "npm:^7.0.0"
   bin:
     node-gyp: bin/node-gyp.js
-  checksum: 10/806fd8e3adc9157e17bf0d4a2c899cf6b98a0bbe9f453f630094ce791866271f6cddcaf2133e6513715d934fcba2014d287c7053d5d7934937b3a34d5a3d84ad
+  checksum: 10/018ca69386d40576c0ab4bb556dc3ecf40a06a260174a8f5d50da9a592d0a90bd5cf936ca481f19de7ccb7f79dc801d17032d8e2b70963194965a1cc79f8063e
   languageName: node
   linkType: hard
 
@@ -5739,6 +5763,17 @@ __metadata:
   version: 2.0.19
   resolution: "node-releases@npm:2.0.19"
   checksum: 10/c2b33b4f0c40445aee56141f13ca692fa6805db88510e5bbb3baadb2da13e1293b738e638e15e4a8eb668bb9e97debb08e7a35409b477b5cc18f171d35a83045
+  languageName: node
+  linkType: hard
+
+"nopt@npm:^10.0.0":
+  version: 10.0.1
+  resolution: "nopt@npm:10.0.1"
+  dependencies:
+    abbrev: "npm:^5.0.0"
+  bin:
+    nopt: bin/nopt.js
+  checksum: 10/8021371365e78a2cbab015cac50d8449aa2cc411f0b8f2edb466c1336c3dfee4e61c5bf5bde22ee7dcea80d5f4510a7a8705ed3646c8d782f28b550c62bc4fdf
   languageName: node
   linkType: hard
 
@@ -6224,6 +6259,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proc-log@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "proc-log@npm:7.0.0"
+  checksum: 10/97cd9f4a8a0d84e42ee91e106e5ba5edcb954521e8dbe26ee6ad31396e5c12cc2be5e5b6be7b53fa5a69959afbacd32719106e2d6f45802e34b31d9a3a01ec20
+  languageName: node
+  linkType: hard
+
 "promise-inflight@npm:^1.0.1":
   version: 1.0.1
   resolution: "promise-inflight@npm:1.0.1"
@@ -6277,13 +6319,13 @@ __metadata:
   linkType: hard
 
 "re2@npm:^1.21.4":
-  version: 1.22.1
-  resolution: "re2@npm:1.22.1"
+  version: 1.26.1
+  resolution: "re2@npm:1.26.1"
   dependencies:
-    install-artifact-from-github: "npm:^1.4.0"
-    nan: "npm:^2.22.2"
-    node-gyp: "npm:^11.2.0"
-  checksum: 10/d969d7b1306ce273c0437c336ed310e5c2eccd079136eb98387c4c7fe1bd63446809b0623334418e5ff695ec7f6b9d57394b9e48f8a9a0d48ac77638d5318d31
+    install-artifact-from-github: "npm:^1.7.0"
+    nan: "npm:^2.28.0"
+    node-gyp: "npm:^13.0.1"
+  checksum: 10/e94e0b350d254b1d3ac5e85a10c44762dad40781f4fc4ba14cece4acb9eecedae8a055b0e8ff3ba03e51c3f6c9fe60ba29b97ff491cdedd6cb5e3cf8d8fac46a
   languageName: node
   linkType: hard
 
@@ -7073,6 +7115,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tar@npm:^7.5.4":
+  version: 7.5.22
+  resolution: "tar@npm:7.5.22"
+  dependencies:
+    "@isaacs/fs-minipass": "npm:^4.0.0"
+    chownr: "npm:^3.0.0"
+    minipass: "npm:^7.1.2"
+    minizlib: "npm:^3.1.0"
+    yallist: "npm:^5.0.0"
+  checksum: 10/129606384b3c895f422aaca48bf316357be6dc7aa35c1066c3f06c28acfff0be5b356e1b0a0be7c53a7a8945534ac06cec6d8e296d170d8a09c8bff67b29300e
+  languageName: node
+  linkType: hard
+
 "test-exclude@npm:^7.0.1":
   version: 7.0.1
   resolution: "test-exclude@npm:7.0.1"
@@ -7369,6 +7424,13 @@ __metadata:
   version: 6.21.3
   resolution: "undici@npm:6.21.3"
   checksum: 10/b6b8f4a90e294c11fabbb174b471a310840695ed0154a44b81e9bb4a08867ed738c8a7eac4eb46c7902d502fbccf03fa2cf2e5f18d9a2218d82e4294e3f74a2b
+  languageName: node
+  linkType: hard
+
+"undici@npm:^8.4.1":
+  version: 8.10.1
+  resolution: "undici@npm:8.10.1"
+  checksum: 10/7983c1a9ecf078cf30ca5e70aade598f73ae24451597501e07ec65c411d75f78fe601870e0003e910501eca2e9a8be740cf1fd30044f3ca05297bc6012836c64
   languageName: node
   linkType: hard
 
@@ -7842,6 +7904,17 @@ __metadata:
   bin:
     node-which: bin/which.js
   checksum: 10/6ec99e89ba32c7e748b8a3144e64bfc74aa63e2b2eacbb61a0060ad0b961eb1a632b08fb1de067ed59b002cec3e21de18299216ebf2325ef0f78e0f121e14e90
+  languageName: node
+  linkType: hard
+
+"which@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "which@npm:7.0.0"
+  dependencies:
+    isexe: "npm:^4.0.0"
+  bin:
+    node-which: bin/which.js
+  checksum: 10/913a43ac10df37602ba9795a004dd7ab12ba7dd592aca1f08ec333be1fdd6a49bbf119a88c3f8d0ea70eeb6251726e77069251424d73000299a0a840ed000732
   languageName: node
   linkType: hard
 
