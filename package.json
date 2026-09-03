@@ -31,7 +31,7 @@
 		"@mikro-orm/sql-highlighter": "^1.0.1",
 		"@prisma/client": "^6.7.0",
 		"@sapphire/decorators": "^6.1.1",
-		"@sapphire/discord-utilities": "^3.5.0",
+		"@sapphire/discord-utilities": "^4.0.0",
 		"@sapphire/discord.js-utilities": "^7.3.3",
 		"@sapphire/framework": "^5.3.4",
 		"@sapphire/plugin-logger": "^4.0.2",
