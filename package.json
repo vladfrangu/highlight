@@ -29,7 +29,7 @@
 	"dependencies": {
 		"@discordjs/builders": "^1.11.2",
 		"@mikro-orm/sql-highlighter": "^1.0.1",
-		"@prisma/client": "^6.7.0",
+		"@prisma/client": "^7.0.0",
 		"@sapphire/decorators": "^6.1.1",
 		"@sapphire/discord-utilities": "^3.5.0",
 		"@sapphire/discord.js-utilities": "^7.3.3",
