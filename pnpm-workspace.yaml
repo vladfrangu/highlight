@@ -9,3 +9,6 @@ allowBuilds:
   prisma: true
   re2: true
   unrs-resolver: false
+minimumReleaseAgeExclude:
+  # Renovate security update: vitest@4.1.11
+  - vitest@4.1.11
