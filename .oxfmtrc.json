@@ -1,0 +1,23 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"tabWidth": 4,
+	"printWidth": 120,
+	"singleQuote": true,
+	"quoteProps": "as-needed",
+	"semi": true,
+	"trailingComma": "all",
+	"endOfLine": "lf",
+	"sortPackageJson": false,
+	"sortImports": {
+		"order": "asc",
+		"ignoreCase": false,
+		"newlinesBetween": false,
+		"groups": ["builtin", "external", "internal", "parent", "sibling", "index", "unknown"]
+	},
+	"overrides": [
+		{ "files": ["*.yml", "*.yaml"], "options": { "tabWidth": 2, "useTabs": false } },
+		{ "files": ["src/lib/setup.ts"], "options": { "sortImports": false } }
+	],
+	"ignorePatterns": ["coverage", "dist", "node_modules", "pnpm-lock.yaml", "prisma/migrations", "src.old"]
+}
