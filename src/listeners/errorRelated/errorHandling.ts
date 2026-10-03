@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, UserError, container } from '@sapphire/framework';
 import type {
-	Command,
+	Args,
 	Piece,
 	Awaitable,
 	ChatInputCommandErrorPayload,
@@ -12,12 +12,11 @@ import type {
 	MessageCommandErrorPayload,
 } from '@sapphire/framework';
 import type {
-	Subcommand,
 	ChatInputSubcommandErrorPayload,
 	MessageSubcommandErrorPayload,
 	MessageSubcommandNoMatchContext,
 } from '@sapphire/plugin-subcommands';
-import { SubcommandPluginEvents, SubcommandPluginIdentifiers } from '@sapphire/plugin-subcommands';
+import { SubcommandPluginEvents } from '@sapphire/plugin-subcommands';
 import {
 	type Message,
 	type PartialGroupDMChannel,
@@ -40,7 +39,6 @@ export class MessageCommandError extends Listener<typeof Events.MessageCommandEr
 
 		await makeAndSendErrorEmbed<MessageCreateOptions>(
 			maybeError,
-			command,
 			async (options) =>
 				(message.channel as Exclude<Message['channel'], PartialGroupDMChannel>).send(
 					withDeprecationWarningForMessageCommands({
@@ -62,7 +60,6 @@ export class ChatInputCommandError extends Listener<typeof Events.ChatInputComma
 
 		await makeAndSendErrorEmbed<InteractionReplyOptions>(
 			maybeError,
-			command,
 			async (options) => {
 				if (interaction.replied) {
 					return interaction.followUp({ ...options, ephemeral: true });
@@ -84,7 +81,6 @@ export class ContextMenuCommandError extends Listener<typeof Events.ContextMenuC
 
 		await makeAndSendErrorEmbed<InteractionReplyOptions>(
 			maybeError,
-			command,
 			async (options) => {
 				if (interaction.replied) {
 					return interaction.followUp({ ...options, ephemeral: true });
@@ -111,7 +107,6 @@ export class MessageCommandSubcommandCommandError extends Listener<
 
 		await makeAndSendErrorEmbed<MessageCreateOptions>(
 			maybeError,
-			command,
 			async (options) =>
 				(message.channel as Exclude<Message['channel'], PartialGroupDMChannel>).send(
 					withDeprecationWarningForMessageCommands({
@@ -138,7 +133,6 @@ export class ChatInputCommandSubcommandCommandError extends Listener<
 
 		await makeAndSendErrorEmbed<InteractionReplyOptions>(
 			maybeError,
-			command,
 			async (options) => {
 				if (interaction.replied) {
 					return interaction.followUp({ ...options, ephemeral: true });
@@ -153,9 +147,95 @@ export class ChatInputCommandSubcommandCommandError extends Listener<
 	}
 }
 
+// Overrides the built-in listener, which only logs the mismatch
+@ApplyOptions<Listener.Options>({
+	name: 'PluginMessageSubcommandNoMatch',
+	event: SubcommandPluginEvents.MessageSubcommandNoMatch,
+})
+export class MessageSubcommandNoMatch extends Listener<typeof SubcommandPluginEvents.MessageSubcommandNoMatch> {
+	public override async run(message: Message, _args: Args, ctx: MessageSubcommandNoMatchContext) {
+		const { command } = ctx;
+		const callback = async (options: MessageCreateOptions) =>
+			(message.channel as Exclude<Message['channel'], PartialGroupDMChannel>).send(
+				withDeprecationWarningForMessageCommands({
+					commandName: command.name,
+					guildId: message.guildId,
+					receivedFromMessage: true,
+					options,
+				}),
+			);
+
+		if (!command.supportsMessageCommands()) {
+			// This command can strictly be ran via slash commands only!
+			await callback({
+				embeds: [createErrorEmbed(`🤐 This command can only be ran via slash commands!`)],
+			} as never);
+
+			return;
+		}
+
+		const mappings = command.parsedSubcommandMappings;
+
+		let foundMessageMapping = mappings.find(
+			(mapping) =>
+				(mapping.type === 'method' && mapping.name === ctx.possibleSubcommandGroupOrName) ||
+				(mapping.type === 'group' &&
+					mapping.entries.some((entry) => entry.name === ctx.possibleSubcommandName)),
+		);
+
+		if (foundMessageMapping?.type === 'group') {
+			foundMessageMapping = foundMessageMapping.entries.find(
+				(mapping) => mapping.type === 'method' && mapping.name === ctx.possibleSubcommandName,
+			);
+		}
+
+		if (foundMessageMapping) {
+			const errorUuid = randomUUID();
+
+			await useErrorWebhook().send({
+				content: `Encountered missing message command mapping for command ${inlineCode(
+					command.name,
+				)}, subcommand group ${inlineCode(`${ctx.possibleSubcommandGroupOrName}`)}, subcommand ${inlineCode(
+					`${ctx.possibleSubcommandGroupOrName}`,
+				)}.\n\nUUID: ${bold(inlineCode(errorUuid))}`,
+			});
+
+			await callback({
+				embeds: [
+					createErrorEmbed(
+						`😖 I seem to have forgotten to map the ${inlineCode(
+							ctx.possibleSubcommandName ?? ctx.possibleSubcommandGroupOrName!,
+						)} properly for you. Please report this error ID to my developer: ${bold(inlineCode(errorUuid))}!`,
+					),
+				],
+				components: [new ActionRowBuilder().setComponents(SupportServerButton)],
+			} as never);
+
+			return;
+		}
+
+		const actualSubcommandNames = mappings
+			.map((entry) => bold(inlineCode(entry.name)))
+			.sort((a, b) => a.localeCompare(b));
+
+		const prettyList = orList.format(actualSubcommandNames);
+
+		await callback({
+			embeds: [
+				createErrorEmbed(
+					`The subcommand you provided is unknown to me or you didn't provide any! ${pluralize(
+						actualSubcommandNames.length,
+						'This is',
+						'These are',
+					)} the ${pluralize(actualSubcommandNames.length, 'subcommand', 'subcommands')} I know about: ${prettyList}`,
+				),
+			],
+		} as never);
+	}
+}
+
 async function makeAndSendErrorEmbed<Options>(
 	error: Error | UserError,
-	command: Command | Subcommand,
 	callback: (options: Options) => Awaitable<unknown>,
 	piece: Piece,
 ) {
@@ -164,78 +244,6 @@ async function makeAndSendErrorEmbed<Options>(
 	const { name, location } = piece;
 
 	if (error instanceof UserError) {
-		if (error.identifier === SubcommandPluginIdentifiers.MessageSubcommandNoMatch) {
-			const casted = command as Subcommand;
-			const ctx = error.context as MessageSubcommandNoMatchContext;
-
-			if (!casted.supportsMessageCommands()) {
-				// This command can strictly be ran via slash commands only!
-				await callback({
-					embeds: [createErrorEmbed(`🤐 This command can only be ran via slash commands!`)],
-				} as never);
-
-				return;
-			}
-
-			const mappings = casted.parsedSubcommandMappings;
-
-			let foundMessageMapping = mappings.find(
-				(mapping) =>
-					(mapping.type === 'method' && mapping.name === ctx.possibleSubcommandGroupOrName) ||
-					(mapping.type === 'group' &&
-						mapping.entries.some((entry) => entry.name === ctx.possibleSubcommandName)),
-			);
-
-			if (foundMessageMapping?.type === 'group') {
-				foundMessageMapping = foundMessageMapping.entries.find(
-					(mapping) => mapping.type === 'method' && mapping.name === ctx.possibleSubcommandName,
-				);
-			}
-
-			if (foundMessageMapping) {
-				await webhook.send({
-					content: `Encountered missing message command mapping for command ${inlineCode(
-						command.name,
-					)}, subcommand group ${inlineCode(`${ctx.possibleSubcommandGroupOrName}`)}, subcommand ${inlineCode(
-						`${ctx.possibleSubcommandGroupOrName}`,
-					)}.\n\nUUID: ${bold(inlineCode(errorUuid))}`,
-				});
-
-				await callback({
-					embeds: [
-						createErrorEmbed(
-							`😖 I seem to have forgotten to map the ${inlineCode(
-								ctx.possibleSubcommandName ?? ctx.possibleSubcommandGroupOrName!,
-							)} properly for you. Please report this error ID to my developer: ${bold(inlineCode(errorUuid))}!`,
-						),
-					],
-					components: [new ActionRowBuilder().setComponents(SupportServerButton)],
-				} as never);
-
-				return;
-			}
-
-			const actualSubcommandNames = mappings
-				.map((entry) => bold(inlineCode(entry.name)))
-				.sort((a, b) => a.localeCompare(b));
-
-			const prettyList = orList.format(actualSubcommandNames);
-
-			await callback({
-				embeds: [
-					createErrorEmbed(
-						`The subcommand you provided is unknown to me or you didn't provide any! ${pluralize(
-							actualSubcommandNames.length,
-							'This is',
-							'These are',
-						)} the ${pluralize(actualSubcommandNames.length, 'subcommand', 'subcommands')} I know about: ${prettyList}`,
-					),
-				],
-			} as never);
-
-			return;
-		}
-
 		const errorEmbed = createErrorEmbed(error.message);
 
 		await callback({ embeds: [errorEmbed], allowedMentions: { parse: [] } } as never);
