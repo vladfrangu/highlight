@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/no-identical-functions */
+/* eslint-disable @neon/eslint-sonarjs/no-identical-functions */
 
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, container } from '@sapphire/framework';

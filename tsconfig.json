@@ -15,6 +15,7 @@
 		"rootDir": "./src",
 		"outDir": "./dist",
 		"tsBuildInfoFile": "./dist/.tsbuildinfo",
+		"types": ["node"],
 		"paths": {
 			"#internals/*": ["./src/lib/internals/*.ts"],
 			"#hooks/*": ["./src/lib/utils/hooks/*.ts"],
