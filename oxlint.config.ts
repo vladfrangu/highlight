@@ -8,8 +8,17 @@ import typescriptJsPlugins from 'eslint-config-neon/oxlint/typescript.jsplugins'
 import { defineConfig, type OxlintConfig } from 'oxlint';
 
 // sonarjs needs the TypeScript JS API, which TypeScript 7 no longer ships.
+// typescript-sort-keys crashes on every enum, perfectionist replaces it below.
 // tsdoc/syntax was already disabled here, react and vue are not used.
-const droppedJsPlugins = ['@neon/eslint-react', '@neon/eslint-sonarjs', '@neon/eslint-tsdoc', '@neon/eslint-vue'];
+const droppedJsPlugins = [
+	'@neon/eslint-react',
+	'@neon/eslint-sonarjs',
+	'@neon/eslint-tsdoc',
+	'@neon/eslint-typescript-sort-keys',
+	'@neon/eslint-vue',
+];
+
+const sortOptions = { type: 'alphabetical', order: 'asc', ignoreCase: false };
 
 function keepRules(rules: OxlintConfig['rules']) {
 	return Object.fromEntries(
@@ -42,7 +51,10 @@ export default defineConfig({
 	],
 	ignorePatterns: ['dist/**', 'coverage/**', 'src.old/**', 'src/lib/generated/**'],
 	options: { typeAware: true, reportUnusedDisableDirectives: 'warn' },
+	jsPlugins: ['eslint-plugin-perfectionist'],
 	rules: {
+		'perfectionist/sort-enums': ['error', sortOptions],
+		'perfectionist/sort-interfaces': ['error', sortOptions],
 		'typescript/consistent-type-definitions': ['error', 'interface'],
 		'typescript/dot-notation': 'off',
 	},
