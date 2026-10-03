@@ -254,6 +254,9 @@ importers:
       eslint-config-neon:
         specifier: 0.5.4
         version: 0.5.4(@typescript-eslint/types@8.71.0)(@typescript-eslint/utils@8.71.0(eslint@10.11.0(jiti@2.4.2)(supports-color@9.4.0))(supports-color@9.4.0)(typescript@7.0.2))(eslint-import-resolver-node@0.3.9(supports-color@9.4.0))(eslint@10.11.0(jiti@2.4.2)(supports-color@9.4.0))(supports-color@9.4.0)(svelte@3.59.2)(typescript@7.0.2)
+      eslint-plugin-perfectionist:
+        specifier: ^5.12.1
+        version: 5.12.1(eslint@10.11.0(jiti@2.4.2)(supports-color@9.4.0))(supports-color@9.4.0)(typescript@7.0.2)
       oxfmt:
         specifier: 0.71.0
         version: 0.71.0(svelte@3.59.2)
@@ -2777,6 +2780,15 @@ packages:
       typescript:
         optional: true
 
+  eslint-plugin-perfectionist@5.12.1:
+    resolution: {integrity: sha512-krdSE7Dz+TCtcVr2+rfNhlOIFFBJcUdoRvjaN7JQnsaVnxJw+BZh9wMkY3MSLCJat+yW+UPTQLKS82Epc7MGZA==}
+    engines: {node: ^20.0.0 || >=22.0.0}
+    peerDependencies:
+      eslint: ^8.45.0 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      eslint:
+        optional: true
+
   eslint-plugin-promise@7.3.0:
     resolution: {integrity: sha512-6uGiOR0INuujr6PEQmeSSP7GbIMJ/ebEXXiEzb/nOj68LknH5Pxzb/AbZivmr6VE6TkTE8rTjRK9zhKpK6HsRA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -3797,6 +3809,10 @@ packages:
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+
+  natural-orderby@5.0.0:
+    resolution: {integrity: sha512-kKHJhxwpR/Okycz4HhQKKlhWe4ASEfPgkSWNmKFHd7+ezuQlxkA5cM3+XkBPvm1gmHen3w53qsYAv+8GwRrBlg==}
+    engines: {node: '>=18'}
 
   negotiator@1.0.0:
     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
@@ -7462,6 +7478,17 @@ snapshots:
     optionalDependencies:
       typescript: 7.0.2
 
+  eslint-plugin-perfectionist@5.12.1(eslint@10.11.0(jiti@2.4.2)(supports-color@9.4.0))(supports-color@9.4.0)(typescript@7.0.2):
+    dependencies:
+      '@typescript-eslint/types': 8.71.0
+      '@typescript-eslint/utils': 8.71.0(eslint@10.11.0(jiti@2.4.2)(supports-color@9.4.0))(supports-color@9.4.0)(typescript@7.0.2)
+      natural-orderby: 5.0.0
+    optionalDependencies:
+      eslint: 10.11.0(jiti@2.4.2)(supports-color@9.4.0)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   eslint-plugin-promise@7.3.0(eslint@10.11.0(jiti@2.4.2)(supports-color@9.4.0)):
     dependencies:
       '@eslint-community/eslint-utils': 4.7.0(eslint@10.11.0(jiti@2.4.2)(supports-color@9.4.0))
@@ -8729,6 +8756,8 @@ snapshots:
   natural-compare-lite@1.4.0: {}
 
   natural-compare@1.4.0: {}
+
+  natural-orderby@5.0.0: {}
 
   negotiator@1.0.0: {}
 
