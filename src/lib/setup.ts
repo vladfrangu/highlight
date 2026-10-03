@@ -1,4 +1,4 @@
-/* eslint-disable import/order, import/first */
+/* eslint-disable import/first */
 
 // #region Env Setup
 import { rootDir } from '#utils/misc';

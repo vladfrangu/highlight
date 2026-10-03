@@ -1,4 +1,4 @@
-/* eslint-disable @neon/eslint-sonarjs/no-identical-functions,n/callback-return,promise/prefer-await-to-callbacks */
+/* eslint-disable n/callback-return,promise/prefer-await-to-callbacks */
 
 import { randomUUID } from 'node:crypto';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -19,12 +19,12 @@ import type {
 } from '@sapphire/plugin-subcommands';
 import { SubcommandPluginEvents, SubcommandPluginIdentifiers } from '@sapphire/plugin-subcommands';
 import {
+	type Message,
+	type PartialGroupDMChannel,
 	ActionRowBuilder,
 	bold,
 	codeBlock,
 	inlineCode,
-	Message,
-	PartialGroupDMChannel,
 	type InteractionReplyOptions,
 	type MessageCreateOptions,
 } from 'discord.js';
@@ -206,9 +206,7 @@ async function makeAndSendErrorEmbed<Options>(
 						createErrorEmbed(
 							`😖 I seem to have forgotten to map the ${inlineCode(
 								ctx.possibleSubcommandName ?? ctx.possibleSubcommandGroupOrName!,
-							)} properly for you. Please report this error ID to my developer: ${bold(
-								inlineCode(errorUuid),
-							)}!`,
+							)} properly for you. Please report this error ID to my developer: ${bold(inlineCode(errorUuid))}!`,
 						),
 					],
 					components: [new ActionRowBuilder().setComponents(SupportServerButton)],
@@ -230,11 +228,7 @@ async function makeAndSendErrorEmbed<Options>(
 							actualSubcommandNames.length,
 							'This is',
 							'These are',
-						)} the ${pluralize(
-							actualSubcommandNames.length,
-							'subcommand',
-							'subcommands',
-						)} I know about: ${prettyList}`,
+						)} the ${pluralize(actualSubcommandNames.length, 'subcommand', 'subcommands')} I know about: ${prettyList}`,
 					),
 				],
 			} as never);

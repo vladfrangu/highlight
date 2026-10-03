@@ -53,6 +53,7 @@ export default defineConfig({
 	options: { typeAware: true, reportUnusedDisableDirectives: 'warn' },
 	jsPlugins: ['eslint-plugin-perfectionist'],
 	rules: {
+		'id-length': ['error', { exceptions: ['_', '$', 'a', 'b', 'v', 'x', 'y', 'T', 'K'], min: 2 }],
 		'perfectionist/sort-enums': ['error', sortOptions],
 		'perfectionist/sort-interfaces': ['error', sortOptions],
 		'typescript/consistent-type-definitions': ['error', 'interface'],

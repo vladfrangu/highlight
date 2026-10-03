@@ -104,12 +104,12 @@ export type ValidateRegularExpressionResultResponse = BaseResponse<
 >;
 // #endregion
 
-interface BaseCommand<C extends WorkerCommands, D> {
-	command: C;
-	data: D;
+interface BaseCommand<Cmd extends WorkerCommands, Data> {
+	command: Cmd;
+	data: Data;
 }
 
-interface BaseResponse<C extends WorkerResponseTypes, D> {
-	command: C;
-	data: D;
+interface BaseResponse<Cmd extends WorkerResponseTypes, Data> {
+	command: Cmd;
+	data: Data;
 }

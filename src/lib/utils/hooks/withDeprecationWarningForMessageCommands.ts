@@ -26,7 +26,7 @@ export function withDeprecationWarningOnEmbedForMessageCommands(
 	if (embed.data.fields?.length === 25) {
 		embed.setDescription(
 			[
-				embed.data.description ? embed.data.description : undefined,
+				embed.data.description ?? undefined,
 				embed.data.description ? '' : undefined,
 				`> ${bold('Did you know?')}`,
 				`> Message based commands are ${bold('deprecated')}, and will be removed in the future.`,
@@ -70,7 +70,7 @@ export function withDeprecationWarningOnEmbedForMessageCommands(
 }
 
 export function withDeprecationWarningForMessageCommands<
-	T extends InteractionReplyOptions | MessageCreateOptions | WebhookMessageEditOptions,
+	TOptions extends InteractionReplyOptions | MessageCreateOptions | WebhookMessageEditOptions,
 >({
 	options,
 	commandName,
@@ -79,7 +79,7 @@ export function withDeprecationWarningForMessageCommands<
 }: {
 	commandName: string;
 	guildId: string | null;
-	options: T;
+	options: TOptions;
 	receivedFromMessage: boolean;
 }) {
 	// If we didn't get it from messages, might as well not do anything

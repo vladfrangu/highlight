@@ -3,9 +3,7 @@ import { GuildIds, testSubjectTriggerUserId, testSubjectUserId } from '#test/con
 import { WorkerResponseTypes, WorkerType } from '#types/WorkerTypes';
 import { RegularExpressionCaseSensitiveMatch, RegularExpressionWordMarker } from '#utils/misc';
 
-vi.mock('#workers/common', () => {
-	return { checkParentPort: vi.fn(() => true), sendToMainProcess: vi.fn(() => void 0) };
-});
+vi.mock('#workers/common', () => ({ checkParentPort: vi.fn(() => true), sendToMainProcess: vi.fn(() => void 0) }));
 
 const { WorkerCache } = await import('#workers/WorkerCache');
 const { sendToMainProcess } = await import('#workers/common');

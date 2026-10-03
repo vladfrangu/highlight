@@ -1,5 +1,3 @@
-/* eslint-disable @neon/eslint-sonarjs/no-identical-functions */
-
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, container } from '@sapphire/framework';
 import type { Message, MessageReaction, Typing, User } from 'discord.js';

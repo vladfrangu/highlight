@@ -79,9 +79,8 @@ export class BotParsingCommand extends Subcommand {
 		},
 		{
 			name: 'list',
-			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
-				return this.listSubcommand(interaction);
-			},
+			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) =>
+				this.listSubcommand(interaction),
 		},
 	];
 

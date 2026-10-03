@@ -1,13 +1,12 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import type { Args } from '@sapphire/framework';
 import { Subcommand, type SubcommandMappingArray } from '@sapphire/plugin-subcommands';
+import type { Message, User } from 'discord.js';
 import {
 	ActionRowBuilder,
 	ApplicationCommandType,
 	ButtonBuilder,
 	ButtonStyle,
-	Message,
-	User,
 	bold,
 	inlineCode,
 	quote,
@@ -135,33 +134,26 @@ export class GlobalBlockCommand extends Subcommand {
 		},
 		{
 			name: 'list',
-			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
-				return this.listSubcommand(interaction, false);
-			},
-			messageRun: async (message: Message<true>) => {
-				return this.listSubcommand(message, true);
-			},
+			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) =>
+				this.listSubcommand(interaction, false),
+			messageRun: async (message: Message<true>) => this.listSubcommand(message, true),
 		},
 		{
 			name: 'clear',
-			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) => {
-				return this.clearSubcommand(interaction, false);
-			},
-			messageRun: async (message: Message<true>) => {
-				return this.clearSubcommand(message, true);
-			},
+			chatInputRun: async (interaction: Subcommand.ChatInputCommandInteraction<'cached'>) =>
+				this.clearSubcommand(interaction, false),
+			messageRun: async (message: Message<true>) => this.clearSubcommand(message, true),
 		},
 		// Hidden subcommand to show the help menu by default
 		{
 			name: 'help',
 			default: true,
-			messageRun: async (message) => {
-				return (this.container.stores.get('commands').get('help') as HelpCommand)['sendSingleCommandHelp'](
+			messageRun: async (message) =>
+				(this.container.stores.get('commands').get('help') as HelpCommand)['sendSingleCommandHelp'](
 					message,
 					this,
 					true,
-				);
-			},
+				),
 		},
 	];
 
