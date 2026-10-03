@@ -40,7 +40,3 @@ wiki/
 
 bwd/
 .env
-
-# Yarn files
-.yarn/install-state.gz
-.yarn/build-state.yml

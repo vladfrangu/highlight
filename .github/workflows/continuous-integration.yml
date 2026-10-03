@@ -3,7 +3,7 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - sapphire/rewrite-to-sapphire-and-application-commands
+      - main
   pull_request:
 
 jobs:
@@ -13,16 +13,17 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: Use Node.js v20
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - name: Use Node.js v24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-          registry-url: https://registry.yarnpkg.com/
+          node-version: 24
+          cache: pnpm
       - name: Install Dependencies
-        run: yarn --immutable
+        run: pnpm install --frozen-lockfile
       - name: Run ESLint & Prettier
-        run: yarn lint
+        run: pnpm lint
 
   UnitTests:
     name: Unit tests
@@ -30,16 +31,17 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: Use Node.js v20
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - name: Use Node.js v24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-          registry-url: https://registry.yarnpkg.com/
+          node-version: 24
+          cache: pnpm
       - name: Install Dependencies
-        run: yarn --immutable
+        run: pnpm install --frozen-lockfile
       - name: Run unit tests
-        run: yarn test
+        run: pnpm test
 
   Building:
     name: Build code
@@ -47,13 +49,14 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: Use Node.js v20
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - name: Use Node.js v24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: yarn
-          registry-url: https://registry.yarnpkg.com/
+          node-version: 24
+          cache: pnpm
       - name: Install Dependencies
-        run: yarn --immutable
+        run: pnpm install --frozen-lockfile
       - name: Build Code
-        run: yarn build
+        run: pnpm build
