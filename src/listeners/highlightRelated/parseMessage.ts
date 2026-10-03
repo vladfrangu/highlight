@@ -1,4 +1,3 @@
-import { GuildNotificationStyle, Prisma, type Guild as GuildSetting } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener } from '@sapphire/framework';
 import { Time } from '@sapphire/timestamp';
@@ -19,6 +18,8 @@ import {
 	italic,
 	time,
 } from 'discord.js';
+import { GuildNotificationStyle, type Guild as GuildSetting } from '#generated/prisma/client';
+import { fetchMembersForHighlight } from '#generated/prisma/sql';
 import { WorkerType, type ParsedHighlightData } from '#types/WorkerTypes';
 import type { EnsureArray } from '#utils/misc';
 import { UnknownUserTag, getUserTag } from '#utils/userTags';
@@ -38,19 +39,6 @@ type DBReturn = {
 
 type MemberInfo = EnsureArray<DBReturn[number]>;
 //   ^?
-
-type ActualDBReturn = {
-	adult_channel_highlights: boolean;
-	direct_message_cooldown_expires_at: Date | null;
-	direct_message_failed_attempts: number;
-	globally_ignored_users: null[] | string[];
-	grace_period: number | null;
-	last_active_at: Date | null;
-	opted_out: boolean;
-	server_ignored_channels: null[] | string[];
-	server_ignored_users: null[] | string[];
-	user_id: string;
-}[];
 
 export const MessageDescription = {
 	Embed: italic('Message has embeds'),
@@ -237,53 +225,18 @@ export class HighlightParser extends Listener<typeof Events.MessageCreate> {
 	}
 
 	private async fetchAllMembersFromDatabase(guildId: string, channelId: string, members: Set<string>) {
-		const query = Prisma.sql`
-	SELECT
-		users.id as user_id,
-		users.opted_out,
-		users.grace_period,
-		users.adult_channel_highlights,
-		users.direct_message_failed_attempts,
-		users.direct_message_cooldown_expires_at,
-		array_agg(guild_ignored_channels.ignored_channel_id) as server_ignored_channels,
-		array_agg(guild_ignored_users.ignored_user_id) as server_ignored_users,
-		array_agg(global_ignored_users.ignored_user_id) as globally_ignored_users,
-		user_activities.last_active_at
-	FROM users
-	LEFT JOIN members m ON
-		users.id = m.user_id
-	LEFT JOIN user_activities ON
-		channel_id = ${channelId}
-		AND users.id = user_activities.user_id
-	LEFT JOIN guild_ignored_channels ON
-		guild_ignored_channels.user_id = m.user_id
-		AND guild_ignored_channels.guild_id = m.guild_id
-	LEFT JOIN guild_ignored_users ON
-		guild_ignored_users.guild_id = m.guild_id
-		AND guild_ignored_users.user_id = m.user_id
-	LEFT JOIN global_ignored_users ON
-		global_ignored_users.user_id = m.user_id
-	WHERE
-		m.user_id IN (${Prisma.join([...members], ',')})
-		AND m.guild_id = ${guildId}
-	GROUP BY
-		users.id,
-		user_activities.last_active_at
-`;
-
-		const data = await this.container.prisma.$queryRaw<ActualDBReturn>(query);
+		const data = await this.container.prisma.$queryRawTyped(
+			fetchMembersForHighlight(channelId, [...members], guildId),
+		);
 
 		const result = new Map<string, MemberInfo>();
 
 		for (const member of data) {
-			const globallyIgnoredUsers =
-				member.globally_ignored_users[0] === null ? [] : (member.globally_ignored_users as string[]);
+			const globallyIgnoredUsers = member.globally_ignored_users?.[0] ? member.globally_ignored_users : [];
 
-			const serverIgnoredChannels =
-				member.server_ignored_channels[0] === null ? [] : (member.server_ignored_channels as string[]);
+			const serverIgnoredChannels = member.server_ignored_channels?.[0] ? member.server_ignored_channels : [];
 
-			const serverIgnoredUsers =
-				member.server_ignored_users[0] === null ? [] : (member.server_ignored_users as string[]);
+			const serverIgnoredUsers = member.server_ignored_users?.[0] ? member.server_ignored_users : [];
 
 			result.set(member.user_id, {
 				adult_channel_highlights: member.adult_channel_highlights,

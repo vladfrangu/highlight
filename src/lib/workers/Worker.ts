@@ -1,6 +1,6 @@
 import { setInterval } from 'node:timers';
 import { parentPort, workerData } from 'node:worker_threads';
-import type { Member } from '@prisma/client';
+import type { Member } from '#generated/prisma/client';
 import { WorkerCommands, WorkerResponseTypes, WorkerType, type WorkerCommandsUnion } from '#types/WorkerTypes';
 import { RegularExpressionWordMarker } from '#utils/misc';
 import { WorkerCache, type GuildId, type UserId } from '#workers/WorkerCache';

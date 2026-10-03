@@ -6,6 +6,7 @@
 	"main": "dist/Highlight.js",
 	"type": "module",
 	"imports": {
+		"#generated/*": "./dist/lib/generated/*.js",
 		"#internals/*": "./dist/lib/internals/*.js",
 		"#hooks/*": "./dist/lib/utils/hooks/*.js",
 		"#setup": "./dist/lib/setup.js",
@@ -22,6 +23,7 @@
 		"coverage": "vitest run --coverage",
 		"lint": "oxfmt --check && oxlint src tests",
 		"format": "oxfmt && oxlint --fix src tests",
+		"generate": "prisma generate --sql",
 		"start": "pnpm run cleanbuild && node .",
 		"test": "vitest run",
 		"watch": "tsc -w"
@@ -29,7 +31,8 @@
 	"dependencies": {
 		"@discordjs/builders": "^1.11.2",
 		"@mikro-orm/sql-highlighter": "^1.0.1",
-		"@prisma/client": "^6.7.0",
+		"@prisma/adapter-pg": "7.10.0",
+		"@prisma/client": "7.10.0",
 		"@sapphire/decorators": "^6.1.1",
 		"@sapphire/discord-utilities": "^3.5.0",
 		"@sapphire/discord.js-utilities": "^7.3.3",
@@ -60,7 +63,7 @@
 		"oxfmt": "0.71.0",
 		"oxlint": "1.86.0",
 		"oxlint-tsgolint": "7.0.2003",
-		"prisma": "^6.7.0",
+		"prisma": "7.10.0",
 		"rimraf": "^6.0.1",
 		"typescript": "7.0.2",
 		"vitest": "^3.1.3"

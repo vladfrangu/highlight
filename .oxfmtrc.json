@@ -19,5 +19,13 @@
 		{ "files": ["*.yml", "*.yaml"], "options": { "tabWidth": 2, "useTabs": false } },
 		{ "files": ["src/lib/setup.ts"], "options": { "sortImports": false } }
 	],
-	"ignorePatterns": ["coverage", "dist", "node_modules", "pnpm-lock.yaml", "prisma/migrations", "src.old"]
+	"ignorePatterns": [
+		"coverage",
+		"dist",
+		"node_modules",
+		"pnpm-lock.yaml",
+		"prisma/migrations",
+		"src.old",
+		"src/lib/generated"
+	]
 }

@@ -1,6 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener } from '@sapphire/framework';
 import { TimestampStyles, time, type Guild } from 'discord.js';
+import { ensureGuild } from '#generated/prisma/sql';
 import { useGuildJoinLeaveWebhook } from '#hooks/useGuildJoinLeaveWebhook';
 import { createInfoEmbed } from '#utils/embeds';
 import { pluralize } from '#utils/misc';
@@ -15,7 +16,7 @@ export class GuildCreateListener extends Listener<typeof Events.GuildCreate> {
 		const { logger, colors, client, prisma } = this.container;
 
 		// Always make sure the guild is in the database
-		await prisma.$queryRaw`INSERT INTO guilds (guild_id) VALUES (${guild.id}) ON CONFLICT DO NOTHING`;
+		await prisma.$queryRawTyped(ensureGuild(guild.id));
 
 		const webhook = useGuildJoinLeaveWebhook();
 

@@ -3,6 +3,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, container } from '@sapphire/framework';
 import type { Message, MessageReaction, Typing, User } from 'discord.js';
+import { upsertUserActivity } from '#generated/prisma/sql';
 
 @ApplyOptions<Listener.Options>({ event: Events.MessageCreate, name: 'ActivityUpdater.MessageCreate' })
 export class MessageCreate extends Listener<typeof Events.MessageCreate> {
@@ -69,12 +70,5 @@ async function updateStateForUserInChannel(userId: string, channelId: string, gu
 		return;
 	}
 
-	// Could it be on one line? Absolutely!
-	// Is it? No, because it looks pretty when logging it for debug purposes :)
-	await container.prisma.$executeRaw`
-	INSERT INTO user_activities (user_id, channel_id, guild_id, last_active_at)
-	VALUES (${userId}, ${channelId}, ${guildId}, NOW())
-	ON CONFLICT (user_id, channel_id, guild_id) DO
-		UPDATE SET last_active_at = NOW()
-`; // We love indentations >.>
+	await container.prisma.$queryRawTyped(upsertUserActivity(userId, channelId, guildId));
 }

@@ -21,9 +21,11 @@ Clone this repository, make sure you have git installed and run
 pnpm install
 ```
 
-Copy `.env.example` to `.env`, fill in the values, then run:
+Copy `.env.example` to `.env` and fill in the values. Generating the Prisma client needs a running database; `docker compose up -d` starts one that matches `.env.example`. Then run:
 
 ```bash
+pnpm prisma migrate deploy
+pnpm generate
 pnpm build
 node .
 ```
