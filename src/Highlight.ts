@@ -1,5 +1,4 @@
 import '#setup';
-
 import process from 'node:process';
 import { container, LogLevel } from '@sapphire/framework';
 import { Time } from '@sapphire/time-utilities';

@@ -11,7 +11,7 @@ export async function getDatabaseMember(guildId: string, userId: string): Promis
 		container.prisma.$queryRaw`INSERT INTO users (id) VALUES (${userId}) ON CONFLICT (id) DO NOTHING`,
 		container.prisma.$queryRaw<
 			{ guild_id: string; regular_expressions: string[] | null; user_id: string }[]
-		>/* sql */ `
+		> /* sql */ `
 	INSERT INTO members (guild_id, user_id)
 	VALUES (${guildId}, ${userId})
 	ON CONFLICT (guild_id, user_id) DO

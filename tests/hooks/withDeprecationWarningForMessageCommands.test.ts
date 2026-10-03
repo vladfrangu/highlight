@@ -56,9 +56,8 @@ vi.mock('@sapphire/framework', async (importActual) => {
 });
 
 const { container } = await import('@sapphire/framework');
-const { withDeprecationWarningForMessageCommands, withDeprecationWarningOnEmbedForMessageCommands } = await import(
-	'#hooks/withDeprecationWarningForMessageCommands'
-);
+const { withDeprecationWarningForMessageCommands, withDeprecationWarningOnEmbedForMessageCommands } =
+	await import('#hooks/withDeprecationWarningForMessageCommands');
 
 const invite = container.client.generateInvite({
 	scopes: [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands],
