@@ -22,7 +22,4 @@ export default defineConfig({
 			exclude: ['src/lib/generated/**'],
 		},
 	},
-	esbuild: {
-		target: 'es2022',
-	},
 });
