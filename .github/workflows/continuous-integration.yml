@@ -6,10 +6,27 @@ on:
       - main
   pull_request:
 
+env:
+  POSTGRES_URL: postgresql://postgres:root@localhost:5432/highlight?schema=public
+
 jobs:
   Linting:
     name: Linting
     runs-on: ubuntu-latest
+    services:
+      postgres: &postgres
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: highlight
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d highlight"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
@@ -22,12 +39,16 @@ jobs:
           cache: pnpm
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+      - name: Generate Prisma Client
+        run: pnpm exec prisma migrate deploy && pnpm generate
       - name: Run oxlint & oxfmt
         run: pnpm lint
 
   UnitTests:
     name: Unit tests
     runs-on: ubuntu-latest
+    services:
+      postgres: *postgres
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
@@ -40,12 +61,16 @@ jobs:
           cache: pnpm
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+      - name: Generate Prisma Client
+        run: pnpm exec prisma migrate deploy && pnpm generate
       - name: Run unit tests
         run: pnpm test
 
   Building:
     name: Build code
     runs-on: ubuntu-latest
+    services:
+      postgres: *postgres
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
@@ -58,5 +83,7 @@ jobs:
           cache: pnpm
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+      - name: Generate Prisma Client
+        run: pnpm exec prisma migrate deploy && pnpm generate
       - name: Build Code
         run: pnpm build

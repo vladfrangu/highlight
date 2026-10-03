@@ -40,7 +40,7 @@ export default defineConfig({
 		prettier,
 		withoutDroppedJsPlugins(prettierJsPlugins),
 	],
-	ignorePatterns: ['dist/**', 'coverage/**', 'src.old/**'],
+	ignorePatterns: ['dist/**', 'coverage/**', 'src.old/**', 'src/lib/generated/**'],
 	options: { typeAware: true, reportUnusedDisableDirectives: 'warn' },
 	rules: {
 		'typescript/consistent-type-definitions': ['error', 'interface'],

@@ -1,6 +1,6 @@
-import { Prisma } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Events, Listener, LogLevel } from '@sapphire/framework';
+import { ensureGuilds } from '#generated/prisma/sql';
 import { InviteButton, inviteOptions, packageJsonFile, pluralize } from '#utils/misc';
 
 @ApplyOptions<Listener.Options>({
@@ -72,13 +72,7 @@ export class ClientReadyListener extends Listener<typeof Events.ClientReady> {
 	private async ensureAllGuildsAreInDatabase() {
 		const { prisma, client } = this.container;
 
-		// eslint-disable-next-line -- This is validated to work but its SO JANK
-		await prisma.$executeRaw`INSERT INTO guilds (guild_id) VALUES ${Prisma.join(
-			[...client.guilds.cache.keys()],
-			'), (',
-			'(',
-			')',
-		)} ON CONFLICT DO NOTHING`;
+		await prisma.$queryRawTyped(ensureGuilds([...client.guilds.cache.keys()]));
 	}
 }
 

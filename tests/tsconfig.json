@@ -4,6 +4,7 @@
 	"compilerOptions": {
 		"rootDir": "../",
 		"paths": {
+			"#generated/*": ["../src/lib/generated/*.ts"],
 			"#internals/*": ["../src/lib/internals/*.ts"],
 			"#hooks/*": ["../src/lib/utils/hooks/*.ts"],
 			"#setup": ["../src/lib/setup.ts"],

@@ -17,6 +17,9 @@ coverage/
 dist/
 bwd/{pending,open,closed}Tickets
 
+# Ignore the generated Prisma client
+src/lib/generated/
+
 # Ignore JavaScript files
 **/*.js
 **/*.js.map

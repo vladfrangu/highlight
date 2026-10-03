@@ -4,6 +4,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	resolve: {
 		alias: [
+			{ find: '#generated', replacement: resolve('src/lib/generated') },
 			{ find: '#internals', replacement: resolve('src/lib/internals') },
 			{ find: '#hooks', replacement: resolve('src/lib/utils/hooks') },
 			{ find: '#setup', replacement: resolve('src/lib/utils/setup.ts') },
@@ -18,6 +19,7 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			include: ['src/lib/**/*'],
+			exclude: ['src/lib/generated/**'],
 		},
 	},
 	esbuild: {

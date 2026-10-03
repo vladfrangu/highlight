@@ -51,12 +51,15 @@ declare module '@sapphire/pieces' {
 // #endregion
 
 // #region Prisma
+import process from 'node:process';
 import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
-import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '#generated/prisma/client';
 
 const highlighter = new SqlHighlighter();
 
 const prisma = new PrismaClient({
+	adapter: new PrismaPg({ connectionString: process.env.POSTGRES_URL }),
 	errorFormat: 'pretty',
 	log: [
 		{ emit: 'stdout', level: 'warn' },
@@ -114,6 +117,16 @@ const prisma = new PrismaClient({
 					}
 
 					consoleMessage.push(highlighter.highlight(sqlString.join('')));
+				} else if (operation === '$queryRawTyped') {
+					const typed = args as unknown as { sql: string; values: unknown[] };
+
+					consoleMessage.push(
+						highlighter.highlight(
+							typed.sql.replaceAll(/\$(?<index>\d+)/g, (_, index: string) =>
+								JSON.stringify(typed.values[Number(index) - 1]),
+							),
+						),
+					);
 				} else if (Array.isArray(args)) {
 					// Most likely in $executeRawUnsafe/queryRawUnsafe
 					const sqlString = args.shift() as string | undefined;
@@ -147,7 +160,7 @@ const prisma = new PrismaClient({
 			return result;
 		},
 	},
-}) as PrismaClient<{ errorFormat: 'pretty' }>;
+}) as PrismaClient;
 
 container.prisma = prisma;
 
