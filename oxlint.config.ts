@@ -7,8 +7,9 @@ import typescript from 'eslint-config-neon/oxlint/typescript';
 import typescriptJsPlugins from 'eslint-config-neon/oxlint/typescript.jsplugins';
 import { defineConfig, type OxlintConfig } from 'oxlint';
 
-// tsdoc/syntax was already disabled here, react and vue are not used
-const droppedJsPlugins = ['@neon/eslint-react', '@neon/eslint-tsdoc', '@neon/eslint-vue'];
+// sonarjs needs the TypeScript JS API, which TypeScript 7 no longer ships.
+// tsdoc/syntax was already disabled here, react and vue are not used.
+const droppedJsPlugins = ['@neon/eslint-react', '@neon/eslint-sonarjs', '@neon/eslint-tsdoc', '@neon/eslint-vue'];
 
 function keepRules(rules: OxlintConfig['rules']) {
 	return Object.fromEntries(
