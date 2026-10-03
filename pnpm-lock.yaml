@@ -194,8 +194,8 @@ importers:
         specifier: ^4.0.2
         version: 4.1.0
       '@sapphire/plugin-subcommands':
-        specifier: ^6.0.3
-        version: 6.0.3
+        specifier: ^7.0.0
+        version: 7.0.1
       '@sapphire/stopwatch':
         specifier: ^1.5.4
         version: 1.5.4
@@ -888,8 +888,8 @@ packages:
     resolution: {integrity: sha512-+vLTITQw3DI8+kfDPNJ0yhIK/LrfM/Gro/UFcxgYWLLm+lwNmSpLZxdWe9v7ESXprody7rTp8JXPNBK7UWyE8w==}
     engines: {node: '>=v18', npm: '>=7'}
 
-  '@sapphire/plugin-subcommands@6.0.3':
-    resolution: {integrity: sha512-SLDlTjMrMpb3s89ZjrBvVbMWsXfNNciO6SnNQdKLKTUQwktaYxIdj+k3MmEWpN19i8W9ogRvIrLl0Hw20pPUng==}
+  '@sapphire/plugin-subcommands@7.0.1':
+    resolution: {integrity: sha512-3ngUpfKfcMX4zIlJ4SHLe10N79XU72H+Wdfcnd9ueMf6FOSMJFvVUfqDIp1rb7/iXi7C5dfx0pQqSwqu3UG0KQ==}
     engines: {node: '>=v18', npm: '>=7'}
 
   '@sapphire/prettier-config@2.0.0':
@@ -4484,10 +4484,9 @@ snapshots:
       '@sapphire/timestamp': 1.0.5
       colorette: 2.0.20
 
-  '@sapphire/plugin-subcommands@6.0.3':
+  '@sapphire/plugin-subcommands@7.0.1':
     dependencies:
       '@sapphire/utilities': 3.18.2
-      tslib: 2.8.1
 
   '@sapphire/prettier-config@2.0.0':
     dependencies:
