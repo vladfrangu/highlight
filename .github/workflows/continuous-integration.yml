@@ -29,7 +29,7 @@ jobs:
           --health-retries 10
     steps:
       - name: Checkout Project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Install pnpm
         uses: pnpm/action-setup@v6
       - name: Use Node.js v24
@@ -51,7 +51,7 @@ jobs:
       postgres: *postgres
     steps:
       - name: Checkout Project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Install pnpm
         uses: pnpm/action-setup@v6
       - name: Use Node.js v24
@@ -73,7 +73,7 @@ jobs:
       postgres: *postgres
     steps:
       - name: Checkout Project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Install pnpm
         uses: pnpm/action-setup@v6
       - name: Use Node.js v24
