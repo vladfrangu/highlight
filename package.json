@@ -61,7 +61,7 @@
 		"eslint": "^10.11.0",
 		"eslint-config-neon": "0.5.4",
 		"eslint-plugin-perfectionist": "^5.12.1",
-		"oxfmt": "0.71.0",
+		"oxfmt": "0.72.0",
 		"oxlint": "1.86.0",
 		"oxlint-tsgolint": "7.0.2003",
 		"prisma": "7.10.0",
