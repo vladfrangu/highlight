@@ -203,8 +203,8 @@ importers:
         specifier: ^1.5.4
         version: 1.5.4
       '@sapphire/time-utilities':
-        specifier: ^1.7.14
-        version: 1.7.14
+        specifier: ^2.0.0
+        version: 2.0.0
       '@sapphire/timestamp':
         specifier: ^1.0.5
         version: 1.0.5
@@ -1161,9 +1161,9 @@ packages:
     resolution: {integrity: sha512-cvGzxbba6sav2zZkH8GPf2oGk9yYoD5qrNWdu9fRehifgnFZJMV+nuy2nON2roRO4yQQ+v7MK/Pktl/HgfsUXg==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
 
-  '@sapphire/cron@1.2.1':
-    resolution: {integrity: sha512-K96GX4UkzgC/Y2VHXVjhM2Bl4D04552nr/fDiOj9bOACW1+wqeFfLJ3eV6jleTSXmzPIwDvkPIUJLf8A5KSD+w==}
-    engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+  '@sapphire/cron@2.0.0':
+    resolution: {integrity: sha512-XlCq1XKKB3o53JA6AOaGtMyY7N7ZByZyQmSloz+y4rbD79qKN9AzZlZoV3A01Orbh6ghguXBWARNcango0PRBA==}
+    engines: {node: '>=v24.0.0', npm: '>=11.0.0'}
 
   '@sapphire/decorators@6.2.0':
     resolution: {integrity: sha512-st1DNDCNoZaZYz3fgCA99W87Bhe6XqM8y0G+Z9NBOBEqvOYkVNGcPMDrMiaZrPD9Z471k8fpLqJVUNSuWUx8Hg==}
@@ -1184,6 +1184,10 @@ packages:
   '@sapphire/duration@1.2.0':
     resolution: {integrity: sha512-LxjOAFXz81WmrI8XX9YaVcAZDjQj/1p78lZCvkAWZB1nphOwz/D0dU3CBejmhOWx5dO5CszTkLJMNR0xuCK+Zg==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+
+  '@sapphire/duration@2.0.0':
+    resolution: {integrity: sha512-nkksFA1WSzdNcNoh05JCtwPcGbtU0lTZZGdbNgoEhX9xTC3svBEJJN881T+wFmB3RpnOONEcxp/6pv7el7dZyw==}
+    engines: {node: '>=v24.0.0', npm: '>=11.0.0'}
 
   '@sapphire/framework@5.5.1':
     resolution: {integrity: sha512-UlEoj3XRjSyGJg1+kD43q5YHfmDDJ1fNN5Ws3OifvgMNhnOrrL1diTjU1ALfLrfUbPuBCJWD1ZfIj/i/J4K9eQ==}
@@ -1225,17 +1229,21 @@ packages:
     resolution: {integrity: sha512-IVI48D2yAz411bSttXyTkBH0p2vhrXoqWLn5loDDSAAEUGkM1r5KNCX2027ifQ8svdoMkUfIGjFueR+satLeWw==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
 
-  '@sapphire/time-utilities@1.7.14':
-    resolution: {integrity: sha512-UVJQ9oyzXcmJVVf9Y9ucGzRmKoPxe6SehpQlBNTX7CTVu0aj1lrEGL+bBa0Mu7hxF5DYXYjDYeO1e5BR0eg90Q==}
-    engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+  '@sapphire/time-utilities@2.0.0':
+    resolution: {integrity: sha512-ZTtOs1OMMmXJ3eKOQ42laD5PuewqkKwk3T9dqXL2SOPuUx74xF+MYXHBnIAOBZMmvhLzMW423V7cVCwAXwFYTQ==}
+    engines: {node: '>=v24.0.0', npm: '>=11.0.0'}
 
-  '@sapphire/timer-manager@1.0.4':
-    resolution: {integrity: sha512-gc1JW8oui86f2l0T/1Iwd7hZTgus8b46slitTR2y0+wiMAEYxdp6vVTHvMAEHOqX8drkxK70aGfZmQKbAcgFqQ==}
-    engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+  '@sapphire/timer-manager@2.0.0':
+    resolution: {integrity: sha512-MWFOM+apXZbjrr4tUboSBXP4xgQCJbSDuUFn0IYzzAjeZBXMQ8asGQAtSEcI7LryPEXTMETF5Z1S3ftdJZhdLw==}
+    engines: {node: '>=v24.0.0', npm: '>=11.0.0'}
 
   '@sapphire/timestamp@1.0.5':
     resolution: {integrity: sha512-oNwWyNdbt5wm4aYZvlHl1+64U3g0xrFmRIHsnER7RgMxNnp/wmAE4yTK2oUHeadg3t4V9iYctPAQCF+aINke4g==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+
+  '@sapphire/timestamp@2.0.0':
+    resolution: {integrity: sha512-iM1W6KgxBQSHp/LLXv6bkLP+tqFJAl1KyueQuCcwKEHTMqhqqYpmkHthcvcy3L7toij55JaBOKJLSmT98Y6g8Q==}
+    engines: {node: '>=v24.0.0', npm: '>=11.0.0'}
 
   '@sapphire/ts-config@5.0.3':
     resolution: {integrity: sha512-bFyGYHFT3TpOf5Sg2P+zY2ad0t5IA2epc5HtewlghhL7MYvbZvxtKsdaNaMwAdNObBx7hpiQm5OcOhyzEwQvbQ==}
@@ -1244,6 +1252,10 @@ packages:
   '@sapphire/utilities@3.18.2':
     resolution: {integrity: sha512-QGLdC9+pT74Zd7aaObqn0EUfq40c4dyTL65pFnkM6WO1QYN7Yg/s4CdH+CXmx0Zcu6wcfCWILSftXPMosJHP5A==}
     engines: {node: '>=v14.0.0'}
+
+  '@sapphire/utilities@4.0.0':
+    resolution: {integrity: sha512-GBM5Caqiw7amBxwbeuXc6asBAZkiRPexXxjN9zX6jD8glpGTvq5zjnDOzeTsNAWhsRpZOc+KeFoWURbImS2Yww==}
+    engines: {node: '>=v24.0.0'}
 
   '@sindresorhus/base62@1.0.0':
     resolution: {integrity: sha512-TeheYy0ILzBEI/CO55CP6zJCSdSWeRtGnHy8U8dWSUH4I68iqTsy7HkMktR4xakThc9jotkPQUXT4ITdbV7cHA==}
@@ -5297,9 +5309,9 @@ snapshots:
 
   '@sapphire/async-queue@1.5.5': {}
 
-  '@sapphire/cron@1.2.1':
+  '@sapphire/cron@2.0.0':
     dependencies:
-      '@sapphire/utilities': 3.18.2
+      '@sapphire/utilities': 4.0.0
 
   '@sapphire/decorators@6.2.0':
     dependencies:
@@ -5321,6 +5333,8 @@ snapshots:
       tslib: 2.8.1
 
   '@sapphire/duration@1.2.0': {}
+
+  '@sapphire/duration@2.0.0': {}
 
   '@sapphire/framework@5.5.1':
     dependencies:
@@ -5368,16 +5382,18 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@sapphire/time-utilities@1.7.14':
+  '@sapphire/time-utilities@2.0.0':
     dependencies:
-      '@sapphire/cron': 1.2.1
-      '@sapphire/duration': 1.2.0
-      '@sapphire/timer-manager': 1.0.4
-      '@sapphire/timestamp': 1.0.5
+      '@sapphire/cron': 2.0.0
+      '@sapphire/duration': 2.0.0
+      '@sapphire/timer-manager': 2.0.0
+      '@sapphire/timestamp': 2.0.0
 
-  '@sapphire/timer-manager@1.0.4': {}
+  '@sapphire/timer-manager@2.0.0': {}
 
   '@sapphire/timestamp@1.0.5': {}
+
+  '@sapphire/timestamp@2.0.0': {}
 
   '@sapphire/ts-config@5.0.3':
     dependencies:
@@ -5385,6 +5401,8 @@ snapshots:
       typescript: 5.4.5
 
   '@sapphire/utilities@3.18.2': {}
+
+  '@sapphire/utilities@4.0.0': {}
 
   '@sindresorhus/base62@1.0.0': {}
 
