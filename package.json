@@ -34,7 +34,7 @@
 		"@prisma/adapter-pg": "7.10.1",
 		"@prisma/client": "7.10.1",
 		"@sapphire/decorators": "^6.2.0",
-		"@sapphire/discord-utilities": "^4.0.0",
+		"@sapphire/discord-utilities": "^5.0.0",
 		"@sapphire/discord.js-utilities": "^7.3.3",
 		"@sapphire/framework": "^5.5.1",
 		"@sapphire/pieces": "^4.4.1",
