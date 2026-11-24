@@ -41,7 +41,7 @@
 		"@sapphire/plugin-logger": "^4.1.0",
 		"@sapphire/plugin-subcommands": "^7.0.1",
 		"@sapphire/stopwatch": "^1.5.4",
-		"@sapphire/time-utilities": "^1.7.14",
+		"@sapphire/time-utilities": "^2.0.0",
 		"@sapphire/timestamp": "^1.0.5",
 		"@sapphire/utilities": "^3.18.2",
 		"@skyra/env-utilities": "^2.0.1",
