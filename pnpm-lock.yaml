@@ -219,8 +219,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       '@sapphire/stopwatch':
-        specifier: ^1.5.4
-        version: 1.5.4
+        specifier: ^2.0.0
+        version: 2.0.0
       '@sapphire/time-utilities':
         specifier: ^1.7.14
         version: 1.7.14
@@ -1247,6 +1247,10 @@ packages:
   '@sapphire/stopwatch@1.5.4':
     resolution: {integrity: sha512-IVI48D2yAz411bSttXyTkBH0p2vhrXoqWLn5loDDSAAEUGkM1r5KNCX2027ifQ8svdoMkUfIGjFueR+satLeWw==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+
+  '@sapphire/stopwatch@2.0.0':
+    resolution: {integrity: sha512-G2HoCni1jSgCieyzfGbo/ExgzJGZ/mw5M40PzRaHah/r9J65oMJ1D6mpoTAPalcqXvJ1Kj5b0Q3gJFyrl54+MA==}
+    engines: {node: '>=v24.0.0', npm: '>=11.0.0'}
 
   '@sapphire/time-utilities@1.7.14':
     resolution: {integrity: sha512-UVJQ9oyzXcmJVVf9Y9ucGzRmKoPxe6SehpQlBNTX7CTVu0aj1lrEGL+bBa0Mu7hxF5DYXYjDYeO1e5BR0eg90Q==}
@@ -5432,6 +5436,8 @@ snapshots:
   '@sapphire/stopwatch@1.5.4':
     dependencies:
       tslib: 2.9.1
+
+  '@sapphire/stopwatch@2.0.0': {}
 
   '@sapphire/time-utilities@1.7.14':
     dependencies:
