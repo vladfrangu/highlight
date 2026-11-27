@@ -210,8 +210,8 @@ importers:
         specifier: ^5.5.1
         version: 5.5.1
       '@sapphire/pieces':
-        specifier: ^4.4.1
-        version: 4.4.1
+        specifier: ^5.0.0
+        version: 5.0.1
       '@sapphire/plugin-logger':
         specifier: ^4.1.0
         version: 4.1.0
@@ -1217,6 +1217,10 @@ packages:
 
   '@sapphire/pieces@4.4.1':
     resolution: {integrity: sha512-2v49P++RzHGb23bdjSa9u7flkdvhrq94IUO9PneY538TILN5QiMxfaXVK+pDR2YR7jpQYBy9APwtFDes2Svykg==}
+    engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+
+  '@sapphire/pieces@5.0.1':
+    resolution: {integrity: sha512-1trHwNMjWcWk156SLhsNAzmQMCXd+K+TWMAlt8tlvWxgklMCESW4AiCJ1ytQzFsIUdUUYaEmsXp678DBJrDQAw==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
 
   '@sapphire/plugin-logger@4.1.0':
@@ -5408,6 +5412,11 @@ snapshots:
       '@discordjs/collection': 2.1.1
       '@sapphire/utilities': 3.18.3
       tslib: 2.9.1
+
+  '@sapphire/pieces@5.0.1':
+    dependencies:
+      '@discordjs/collection': 2.1.1
+      '@sapphire/utilities': 3.18.3
 
   '@sapphire/plugin-logger@4.1.0':
     dependencies:
