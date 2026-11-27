@@ -225,8 +225,8 @@ importers:
         specifier: ^1.7.14
         version: 1.7.14
       '@sapphire/timestamp':
-        specifier: ^1.0.5
-        version: 1.0.5
+        specifier: ^2.0.0
+        version: 2.0.0
       '@sapphire/utilities':
         specifier: ^3.18.2
         version: 3.18.3
@@ -1259,6 +1259,10 @@ packages:
   '@sapphire/timestamp@1.0.5':
     resolution: {integrity: sha512-oNwWyNdbt5wm4aYZvlHl1+64U3g0xrFmRIHsnER7RgMxNnp/wmAE4yTK2oUHeadg3t4V9iYctPAQCF+aINke4g==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+
+  '@sapphire/timestamp@2.0.0':
+    resolution: {integrity: sha512-iM1W6KgxBQSHp/LLXv6bkLP+tqFJAl1KyueQuCcwKEHTMqhqqYpmkHthcvcy3L7toij55JaBOKJLSmT98Y6g8Q==}
+    engines: {node: '>=v24.0.0', npm: '>=11.0.0'}
 
   '@sapphire/ts-config@5.0.3':
     resolution: {integrity: sha512-bFyGYHFT3TpOf5Sg2P+zY2ad0t5IA2epc5HtewlghhL7MYvbZvxtKsdaNaMwAdNObBx7hpiQm5OcOhyzEwQvbQ==}
@@ -5443,6 +5447,8 @@ snapshots:
   '@sapphire/timer-manager@1.0.4': {}
 
   '@sapphire/timestamp@1.0.5': {}
+
+  '@sapphire/timestamp@2.0.0': {}
 
   '@sapphire/ts-config@5.0.3':
     dependencies:
